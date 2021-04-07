@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\daab_\\Desktop\\Programación\\OC2_P2_201800523\\OC2_P2_201800523.csproj",
+      "projectUniqueName": "D:\\Repositorios\\xd\\OC2_P2_201800523.csproj",
       "projectName": "OC2_P2_201800523",
-      "projectPath": "C:\\Users\\daab_\\Desktop\\Programación\\OC2_P2_201800523\\OC2_P2_201800523.csproj",
+      "projectPath": "D:\\Repositorios\\xd\\OC2_P2_201800523.csproj",
       "packagesPath": "C:\\Users\\daab_\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\daab_\\Desktop\\Programación\\OC2_P2_201800523\\obj\\",
+      "outputPath": "D:\\Repositorios\\xd\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\daab_\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -63,7 +63,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

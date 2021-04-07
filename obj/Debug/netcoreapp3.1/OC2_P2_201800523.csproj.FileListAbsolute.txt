@@ -1,0 +1,17 @@
+D:\Repositorios\xd\obj\Debug\netcoreapp3.1\OC2_P2_201800523.csprojAssemblyReference.cache
+D:\Repositorios\xd\obj\Debug\netcoreapp3.1\OC2_P2_201800523.csproj.GenerateResource.cache
+D:\Repositorios\xd\obj\Debug\netcoreapp3.1\OC2_P2_201800523.AssemblyInfoInputs.cache
+D:\Repositorios\xd\obj\Debug\netcoreapp3.1\OC2_P2_201800523.AssemblyInfo.cs
+D:\Repositorios\xd\obj\Debug\netcoreapp3.1\OC2_P2_201800523.csproj.CoreCompileInputs.cache
+D:\Repositorios\xd\bin\Debug\netcoreapp3.1\OC2_P2_201800523.exe
+D:\Repositorios\xd\bin\Debug\netcoreapp3.1\OC2_P2_201800523.deps.json
+D:\Repositorios\xd\bin\Debug\netcoreapp3.1\OC2_P2_201800523.runtimeconfig.json
+D:\Repositorios\xd\bin\Debug\netcoreapp3.1\OC2_P2_201800523.runtimeconfig.dev.json
+D:\Repositorios\xd\bin\Debug\netcoreapp3.1\OC2_P2_201800523.dll
+D:\Repositorios\xd\bin\Debug\netcoreapp3.1\OC2_P2_201800523.pdb
+D:\Repositorios\xd\bin\Debug\netcoreapp3.1\Irony.dll
+D:\Repositorios\xd\obj\Debug\netcoreapp3.1\OC2_P2_201800523.Form1.resources
+D:\Repositorios\xd\obj\Debug\netcoreapp3.1\OC2_P2_201800523.csproj.CopyComplete
+D:\Repositorios\xd\obj\Debug\netcoreapp3.1\OC2_P2_201800523.dll
+D:\Repositorios\xd\obj\Debug\netcoreapp3.1\OC2_P2_201800523.pdb
+D:\Repositorios\xd\obj\Debug\netcoreapp3.1\OC2_P2_201800523.genruntimeconfig.cache
