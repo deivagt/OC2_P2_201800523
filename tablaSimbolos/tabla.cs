@@ -39,7 +39,7 @@ namespace OC2_P2_201800523.tablaSimbolos
             return "ERROR";
         }
 
-        public simbolo buscarSimbolo(string id)
+        public simbolo buscarSimbolo(string id,string ambito)
         {
 
             id = id.ToLower();
@@ -49,7 +49,7 @@ namespace OC2_P2_201800523.tablaSimbolos
                 {
                     if (a.id == id)
                     {
-                        if(a.ambito == manejadorArbol.ambitoActual || a.ambito == "global")
+                        if(a.ambito == ambito || a.ambito == "global")
                         {
                             return a;
                         }

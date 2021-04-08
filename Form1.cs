@@ -28,9 +28,10 @@ namespace OC2_P2_201800523
         private void button1_Click(object sender, EventArgs e)
         {
             //System.Diagnostics.Debug.WriteLine(richTextBox1.Text);
-            this.richTextBox2.Text = "";
+            this.consola.Text = "";
             n = new AnalizadorSintactico();
             n.analisis(richTextBox1.Text);
+            consola.Text = cosasGlobalesewe.salida;
             
         }
 
@@ -41,7 +42,7 @@ namespace OC2_P2_201800523
 
         private void button2_Click(object sender, EventArgs e)
         {
-            manejadorArbol.imprimirTabla();
+            //manejadorArbol.imprimirTabla();
             
         }
 

@@ -8,15 +8,15 @@ namespace OC2_P2_201800523.AST
 {
     class AnalizadorSintactico : Grammar
     {
-
+        public static manejadorArbol xd;
         public ParseTreeNode raiz;
         public void analisis(string entrada)
         {
-            Program.form.richTextBox2.Text = "";
+            Program.form.consola.Text = "";
             Program.form.richTextBox3.Text = "";
             Program.form.richTextBox4.Text = "";
             Program.form.richTextBox5.Text = "";
-
+            cosasGlobalesewe.inicializar();
             Gramatica gram = new Gramatica();
             LanguageData leng = new LanguageData(gram);
             Parser parser = new Parser(leng);
@@ -27,7 +27,9 @@ namespace OC2_P2_201800523.AST
                 {
                     raiz = arbol.Root;
                     recorrer(raiz);
-                    manejadorArbol.iniciar(raiz);
+                    xd = new manejadorArbol();
+                    xd.iniciar(raiz);
+                    xd.traducir();
                     //manejadorArbol.ejecutar();
                     graficar(raiz);
                     //manejadorArbol.imprimirTabla();
@@ -72,7 +74,7 @@ namespace OC2_P2_201800523.AST
         public string graficar(ParseTreeNode padre)
         {
            
-            return manejadorArbol.graficar(padre);
+            return xd.graficar(padre);
         }
 
 

@@ -4,6 +4,7 @@ using System.Text;
 using Irony.Parsing;
 using Irony.Ast;
 using OC2_P2_201800523.AST;
+using OC2_P2_201800523.tablaSimbolos;
 //using OC2_P2_201800523.Arbol.Ejecucion.Funcion_Procedimiento;
 
 namespace OC2_P2_201800523.tablaSimbolos
@@ -52,7 +53,7 @@ namespace OC2_P2_201800523.tablaSimbolos
             this.defaultVal = "";
             this.categoria = "var";
         }
-        public simbolo(string ambito, string id, string tipo, int fila, int columna)  //variable sin inicializar con valores por defecto
+        public simbolo(string ambito, string id, string tipo, int fila, int columna, tabla tabla)  //variable sin inicializar con valores por defecto
         {
             this.ambito = ambito;
             this.id = id;
@@ -85,11 +86,11 @@ namespace OC2_P2_201800523.tablaSimbolos
             }
             else if (tipo == terminales.id)
             {
-                this.valor = manejadorArbol.tabladeSimbolos.buscar(tipo);
+                this.valor = tabla.buscar(tipo);
             }
         }
 
-        public simbolo(bool esAtributo, string ambito, string id, string tipo, int fila, int columna)  //atributo
+        public simbolo(bool esAtributo, string ambito, string id, string tipo, int fila, int columna, tabla tabla)  //atributo
         {
             this.esAtributo = esAtributo;
             this.ambito = ambito;
@@ -124,10 +125,10 @@ namespace OC2_P2_201800523.tablaSimbolos
             }
             else if (tipo == terminales.id)
             {
-                this.valor = manejadorArbol.tabladeSimbolos.buscar(tipo);
+                this.valor = tabla.buscar(tipo);
             }
         }
-        public simbolo(string ambito, string id, string tipo, int fila, int columna, bool esTipo) //Tipo
+        public simbolo(string ambito, string id, string tipo, int fila, int columna, bool esTipo, tabla tabla) //Tipo
         {
             this.ambito = ambito;
             this.id = id;
@@ -161,7 +162,7 @@ namespace OC2_P2_201800523.tablaSimbolos
             }
             else if (tipo == terminales.id)
             {
-                this.defaultVal = manejadorArbol.tabladeSimbolos.buscar(tipo);
+                this.defaultVal = tabla.buscar(tipo);
             }
         }
 

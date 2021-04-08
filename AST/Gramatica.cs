@@ -155,8 +155,10 @@ namespace OC2_P2_201800523.AST
             #endregion
 
             #region DEFINICION OWO
-            INI.Rule = COSAS
+            INI.Rule = EXPRESION
                 ;
+            //INI.Rule = COSAS
+            //    ;
 
             COSAS.Rule = program + id + punto_coma + USES + INSTRUCCIONES + CUERPO_PROGRAMA
                 ;
