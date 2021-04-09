@@ -31,7 +31,12 @@ namespace OC2_P2_201800523
             salida += temp1;
             return "t" + (temp - 1);
         }
-
+        public static string nuevoTemp()
+        {
+            string temp1 = "t" + temp;
+            temp++;
+            return temp1;
+        }
         public static void concatenarAccion(string argumento)
         {
             salida += argumento + "\n";
