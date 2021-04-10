@@ -30,6 +30,7 @@ namespace OC2_P2_201800523.AST
                     xd = new manejadorArbol();
                     xd.iniciar(raiz);
                     xd.traducir();
+                    cosasGlobalesewe.cocinar();
                     //manejadorArbol.ejecutar();
                     graficar(raiz);
                     //manejadorArbol.imprimirTabla();

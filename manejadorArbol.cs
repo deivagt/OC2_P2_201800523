@@ -17,6 +17,7 @@ namespace OC2_P2_201800523
         public string ambitoActual = "global";
         static ParseTreeNode raiz;
         tabla tabladeSimbolos;
+        string args = "";
 
         public static int contadorNodos = 0;
 
@@ -26,14 +27,14 @@ namespace OC2_P2_201800523
             manejadorArbol.raiz = nuevaRaiz;
             tabladeSimbolos = new tabla();
             ambitoActual = "global";
-
+            
         }
 
         public void traducir()
         {            
             ini a = new ini(noterminales.INI, manejadorArbol.raiz);
             resultado salida = a.traducir(ref tabladeSimbolos, ambitoActual, "", "", "");
-
+            
         }
 
         //public void imprimirTabla()

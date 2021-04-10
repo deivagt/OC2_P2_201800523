@@ -12,6 +12,7 @@ namespace OC2_P2_201800523
         public static bool controlContinue = false;
         public static bool controlExit = false;
         public static string salida = "";
+        static string args;
 
         public static void inicializar()
         {
@@ -47,6 +48,30 @@ namespace OC2_P2_201800523
             string etiqueta1 = "L" + etiqueta;
             etiqueta++;
             return etiqueta1;
+        }
+
+        public static void cocinar()
+        {
+            args = "double heap[1000000]; \ndouble stack[16000]; \n";
+            args += "double sp; //Puntero del stack\n";
+            args += "double hp; //Puntero del heap\n";
+            args += declararTemporales();
+            args += "main()\n{\n";
+            salida = args + salida;  
+            salida += "}";
+        }
+
+
+        static string declararTemporales()
+        {
+            string t = "double ";
+            for(int i = 0; i < temp; i++)
+            {
+                t += "t" + i + ", ";
+            }
+            t = t.Remove(t.Length - 2);
+            t += ";\n";
+            return t;
         }
     }
 }

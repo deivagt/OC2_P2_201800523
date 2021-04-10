@@ -15,6 +15,7 @@ namespace OC2_P2_201800523.Arbol
         public string verdadero;
         public string falso;
         public string salida;
+        public string argumento;
         LinkedList<ParseTreeNode> nodo;
 
 
@@ -22,6 +23,13 @@ namespace OC2_P2_201800523.Arbol
         {
             this.tipo = tipo;
             this.valor = valor;
+        }
+
+        public resultado(string tipo, string valor, string argumento) //Para cadenas 
+        {
+            this.tipo = tipo;
+            this.valor = valor;
+            this.argumento = argumento;
         }
 
         public resultado(string tipo, int valor) //Para numeros enteros 

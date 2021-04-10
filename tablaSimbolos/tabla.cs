@@ -13,8 +13,8 @@ namespace OC2_P2_201800523.tablaSimbolos
         public tabla()
         {
             this.tablaSimbolos = new LinkedList<simbolo>();
-        }  
-        
+        }
+
         public void agregarSimbolo(simbolo simbolo)
         {
             simbolo.id = simbolo.id.ToLower();
@@ -26,56 +26,56 @@ namespace OC2_P2_201800523.tablaSimbolos
             return this.tablaSimbolos;
         }
 
-        public string buscar(string id)
+        public simbolo buscar(string id)
         {
-            id = id.ToLower();
-            foreach(var a in tablaSimbolos)
-            {
-                if(a.id == id)
-                {
-                    return a.defaultVal;
-                }
-            }
-            return "ERROR";
-        }
-
-        public simbolo buscarSimbolo(string id,string ambito)
-        {
-
             id = id.ToLower();
             foreach (var a in tablaSimbolos)
             {
-                if(a.categoria == "var" || a.categoria == "const")
+                if (a.id == id)
                 {
-                    if (a.id == id)
-                    {
-                        if(a.ambito == ambito || a.ambito == "global")
-                        {
-                            return a;
-                        }
-                        
-                    }
+                    return a;
                 }
-                
             }
             return null;
         }
-        public simbolo buscarFuncion(string id)
-        {
 
-            id = id.ToLower();
-            foreach (var a in tablaSimbolos)
-            {
-                if (a.categoria == "func" )
-                {
-                    if (a.id == id)
-                    {
-                        return a;
-                    }
-                }
+        //public simbolo buscarSimbolo(string id, string ambito)
+        //{
 
-            }
-            return null;
-        }
+        //    id = id.ToLower();
+        //    foreach (var a in tablaSimbolos)
+        //    {
+        //        if (a.categoria == "var" || a.categoria == "const")
+        //        {
+        //            if (a.id == id)
+        //            {
+        //                if (a.ambito == ambito || a.ambito == "global")
+        //                {
+        //                    return a;
+        //                }
+
+        //            }
+        //        }
+
+        //    }
+        //    return null;
+        //}
+        //public simbolo buscarFuncion(string id)
+        //{
+
+        //    id = id.ToLower();
+        //    foreach (var a in tablaSimbolos)
+        //    {
+        //        if (a.categoria == "func")
+        //        {
+        //            if (a.id == id)
+        //            {
+        //                return a;
+        //            }
+        //        }
+
+        //    }
+        //    return null;
+        //}
     }
 }
