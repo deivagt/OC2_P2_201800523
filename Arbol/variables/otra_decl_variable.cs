@@ -8,7 +8,7 @@ using OC2_P2_201800523.tablaSimbolos;
 using OC2_P2_201800523.Arbol.Expresion;
 using OC2_P2_201800523.AST;
 
-namespace OC2_P2_201800523.Arbol.Ejecucion.variables
+namespace OC2_P2_201800523.Arbol.variables
 {
     class otra_decl_variable : nodo
     {

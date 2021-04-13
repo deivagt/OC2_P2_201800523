@@ -155,12 +155,11 @@ namespace OC2_P2_201800523.AST
             #endregion
 
             #region DEFINICION OWO
-            INI.Rule =VARIABLE
+            
+            INI.Rule = COSAS
                 ;
-            //INI.Rule = COSAS
-            //    ;
 
-            COSAS.Rule = program + id + punto_coma + USES + INSTRUCCIONES + CUERPO_PROGRAMA
+            COSAS.Rule = program + id + punto_coma +USES + INSTRUCCIONES + CUERPO_PROGRAMA
                 ;
             COSAS.ErrorRule = SyntaxError + Eof;
 
@@ -273,6 +272,7 @@ namespace OC2_P2_201800523.AST
 
             SENTENCIAS.Rule = SENTENCIAS + SENTENCIA
                 | SENTENCIA
+                |Empty
                 ;
 
             SENTENCIA.Rule = id + dos_puntos_igual + EXPRESION + punto_coma

@@ -14,8 +14,7 @@ namespace OC2_P2_201800523.Arbol
         public ini(string tipo, ParseTreeNode node) : base(tipo, node) { }
         public override resultado traducir(ref tabla tablaActual, string ambito, string verdadero, string falso, string xd)
         {
-            variables.variable a = new variables.variable(noterminales.VARIABLE, node.ChildNodes.ElementAt(0));
-            //etc.cosas a = new etc.cosas(noterminales.COSAS, node.ChildNodes.ElementAt(0));            
+            etc.cosas a = new etc.cosas(noterminales.COSAS, node.ChildNodes.ElementAt(0));          
             resultado res = a.traducir(ref tablaActual, ambito, "", "", "");
             return res;
         }

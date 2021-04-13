@@ -38,14 +38,14 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                     if (int.TryParse(salida.Token.Text, out int i) == true)
                     {
-                        res = new resultado(salida.Term.ToString(), int.Parse(salida.Token.Text));
+                        res = new resultado(terminales.numero, int.Parse(salida.Token.Text));
 
                         return res;
                     }
                     else
                     {
 
-                        res = new resultado(salida.Term.ToString(), double.Parse(salida.Token.Text));
+                        res = new resultado(terminales.numero, double.Parse(salida.Token.Text));
                         return res;
                     }
 

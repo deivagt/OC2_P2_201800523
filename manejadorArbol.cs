@@ -43,7 +43,7 @@ namespace OC2_P2_201800523
             foreach (var simbolo in manejadorArbol.tabladeSimbolos.getTabla())
             {
                 Program.form.richTextBox3.AppendText("Simbolo:\n     Ámbito: " + simbolo.ambito + "\n     Nombre: " + simbolo.id + "\n     Tipo: "
-                    + simbolo.tipo + "\n     Direccion: " + simbolo.direccion + "\n     Fila: " + simbolo.fila + "\n     Columna; " + simbolo.columna + "\n");
+                    + simbolo.tipo + "\n     Direccion: " + simbolo.direccion + "\n     Fila: " + simbolo.fila + "\n     Columna: " + simbolo.columna + "\n");
                 Program.form.richTextBox3.AppendText("-------------------------\n");
             }
         }

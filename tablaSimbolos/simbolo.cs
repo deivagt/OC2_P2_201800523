@@ -27,16 +27,28 @@ namespace OC2_P2_201800523.tablaSimbolos
 
         public ParseTreeNode nodo;
 
-        public simbolo(string ambito, string id, string tipo, string direccion, int fila, int columna)
+        public simbolo(string ambito, string id, string tipo, string direccion, int fila, int columna,string categoria)
         {
             this.ambito = ambito;
             this.id = id;
             this.tipo = tipo;
+            this.categoria = categoria;
             this.direccion = direccion;
             this.fila = fila;
             this.columna = columna;
+            this.esConstante = false;
         }
-
+        public simbolo(string ambito, string id, string tipo, string direccion, int fila, int columna, bool esConstante)//Constructor de constantes
+        {
+            this.ambito = ambito;
+            this.id = id;
+            this.tipo = tipo;
+            this.categoria = "constante";
+            this.direccion = direccion;
+            this.fila = fila;
+            this.columna = columna;
+            this.esConstante = esConstante;
+        }
 
     }
 }
