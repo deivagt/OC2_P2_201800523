@@ -16,7 +16,7 @@ namespace OC2_P2_201800523
        
         public string ambitoActual = "global";
         static ParseTreeNode raiz;
-        tabla tabladeSimbolos;
+        public static tabla tabladeSimbolos;
         string args = "";
 
         public static int contadorNodos = 0;
@@ -37,16 +37,16 @@ namespace OC2_P2_201800523
             
         }
 
-        //public void imprimirTabla()
-        //{
-        //    Program.form.richTextBox3.Text = "";
-        //    foreach (var simbolo in manejadorArbol.tabladeSimbolos.getTabla())
-        //    {
-        //        Program.form.richTextBox3.AppendText("Simbolo:\n     Ámbito: " + simbolo.ambito + "\n     Nombre: " + simbolo.id + "\n     Tipo: "
-        //            + simbolo.tipo + "\n     Valor: " + simbolo.valor + "\n     Fila: " + simbolo.fila + "\n     Columna; " + simbolo.columna + "\n");
-        //        Program.form.richTextBox3.AppendText("-------------------------\n");
-        //    }
-        //}
+        public static void imprimirTabla()
+        {
+            Program.form.richTextBox3.Text = "";
+            foreach (var simbolo in manejadorArbol.tabladeSimbolos.getTabla())
+            {
+                Program.form.richTextBox3.AppendText("Simbolo:\n     Ámbito: " + simbolo.ambito + "\n     Nombre: " + simbolo.id + "\n     Tipo: "
+                    + simbolo.tipo + "\n     Direccion: " + simbolo.direccion + "\n     Fila: " + simbolo.fila + "\n     Columna; " + simbolo.columna + "\n");
+                Program.form.richTextBox3.AppendText("-------------------------\n");
+            }
+        }
 
         public  string graficar(ParseTreeNode raiz)
         {

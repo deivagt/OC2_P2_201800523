@@ -42,7 +42,7 @@ namespace OC2_P2_201800523
 
         private void button2_Click(object sender, EventArgs e)
         {
-            //manejadorArbol.imprimirTabla();
+            manejadorArbol.imprimirTabla();
             
         }
 

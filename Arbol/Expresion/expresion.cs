@@ -52,15 +52,15 @@ namespace OC2_P2_201800523.Arbol.Expresion
                 }
                 else if (salida.Term.ToString() == "cadena")
                 {
-                    //string retorno = salida.Token.Text.Replace("'", "");
-                    //if (retorno.Length == 1)
-                    //{
-                    //    return new resultado(terminales.rchar, retorno);
-                    //}
-                    //else
-                    //{
-                    //    return new resultado(terminales.rstring, retorno);
-                    //}
+                    string retorno = salida.Token.Text.Replace("'", "");
+                    if (retorno.Length == 1)
+                    {
+                        return new resultado(terminales.rchar, retorno);
+                    }
+                    else
+                    {
+                        return new resultado(terminales.cadena, retorno);
+                    }
 
                 }
                 else if (salida.Term.ToString() == "true" || salida.Term.ToString() == "false")
@@ -112,15 +112,10 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(1));
                     resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                    argumento = tempEtiqueta + " = - " + resDer.valor + ";\n";
-                    //cosasGlobalesewe.concatenarAccion(argumento);
-
+                    argumento = tempEtiqueta + " = - " + resDer.valor + ";\n"; 
 
                     return new resultado(terminales.numero, tempEtiqueta, argumento);
-                    //expresion derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(1));
-                    //resultado resDer = derecha.Ejecutar();
-                    //resultado res = new resultado(terminales.numero, -resDer.getNumero());
-                    //return res;
+                    
                 }
                 else//NOT
                 {
@@ -155,7 +150,6 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     expresion centro = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(1));
                     res = centro.traducir(ref tablaActual, ambito, "", "", "");
                     return res;
-
 
                 }
                 else
@@ -219,140 +213,146 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
 
                         case "AND":
-                        //if (verdadero != "" && falso != "")
-                        //{
-                        //    tempFalso = falso;
-                        //    tempVerdadero = verdadero;
+                            if (verdadero != "" && falso != "")
+                            {
+                                tempFalso = falso;
+                                tempVerdadero = verdadero;
 
-                        //}
-                        //else
-                        //{
-                        //    tempVerdadero = cosasGlobalesewe.crearEtiqueta();
-                        //    tempFalso = cosasGlobalesewe.crearEtiqueta();
-                        //}
-                        //tempSiguiente = cosasGlobalesewe.crearEtiqueta();
+                            }
+                            else
+                            {
+                                tempVerdadero = cosasGlobalesewe.crearEtiqueta();
+                                tempFalso = cosasGlobalesewe.crearEtiqueta();
+                            }
+                            tempSiguiente = cosasGlobalesewe.crearEtiqueta();
 
-                        //izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
-                        //derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
+                            izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
+                            derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
-                        //resIzq = izquierda.traducir(ref tablaActual, ambito, tempSiguiente, tempFalso, "");
-                        //resDer = derecha.traducir(ref tablaActual, ambito, tempVerdadero, tempFalso, "");
+                            resIzq = izquierda.traducir(ref tablaActual, ambito, tempSiguiente, tempFalso, "");
+                            resDer = derecha.traducir(ref tablaActual, ambito, tempVerdadero, tempFalso, "");
 
-                        //if (verdadero == "" && falso == "") //ULTIMO AND OR NOT
-                        //{
-                        //    argumento = "";
+                            if (verdadero == "" && falso == "") //ULTIMO AND OR NOT
+                            {
+                                argumento = "";
 
-                        //    tempSalida = cosasGlobalesewe.crearEtiqueta();
+                                tempSalida = cosasGlobalesewe.crearEtiqueta();
 
-                        //    if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
-                        //    {
-                        //        argumento = "if(" + resIzq.valor + ") goto " + tempSiguiente + ";\n" + "goto " + tempFalso + ";\n";
+                                if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
+                                {
+                                    argumento = "if(" + resIzq.valor + ") goto " + tempSiguiente + ";\n" + "goto " + tempFalso + ";\n";
 
-                        //    }
+                                }
+                                argumento += resIzq.argumento;
+                                argumento += tempSiguiente + ":\n" + "";
+                                if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
+                                {
+                                    argumento += "if(" + resDer.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
 
-                        //    argumento += tempSiguiente + ":\n" + "";
-                        //    if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
-                        //    {
-                        //        argumento += "if(" + resDer.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
+                                }
+                                argumento += resDer.argumento;
+                                temp = cosasGlobalesewe.nuevoTemp();
+                                argumento += tempVerdadero + ":\n";
+                                argumento += temp + " = 1" + ";\n";
+                                argumento += "goto " + tempSalida + ";\n" + tempFalso + ":\n";
+                                argumento += temp + " = 0" + ";\n";
+                                argumento += tempSalida + ":\n";
 
-                        //    }
-                        //    temp = cosasGlobalesewe.nuevoTemp();
-                        //    argumento += tempVerdadero + ":\n";
-                        //    argumento += temp + " = 1" + ";\n";
-                        //    argumento += "goto " + tempSalida + ";\n" + tempFalso + ":\n";
-                        //    argumento += temp + " = 0" + ";\n";
-                        //    argumento += tempSalida + ":\n";
+                                cosasGlobalesewe.temp++;
+                                //cosasGlobalesewe.concatenarAccion(argumento);
+                            }
+                            else //Previo al ultimo AND OR NOT
+                            {
+                                argumento = "";
+                                if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
+                                {
+                                    argumento = "if(" + resIzq.valor + ") goto " + tempSiguiente + ";\n" + "goto " + falso + ";\n";
+                                }
 
-                        //    cosasGlobalesewe.temp++;
-                        //    cosasGlobalesewe.concatenarAccion(argumento);
-                        //}
-                        //else //Previo al ultimo AND OR NOT
-                        //{
-                        //    argumento = "";
-                        //    if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
-                        //    {
-                        //        argumento = "if(" + resIzq.valor + ") goto " + tempSiguiente + ";\n" + "goto " + falso + ";\n";
-                        //    }
+                                argumento += resIzq.argumento;
+                                argumento += tempSiguiente + ":\n" + "";
+                                if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
+                                {
+                                    argumento += "if(" + resDer.valor + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
 
+                                }
+                                argumento += resDer.argumento;
+                                //cosasGlobalesewe.concatenarAccion(argumento);
+                            }
 
-                        //    argumento += tempSiguiente + ":\n" + "";
-                        //    if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
-                        //    {
-                        //        argumento += "if(" + resDer.valor + ") goto " + verdadero + ";\n" + "goto " + falso + ";";
-                        //    }
-                        //    cosasGlobalesewe.concatenarAccion(argumento);
-                        //}
-
-                        //return new resultado(terminales.and, temp);
+                            return new resultado(terminales.and, temp, argumento);
 
                         case "OR":
 
-                        //if (verdadero != "" && falso != "")
-                        //{
-                        //    tempFalso = falso;
-                        //    tempVerdadero = verdadero;
+                            if (verdadero != "" && falso != "")
+                            {
+                                tempFalso = falso;
+                                tempVerdadero = verdadero;
 
-                        //}
-                        //else
-                        //{
-                        //    tempVerdadero = cosasGlobalesewe.crearEtiqueta();
-                        //    tempFalso = cosasGlobalesewe.crearEtiqueta();
-                        //}
-                        //tempSiguiente = cosasGlobalesewe.crearEtiqueta();
-
-                        //izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
-                        //derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
-
-                        //resIzq = izquierda.traducir(ref tablaActual, ambito, tempVerdadero, tempSiguiente, "");
-                        //resDer = derecha.traducir(ref tablaActual, ambito, tempVerdadero, tempFalso, "");
-
-                        //if (verdadero == "" && falso == "") //ULTIMO AND OR NOT
-                        //{
-                        //    argumento = "";
-
-                        //    tempSalida = cosasGlobalesewe.crearEtiqueta();
-
-                        //    if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
-                        //    {
-                        //        argumento = "if(" + resIzq.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempSiguiente + ";\n";
-
-                        //    }
-
-                        //    argumento += tempSiguiente + ":\n" + "";
-                        //    if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
-                        //    {
-                        //        argumento += "if(" + resDer.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
-
-                        //    }
-                        //    temp = cosasGlobalesewe.nuevoTemp();
-                        //    argumento += tempVerdadero + ":\n";
-                        //    argumento += temp + " = 1" + ";\n";
-                        //    argumento += "goto " + tempSalida + ";\n" + tempFalso + ":\n";
-                        //    argumento += temp + " = 0" + ";\n";
-                        //    argumento += tempSalida + ":\n";
-
-                        //    cosasGlobalesewe.temp++;
-                        //    cosasGlobalesewe.concatenarAccion(argumento);
-                        //}
-                        //else //Previo al ultimo AND OR NOT
-                        //{
-                        //    argumento = "";
-                        //    if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
-                        //    {
-                        //        argumento = "if(" + resIzq.valor + ") goto " + verdadero + ";\n" + "goto " + tempSiguiente + ";\n";
-                        //    }
+                            }
+                            else
+                            {
+                                tempVerdadero = cosasGlobalesewe.crearEtiqueta();
+                                tempFalso = cosasGlobalesewe.crearEtiqueta();
+                            }
+                            tempSiguiente = cosasGlobalesewe.crearEtiqueta();
 
 
-                        //    argumento += tempSiguiente + ":\n" + "";
+                            izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
+                            derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
-                        //    if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
-                        //    {
-                        //        argumento += "if(" + resDer.valor + ") goto " + verdadero + ";\n" + "goto " + falso + ";";
-                        //    }
-                        //    cosasGlobalesewe.concatenarAccion(argumento);
-                        //}
+                            resIzq = izquierda.traducir(ref tablaActual, ambito, tempVerdadero, tempSiguiente, "");
+                            resDer = derecha.traducir(ref tablaActual, ambito, tempVerdadero, tempFalso, "");
 
-                        //return new resultado(terminales.or, temp);
+                            if (verdadero == "" && falso == "") //ULTIMO AND OR NOT
+                            {
+                                argumento = "";
+
+                                tempSalida = cosasGlobalesewe.crearEtiqueta();
+
+                                if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
+                                {
+                                    argumento = "if(" + resIzq.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempSiguiente + ";\n";
+
+                                }
+                                argumento += resIzq.argumento;
+                                argumento += tempSiguiente + ":\n" + "";
+                                if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
+                                {
+                                    argumento += "if(" + resDer.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
+
+                                }
+                                argumento += resDer.argumento;
+                                temp = cosasGlobalesewe.nuevoTemp();
+                                argumento += tempVerdadero + ":\n";
+                                argumento += temp + " = 1" + ";\n";
+                                argumento += "goto " + tempSalida + ";\n" + tempFalso + ":\n";
+                                argumento += temp + " = 0" + ";\n";
+                                argumento += tempSalida + ":\n";
+
+                                cosasGlobalesewe.temp++;
+                                //cosasGlobalesewe.concatenarAccion(argumento);
+                            }
+                            else //Previo al ultimo AND OR NOT
+                            {
+                                argumento = "";
+                                if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
+                                {
+                                    argumento = "if(" + resIzq.valor + ") goto " + verdadero + ";\n" + "goto " + tempSiguiente + ";\n";
+                                }
+
+                                argumento += resIzq.argumento + ";\n";
+                                argumento += tempSiguiente + ":\n" + "";
+
+                                if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
+                                {
+                                    argumento += "if(" + resDer.valor + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
+                                }
+                                argumento += resDer.argumento;
+                                //cosasGlobalesewe.concatenarAccion(argumento);
+                            }
+
+                            return new resultado(terminales.or, temp, argumento);
 
                         case "and":
 
