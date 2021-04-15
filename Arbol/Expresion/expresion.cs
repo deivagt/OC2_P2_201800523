@@ -68,11 +68,11 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                     if (salida.Term.ToString() == "true")
                     {
-                        return new resultado(salida.Term.ToString(), "1");
+                        return new resultado(terminales.rtrue, "1");
                     }
                     else
                     {
-                        return new resultado(salida.Term.ToString(), "0");
+                        return new resultado(terminales.rfalse, "0");
                     }
 
                 }
@@ -473,7 +473,6 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 argumento += tempSalida + ":\n";
 
                                 cosasGlobalesewe.temp++;
-                                //cosasGlobalesewe.concatenarAccion(argumento);
                             }
                             else //Previo al ultimo AND OR NOT
                             {
@@ -491,7 +490,6 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     argumento += "if(" + resDer.valor + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
                                 }
                                 argumento += resDer.argumento ;
-                                //cosasGlobalesewe.concatenarAccion(argumento);
                             }
 
                             return new resultado(terminales.or, temp,argumento);

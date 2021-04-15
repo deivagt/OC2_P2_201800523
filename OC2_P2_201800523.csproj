@@ -12,4 +12,8 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Arbol\sentencia\condicion\" />
+  </ItemGroup>
+
 </Project>

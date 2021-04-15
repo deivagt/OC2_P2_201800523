@@ -25,7 +25,7 @@ namespace OC2_P2_201800523.Arbol
             this.valor = valor;
         }
 
-        public resultado(string tipo, string valor, string argumento) //Para cadenas 
+        public resultado(string tipo, string valor, string argumento) //Otras cosas ewe
         {
             this.tipo = tipo;
             this.valor = valor;

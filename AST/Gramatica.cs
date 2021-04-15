@@ -286,7 +286,7 @@ namespace OC2_P2_201800523.AST
                 | rfor + id + dos_puntos_igual + EXPRESION + to + EXPRESION + rdo + begin + SENTENCIAS + end + punto_coma
                 | repeat + begin + SENTENCIAS + end + until + EXPRESION + punto_coma
                 | repeat + SENTENCIAS + until + EXPRESION + punto_coma
-                | writeln + punto_coma
+                | writeln  + punto_coma
                 | write + punto_coma
                 | write + abrir_parentesis + PARAMETROSWRITELN + cerrar_parentesis + punto_coma
                 | writeln + abrir_parentesis+ PARAMETROSWRITELN + cerrar_parentesis + punto_coma

@@ -31,9 +31,9 @@ namespace OC2_P2_201800523.Arbol.etc
 
             }
 
-            //ParseTreeNode main = node.ChildNodes.ElementAt(5);
-            //sentencias.cuerpo_programa ejecucionMain = new sentencias.cuerpo_programa(noterminales.CUERPO_PROGRAMA, main);
-            //ejecucionMain.Ejecutar();
+            ParseTreeNode main = node.ChildNodes.ElementAt(5);
+            sentencia.cuerpo_programa ejecucionMain = new sentencia.cuerpo_programa(noterminales.CUERPO_PROGRAMA, main);
+            ejecucionMain.traducir(ref tablaActual, ambito, verdadero, falso, xd);
 
 
 

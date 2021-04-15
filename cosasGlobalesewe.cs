@@ -52,7 +52,8 @@ namespace OC2_P2_201800523
 
         public static void cocinar()
         {
-            args = "double heap[1000000]; \ndouble stack[16000]; \n";
+            args = "#include <stdio.h>\n";
+            args += "double heap[1000000]; \ndouble stack[16000]; \n";
             args += "double sp; //Puntero del stack\n";
             args += "double hp; //Puntero del heap\n";
             args += declararTemporales();
