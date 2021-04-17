@@ -25,7 +25,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
                 resultado res = expr.traducir(ref tablaActual, ambito,verdadero,falso,xd);
                 
 
-                if (res.tipo == terminales.cadena || res.tipo == terminales.rchar)
+                if (res.tipo == terminales.rstring || res.tipo == terminales.rchar)
                 {
                     //if (array != "heap") /*Hacer que el stack apunte al heap*/ //SIGUE EN DESARROLLO
                     //{

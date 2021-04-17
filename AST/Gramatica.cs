@@ -370,6 +370,7 @@ namespace OC2_P2_201800523.AST
             this.RegisterOperators(2, Associativity.Left,terminales.mas, terminales.menos, terminales.or);
             this.RegisterOperators(1, Associativity.Left,terminales.distinto, terminales.menor, terminales.menor_igual,
                 terminales.mayor, terminales.mayor_igual, terminales.rin, terminales.igual);
+            this.RegisterOperators(0, Associativity.Left, terminales.igual);
             AddToNoReportGroup(punto_coma);
         }
     }

@@ -53,16 +53,16 @@ namespace OC2_P2_201800523
         public static void cocinar()
         {
             args = "#include <stdio.h>\n";
-            args += "double heap[1000000]; \ndouble stack[16000]; \n";
-            args += "double sp; //Puntero del stack\n";
-            args += "double hp; //Puntero del heap\n";
+            args += "float heap[1000000]; \nfloat stack[16000]; \n";
+            args += "float sp; //Puntero del stack\n";
+            args += "float hp; //Puntero del heap\n";
             args += declararTemporales();
             args += declararVariablesInternas();
             args += cocinarWriteln();
             args += booleanoCadena();
             args += "void main()\n{\n";
             salida = args + salida;  
-            salida += "}";
+            salida += "return;\n}";
         }
 
         
@@ -70,7 +70,7 @@ namespace OC2_P2_201800523
         static string declararVariablesInternas()
         {
             int temp = 5;
-            string salida = "double ";
+            string salida = "float ";
             for (int i = 0; i < temp; i++)
             {
                 salida += "N" + i + ", ";
@@ -81,7 +81,7 @@ namespace OC2_P2_201800523
         }
         static string declararTemporales()
         {
-            string t = "double ";
+            string t = "float ";
             for(int i = 0; i < temp; i++)
             {
                 t += "t" + i + ", ";

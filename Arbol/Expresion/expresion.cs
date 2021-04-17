@@ -17,7 +17,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
         {
             resultado res;
             string argumento;
+            string temporal;
             string temp = "";
+            string array, pointer;
 
             string tempVerdadero = "";
             string tempFalso = "";
@@ -29,6 +31,18 @@ namespace OC2_P2_201800523.Arbol.Expresion
             expresion derecha;
             resultado resIzq;
             resultado resDer;
+            if (ambito == "global")//Escribir en heap
+            {
+                array = "heap";
+                pointer = "hp";
+            }
+            else //Escribir en stack
+            {
+                array = "stack";
+                pointer = "sp";
+
+            }
+
 
             if (node.ChildNodes.Count == 1)
             {
@@ -59,7 +73,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     }
                     else
                     {
-                        return new resultado(terminales.cadena, retorno);
+                        return new resultado(terminales.rstring, retorno);
                     }
 
                 }
@@ -76,28 +90,39 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     }
 
                 }
-                else // id
+                else
                 {
-                    //if (salida.Token.Text == "true" || salida.Token.Text == "false")
-                    //{
-                    //    return new resultado(terminales.rboolean, salida.Token.Text);
-                    //}
-                    //else
-                    //{
-                    //    simbolo a = manejadorArbol.tabladeSimbolos.buscarSimbolo(salida.Token.Text);
-                    //    if (a != null)
-                    //    {
-                    //        if (a.tipo == "integer" || a.tipo == "real")
-                    //        {
-                    //            return new resultado(terminales.numero, a.valor);
-                    //        }
-                    //        else
-                    //        {
-                    //            return new resultado(a.tipo, a.valor);
-                    //        }
+                    simbolo a = tablaActual.buscar(salida.Token.Text);
+                    if (a != null)
+                    {
+                        if (a.tipo == "integer")
+                        {
 
-                    //    }
-                    //}
+                            return new resultado(terminales.rinteger, a.direccion);
+                        }
+                        else if (a.tipo == "real")
+                        {
+                            return new resultado(terminales.rreal, a.direccion);
+                        }
+
+                        else if (a.tipo == "string")
+                        {
+                            return new resultado(terminales.rstring, a.direccion);
+                        }
+                        else if (a.tipo == "char")
+                        {
+                            return new resultado(terminales.rchar, a.direccion);
+                        }
+                        else if (a.tipo == "boolean")
+                        {
+                            return new resultado(terminales.rboolean, a.direccion);
+                        }
+                        else
+                        {
+                            return new resultado("etc", a.direccion);
+                        }
+                    }
+
 
 
                     return new resultado();
@@ -112,10 +137,10 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(1));
                     resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                    argumento = tempEtiqueta + " = - " + resDer.valor + ";\n"; 
+                    argumento = tempEtiqueta + " = - " + resDer.valor + ";\n";
 
                     return new resultado(terminales.numero, tempEtiqueta, argumento);
-                    
+
                 }
                 else//NOT
                 {
@@ -160,56 +185,352 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     switch (salida.Token.Text)
                     {
                         case "+":
+                            #region SUMA
                             izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
                             derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            argumento = resIzq.valor + " + " + resDer.valor;
-                            temp = cosasGlobalesewe.nuevoTemp(argumento);
-                            return new resultado(terminales.numero, temp);
+                            if (resIzq.tipo == terminales.rstring || resIzq.tipo == terminales.rchar || resDer.tipo == terminales.rstring || resDer.tipo == terminales.rchar)
+                            {
+                                /*Concatenar cadena*/
+                                return new resultado(terminales.rstring, "xd");
+                            }
+
+                            else if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a+a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    argumento = temp + " + " + temporal;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a+num
+                                {
+
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+
+                                    argumento = temp + " + " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+
+                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num+a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+
+                                    argumento = resIzq.valor + " + " + temp;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num + num
+                                {
+                                    argumento = resIzq.valor + " + " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+                            else
+                            {
+                                //ERROR
+                            }
+
+                            return new resultado();
+                        #endregion
                         case "-":
+                            #region Resta
                             izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
                             derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            argumento = resIzq.valor + " - " + resDer.valor;
-                            temp = cosasGlobalesewe.nuevoTemp(argumento);
-                            return new resultado(terminales.numero, temp);
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a-a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    argumento = temp + " - " + temporal;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a-num
+                                {
+
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+
+                                    argumento = temp + " - " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+
+                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num-a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+
+                                    argumento = resIzq.valor + " - " + temp;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num - num
+                                {
+                                    argumento = resIzq.valor + " - " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+                            else
+                            {
+                                //ERROR
+                            }
+
+                            return new resultado();
+                        #endregion
                         case "*":
+                            #region Multiplicacion
                             izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
                             derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            argumento = resIzq.valor + " * " + resDer.valor;
-                            temp = cosasGlobalesewe.nuevoTemp(argumento);
-                            return new resultado(terminales.numero, temp);
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a*a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    argumento = temp + " * " + temporal;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a*num
+                                {
+
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+
+                                    argumento = temp + " * " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+
+                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num*a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+
+                                    argumento = resIzq.valor + " * " + temp;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num * num
+                                {
+                                    argumento = resIzq.valor + " * " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+                            else
+                            {
+                                //ERROR
+                            }
+
+                            return new resultado();
+                        #endregion
 
                         case "/":
+                            #region Division1
                             izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
                             derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            argumento = resIzq.valor + " / " + resDer.valor;
-                            temp = cosasGlobalesewe.nuevoTemp(argumento);
-                            return new resultado(terminales.numero, temp);
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a/a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    argumento = temp + " / " + temporal;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a/num
+                                {
+
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+
+                                    argumento = temp + " / " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+
+                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num/a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+
+                                    argumento = resIzq.valor + " / " + temp;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num / num
+                                {
+                                    argumento = resIzq.valor + " / " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+                            else
+                            {
+                                //ERROR
+                            }
+
+                            return new resultado();
+                        #endregion
                         case "mod":
+                            #region DivisionMod
                             izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
                             derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            argumento = resIzq.valor + " % " + resDer.valor;
-                            temp = cosasGlobalesewe.nuevoTemp(argumento);
-                            return new resultado(terminales.numero, temp);
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a%a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    argumento = temp + " % " + temporal;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a%num
+                                {
+
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+
+                                    argumento = temp + " % " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+
+                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num%a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+
+                                    argumento = resIzq.valor + " % " + temp;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num % num
+                                {
+                                    argumento = resIzq.valor + " % " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+                            else
+                            {
+                                //ERROR
+                            }
+
+                            return new resultado();
+                        #endregion
 
 
                         case "AND":
@@ -386,14 +707,14 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     argumento = "if(" + resIzq.valor + ") goto " + tempSiguiente + ";\n" + "goto " + tempFalso + ";\n";
 
                                 }
-                                argumento += resIzq.argumento ;
+                                argumento += resIzq.argumento;
                                 argumento += tempSiguiente + ":\n" + "";
                                 if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
                                 {
                                     argumento += "if(" + resDer.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
 
                                 }
-                                argumento += resDer.argumento ;
+                                argumento += resDer.argumento;
                                 temp = cosasGlobalesewe.nuevoTemp();
                                 argumento += tempVerdadero + ":\n";
                                 argumento += temp + " = 1" + ";\n";
@@ -412,14 +733,14 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     argumento = "if(" + resIzq.valor + ") goto " + tempSiguiente + ";\n" + "goto " + falso + ";\n";
                                 }
 
-                                argumento += resIzq.argumento ;
+                                argumento += resIzq.argumento;
                                 argumento += tempSiguiente + ":\n" + "";
                                 if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
                                 {
                                     argumento += "if(" + resDer.valor + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
 
                                 }
-                                argumento += resDer.argumento ;
+                                argumento += resDer.argumento;
                                 //cosasGlobalesewe.concatenarAccion(argumento);
                             }
 
@@ -457,14 +778,14 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     argumento = "if(" + resIzq.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempSiguiente + ";\n";
 
                                 }
-                                argumento += resIzq.argumento ;
+                                argumento += resIzq.argumento;
                                 argumento += tempSiguiente + ":\n" + "";
                                 if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
                                 {
                                     argumento += "if(" + resDer.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
 
                                 }
-                                argumento += resDer.argumento ;
+                                argumento += resDer.argumento;
                                 temp = cosasGlobalesewe.nuevoTemp();
                                 argumento += tempVerdadero + ":\n";
                                 argumento += temp + " = 1" + ";\n";
@@ -489,64 +810,418 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     argumento += "if(" + resDer.valor + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
                                 }
-                                argumento += resDer.argumento ;
+                                argumento += resDer.argumento;
                             }
 
-                            return new resultado(terminales.or, temp,argumento);
+                            return new resultado(terminales.or, temp, argumento);
                         case "=":
+                            #region igual
                             izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
                             derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            argumento = resIzq.valor + " == " + resDer.valor;
-                            return new resultado(terminales.igual, argumento);
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a==a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    argumento = temp + " == " + temporal;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a==num
+                                {
+
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+
+                                    argumento = temp + " == " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+
+                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num==a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+
+                                    argumento = resIzq.valor + " == " + temp;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num == num
+                                {
+                                    argumento = resIzq.valor + " == " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+                            else
+                            {
+                                //ERROR
+                            }
+
+                            return new resultado();
+                        #endregion
                         case "<>":
+                            #region distinto
                             izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
                             derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            argumento = resIzq.valor + " != " + resDer.valor;
-                            return new resultado(terminales.distinto, argumento);
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a<>a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    argumento = temp + " <> " + temporal;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a<>num
+                                {
+
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+
+                                    argumento = temp + " <> " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+
+                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num<>a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+
+                                    argumento = resIzq.valor + " <> " + temp;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num <> num
+                                {
+                                    argumento = resIzq.valor + " <> " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+                            else
+                            {
+                                //ERROR
+                            }
+
+                            return new resultado();
+                        #endregion
                         case "<":
+                            #region menor
                             izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
                             derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            argumento = resIzq.valor + " < " + resDer.valor;
-                            return new resultado(terminales.menor, argumento);
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a<a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    argumento = temp + " < " + temporal;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a<num
+                                {
+
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+
+                                    argumento = temp + " < " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+
+                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num<a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+
+                                    argumento = resIzq.valor + " < " + temp;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num < num
+                                {
+                                    argumento = resIzq.valor + " < " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+                            else
+                            {
+                                //ERROR
+                            }
+
+                            return new resultado();
+                        #endregion
                         case ">":
+                            #region mayor
                             izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
                             derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            argumento = resIzq.valor + " > " + resDer.valor;
-                            return new resultado(terminales.mayor, argumento);
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a>a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    argumento = temp + " > " + temporal;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a>num
+                                {
+
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+
+                                    argumento = temp + " > " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+
+                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num>a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+
+                                    argumento = resIzq.valor + " > " + temp;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num > num
+                                {
+                                    argumento = resIzq.valor + " > " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+                            else
+                            {
+                                //ERROR
+                            }
+
+                            return new resultado();
+                        #endregion
                         case "<=":
+                            #region menorIgual
                             izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
                             derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            argumento = resIzq.valor + " <= " + resDer.valor;
-                            return new resultado(terminales.menor_igual, argumento);
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a<=a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    argumento = temp + " <= " + temporal;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a<=num
+                                {
+
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+
+                                    argumento = temp + " <= " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+
+                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num<=a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+
+                                    argumento = resIzq.valor + " <= " + temp;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num <= num
+                                {
+                                    argumento = resIzq.valor + " <= " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+                            else
+                            {
+                                //ERROR
+                            }
+
+                            return new resultado();
+                        #endregion
                         case ">=":
+                            #region mayorIgual
                             izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
                             derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            argumento = resIzq.valor + " >= " + resDer.valor;
-                            return new resultado(terminales.mayor_igual, argumento);
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a>=a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    argumento = temp + " >= " + temporal;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a>=num
+                                {
+
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+
+                                    argumento = temp + " >= " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+
+                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
+                            {
+                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num>=a
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+
+                                    argumento = resIzq.valor + " >= " + temp;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num >= num
+                                {
+                                    argumento = resIzq.valor + " >= " + resDer.valor;
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    return new resultado(terminales.numero, temp);
+                                }
+                                else
+                                {
+                                    //ERROR
+                                }
+                            }
+                            else
+                            {
+                                //ERROR
+                            }
+
+                            return new resultado();
+                            #endregion
 
                     }
                 }
