@@ -21,6 +21,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
             string temp = "";
             string array, pointer;
 
+
+            string tempIzquierdo;
+            string tempDerecho;
             string tempVerdadero = "";
             string tempFalso = "";
             string tempSiguiente = "";
@@ -98,28 +101,28 @@ namespace OC2_P2_201800523.Arbol.Expresion
                         if (a.tipo == "integer")
                         {
 
-                            return new resultado(terminales.rinteger, a.direccion);
+                            return new resultado(terminales.rinteger, a.direccion,a);
                         }
                         else if (a.tipo == "real")
                         {
-                            return new resultado(terminales.rreal, a.direccion);
+                            return new resultado(terminales.rreal, a.direccion,a);
                         }
 
                         else if (a.tipo == "string")
                         {
-                            return new resultado(terminales.rstring, a.direccion);
+                            return new resultado(terminales.rstring, a.direccion,a);
                         }
                         else if (a.tipo == "char")
                         {
-                            return new resultado(terminales.rchar, a.direccion);
+                            return new resultado(terminales.rchar, a.direccion,a);
                         }
                         else if (a.tipo == "boolean")
                         {
-                            return new resultado(terminales.rboolean, a.direccion);
+                            return new resultado(terminales.rboolean, a.direccion,a);
                         }
                         else
                         {
-                            return new resultado("etc", a.direccion);
+                            return new resultado("etc", a.direccion,a);
                         }
                     }
 
@@ -137,8 +140,13 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(1));
                     resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                    argumento = tempEtiqueta + " = - " + resDer.valor + ";\n";
-
+                    tempDerecho = resDer.valor;
+                    if(resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resDer.tipo == terminales.rboolean)
+                    {
+                        tempDerecho = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resDer.valor + "]");
+                    }
+                    argumento = tempEtiqueta + " = - " + tempDerecho + ";\n";
+                    cosasGlobalesewe.concatenarAccion(argumento);
                     return new resultado(terminales.numero, tempEtiqueta, argumento);
 
                 }
@@ -151,8 +159,16 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(1));
 
                     resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
+                                        
+                    tempDerecho = resDer.valor;
+                    
+                    if (resDer.tipo == terminales.rboolean)
+                    {
+                        tempDerecho = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resDer.valor + "]");
+                    }
 
-                    argumento = "if(" + resDer.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
+
+                    argumento = "if(" + tempDerecho + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
 
                     temp = cosasGlobalesewe.nuevoTemp();
 
@@ -534,6 +550,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
 
                         case "AND":
+                            #region AND
                             if (verdadero != "" && falso != "")
                             {
                                 tempFalso = falso;
@@ -553,6 +570,21 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, tempSiguiente, tempFalso, "");
                             resDer = derecha.traducir(ref tablaActual, ambito, tempVerdadero, tempFalso, "");
 
+                            tempIzquierdo = resIzq.valor;
+                            tempDerecho = resDer.valor;
+
+                            if(resIzq.tipo == terminales.rboolean)
+                            {
+                                
+                                tempIzquierdo = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resIzq.valor + "]");
+                            }
+
+                            if(resDer.tipo == terminales.rboolean)
+                            {
+                                tempDerecho = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resDer.valor + "]");
+                            }
+
+
                             if (verdadero == "" && falso == "") //ULTIMO AND OR NOT
                             {
                                 argumento = "";
@@ -561,14 +593,14 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                 if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
                                 {
-                                    argumento = "if(" + resIzq.valor + ") goto " + tempSiguiente + ";\n" + "goto " + tempFalso + ";\n";
+                                    argumento = "if(" + tempIzquierdo + ") goto " + tempSiguiente + ";\n" + "goto " + tempFalso + ";\n";
 
                                 }
                                 argumento += resIzq.argumento;
                                 argumento += tempSiguiente + ":\n" + "";
                                 if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
                                 {
-                                    argumento += "if(" + resDer.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
+                                    argumento += "if(" + tempDerecho + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
 
                                 }
                                 argumento += resDer.argumento;
@@ -587,14 +619,14 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 argumento = "";
                                 if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
                                 {
-                                    argumento = "if(" + resIzq.valor + ") goto " + tempSiguiente + ";\n" + "goto " + falso + ";\n";
+                                    argumento = "if(" + tempIzquierdo + ") goto " + tempSiguiente + ";\n" + "goto " + falso + ";\n";
                                 }
 
                                 argumento += resIzq.argumento;
                                 argumento += tempSiguiente + ":\n" + "";
                                 if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
                                 {
-                                    argumento += "if(" + resDer.valor + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
+                                    argumento += "if(" + tempDerecho + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
 
                                 }
                                 argumento += resDer.argumento;
@@ -602,9 +634,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             }
 
                             return new resultado(terminales.and, temp, argumento);
-
+                        #endregion
                         case "OR":
-
+                            #region OR
                             if (verdadero != "" && falso != "")
                             {
                                 tempFalso = falso;
@@ -625,6 +657,19 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, tempVerdadero, tempSiguiente, "");
                             resDer = derecha.traducir(ref tablaActual, ambito, tempVerdadero, tempFalso, "");
 
+                            tempIzquierdo = resIzq.valor;
+                            tempDerecho = resDer.valor;
+                            if (resIzq.tipo == terminales.rboolean)
+                            {
+
+                                tempIzquierdo = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resIzq.valor + "]");
+                            }
+
+                            if (resDer.tipo == terminales.rboolean)
+                            {
+                                tempDerecho = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resDer.valor + "]");
+                            }
+
                             if (verdadero == "" && falso == "") //ULTIMO AND OR NOT
                             {
                                 argumento = "";
@@ -633,14 +678,14 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                 if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
                                 {
-                                    argumento = "if(" + resIzq.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempSiguiente + ";\n";
+                                    argumento = "if(" + tempIzquierdo + ") goto " + tempVerdadero + ";\n" + "goto " + tempSiguiente + ";\n";
 
                                 }
                                 argumento += resIzq.argumento;
                                 argumento += tempSiguiente + ":\n" + "";
                                 if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
                                 {
-                                    argumento += "if(" + resDer.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
+                                    argumento += "if(" + tempDerecho + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
 
                                 }
                                 argumento += resDer.argumento;
@@ -659,7 +704,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 argumento = "";
                                 if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
                                 {
-                                    argumento = "if(" + resIzq.valor + ") goto " + verdadero + ";\n" + "goto " + tempSiguiente + ";\n";
+                                    argumento = "if(" + tempIzquierdo + ") goto " + verdadero + ";\n" + "goto " + tempSiguiente + ";\n";
                                 }
 
                                 argumento += resIzq.argumento + ";\n";
@@ -667,16 +712,16 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                 if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
                                 {
-                                    argumento += "if(" + resDer.valor + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
+                                    argumento += "if(" + tempDerecho + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
                                 }
                                 argumento += resDer.argumento;
                                 //cosasGlobalesewe.concatenarAccion(argumento);
                             }
 
                             return new resultado(terminales.or, temp, argumento);
-
+                        #endregion
                         case "and":
-
+                            #region and
                             if (verdadero != "" && falso != "")
                             {
                                 tempFalso = falso;
@@ -696,6 +741,19 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, tempSiguiente, tempFalso, "");
                             resDer = derecha.traducir(ref tablaActual, ambito, tempVerdadero, tempFalso, "");
 
+                            tempIzquierdo = resIzq.valor;
+                            tempDerecho = resDer.valor;
+                            if (resIzq.tipo == terminales.rboolean)
+                            {
+
+                                tempIzquierdo = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resIzq.valor + "]");
+                            }
+
+                            if (resDer.tipo == terminales.rboolean)
+                            {
+                                tempDerecho = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resDer.valor + "]");
+                            }
+
                             if (verdadero == "" && falso == "") //ULTIMO AND OR NOT
                             {
                                 argumento = "";
@@ -704,14 +762,14 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                 if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
                                 {
-                                    argumento = "if(" + resIzq.valor + ") goto " + tempSiguiente + ";\n" + "goto " + tempFalso + ";\n";
+                                    argumento = "if(" + tempIzquierdo + ") goto " + tempSiguiente + ";\n" + "goto " + tempFalso + ";\n";
 
                                 }
                                 argumento += resIzq.argumento;
                                 argumento += tempSiguiente + ":\n" + "";
                                 if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
                                 {
-                                    argumento += "if(" + resDer.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
+                                    argumento += "if(" + tempDerecho + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
 
                                 }
                                 argumento += resDer.argumento;
@@ -730,14 +788,14 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 argumento = "";
                                 if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
                                 {
-                                    argumento = "if(" + resIzq.valor + ") goto " + tempSiguiente + ";\n" + "goto " + falso + ";\n";
+                                    argumento = "if(" + tempIzquierdo + ") goto " + tempSiguiente + ";\n" + "goto " + falso + ";\n";
                                 }
 
                                 argumento += resIzq.argumento;
                                 argumento += tempSiguiente + ":\n" + "";
                                 if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
                                 {
-                                    argumento += "if(" + resDer.valor + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
+                                    argumento += "if(" + tempDerecho + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
 
                                 }
                                 argumento += resDer.argumento;
@@ -745,8 +803,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             }
 
                             return new resultado(terminales.and, temp, argumento);
+                        #endregion
                         case "or":
-
+                            #region or
                             if (verdadero != "" && falso != "")
                             {
                                 tempFalso = falso;
@@ -767,6 +826,18 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, tempVerdadero, tempSiguiente, "");
                             resDer = derecha.traducir(ref tablaActual, ambito, tempVerdadero, tempFalso, "");
 
+                            tempIzquierdo = resIzq.valor;
+                            tempDerecho = resDer.valor;
+                            if (resIzq.tipo == terminales.rboolean)
+                            {
+
+                                tempIzquierdo = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resIzq.valor + "]");
+                            }
+
+                            if (resDer.tipo == terminales.rboolean)
+                            {
+                                tempDerecho = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resDer.valor + "]");
+                            }
                             if (verdadero == "" && falso == "") //ULTIMO AND OR NOT
                             {
                                 argumento = "";
@@ -775,14 +846,14 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                 if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
                                 {
-                                    argumento = "if(" + resIzq.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempSiguiente + ";\n";
+                                    argumento = "if(" + tempIzquierdo + ") goto " + tempVerdadero + ";\n" + "goto " + tempSiguiente + ";\n";
 
                                 }
                                 argumento += resIzq.argumento;
                                 argumento += tempSiguiente + ":\n" + "";
                                 if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
                                 {
-                                    argumento += "if(" + resDer.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
+                                    argumento += "if(" + tempIzquierdo + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
 
                                 }
                                 argumento += resDer.argumento;
@@ -800,7 +871,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 argumento = "";
                                 if (resIzq.tipo != terminales.and && resIzq.tipo != terminales.or && resIzq.tipo != terminales.not)
                                 {
-                                    argumento = "if(" + resIzq.valor + ") goto " + verdadero + ";\n" + "goto " + tempSiguiente + ";\n";
+                                    argumento = "if(" + tempIzquierdo + ") goto " + verdadero + ";\n" + "goto " + tempSiguiente + ";\n";
                                 }
 
                                 argumento += resIzq.argumento + ";\n";
@@ -808,12 +879,13 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                 if (resDer.tipo != terminales.and && resDer.tipo != terminales.or && resDer.tipo != terminales.not)
                                 {
-                                    argumento += "if(" + resDer.valor + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
+                                    argumento += "if(" + tempDerecho + ") goto " + verdadero + ";\n" + "goto " + falso + ";\n";
                                 }
                                 argumento += resDer.argumento;
                             }
 
                             return new resultado(terminales.or, temp, argumento);
+                        #endregion
                         case "=":
                             #region igual
                             izquierda = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
@@ -831,8 +903,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
                                     cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " == " + temporal;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a==num
                                 {
@@ -842,8 +913,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " == " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else
                                 {
@@ -860,15 +930,12 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " == " + temp;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num == num
                                 {
                                     argumento = resIzq.valor + " == " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else
                                 {
@@ -899,8 +966,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
                                     cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " <> " + temporal;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a<>num
                                 {
@@ -910,8 +976,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " <> " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else
                                 {
@@ -928,15 +993,12 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " <> " + temp;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num <> num
                                 {
                                     argumento = resIzq.valor + " <> " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else
                                 {
@@ -967,8 +1029,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
                                     cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " < " + temporal;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a<num
                                 {
@@ -978,8 +1039,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " < " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else
                                 {
@@ -996,15 +1056,13 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " < " + temp;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
 
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num < num
                                 {
                                     argumento = resIzq.valor + " < " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else
                                 {
@@ -1035,8 +1093,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
                                     cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " > " + temporal;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a>num
                                 {
@@ -1046,8 +1103,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " > " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else
                                 {
@@ -1064,15 +1120,12 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " > " + temp;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num > num
                                 {
                                     argumento = resIzq.valor + " > " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else
                                 {
@@ -1103,8 +1156,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
                                     cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " <= " + temporal;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a<=num
                                 {
@@ -1114,8 +1166,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " <= " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else
                                 {
@@ -1132,15 +1183,12 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " <= " + temp;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num <= num
                                 {
                                     argumento = resIzq.valor + " <= " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else
                                 {
@@ -1171,8 +1219,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
                                     cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " >= " + temporal;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a>=num
                                 {
@@ -1182,8 +1229,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " >= " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else
                                 {
@@ -1200,15 +1246,13 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " >= " + temp;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
 
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num >= num
                                 {
                                     argumento = resIzq.valor + " >= " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    return new resultado(terminales.numero, argumento);
                                 }
                                 else
                                 {

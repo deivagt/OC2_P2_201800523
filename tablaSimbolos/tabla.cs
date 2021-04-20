@@ -26,6 +26,19 @@ namespace OC2_P2_201800523.tablaSimbolos
             return this.tablaSimbolos;
         }
 
+        public string buscarDireccion(string id)
+        {
+            id = id.ToLower();
+            foreach (var a in tablaSimbolos)
+            {
+                if (a.id == id)
+                {
+                    return a.direccion;
+                }
+            }
+            return null;
+        }
+
         public simbolo buscar(string id)
         {
             id = id.ToLower();

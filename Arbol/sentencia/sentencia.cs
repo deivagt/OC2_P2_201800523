@@ -6,6 +6,7 @@ using OC2_P2_201800523.tablaSimbolos;
 using OC2_P2_201800523.Arbol.Expresion;
 using OC2_P2_201800523.AST;
 using System.Collections.Generic;
+using OC2_P2_201800523.Arbol.sentencia.ciclo;
 using System;
 
 namespace OC2_P2_201800523.Arbol.sentencia
@@ -25,6 +26,20 @@ namespace OC2_P2_201800523.Arbol.sentencia
             string tempSiguiente = "";
             string tempSalida = "";
             string tempEtiqueta = "";
+            string array, pointer;
+
+            if (ambito == "global")//Escribir en heap
+            {
+                array = "heap";
+                pointer = "hp";
+            }
+            else //Escribir en stack
+            {
+                array = "stack";
+                pointer = "sp";
+
+            }
+
 
             switch (palabraClave.Token.Text)
             {
@@ -52,30 +67,14 @@ namespace OC2_P2_201800523.Arbol.sentencia
                         argumento += tempVerdadero + ":";
                         cosasGlobalesewe.concatenarAccion(argumento);
                         hacerTraduccion(node.ChildNodes.ElementAt(4), ref tablaActual, ambito, verdadero, falso, xd);
-                        argumento = "goto "+tempSalida+";\n";
-                        argumento += tempFalso + ":"+ tempSalida + ":\n";
-                        
+                        argumento = "goto " + tempSalida + ";\n";
+                        argumento += tempFalso + ":" + tempSalida + ":\n";
+
 
                         cosasGlobalesewe.concatenarAccion(argumento);
                         argumento = "/*Finaliza DECLARACION DE IF SIMPLE*/";
                         cosasGlobalesewe.concatenarAccion(argumento);
 
-                        //if (res.getValor() == "true")
-                        //{
-                        //    hacerEjecucion(node.ChildNodes.ElementAt(4));
-                        //}
-                        //else
-
-                        //{
-                        //    if (res.getValor() != "false")
-                        //    {
-
-                        //    }
-                        //    else
-                        //    {
-                        //        //ERROR
-                        //    }
-                        //}
                     }
                     else //if else
                     {
@@ -99,7 +98,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
                         argumento += "if(" + res.valor + ") goto " + tempVerdadero + ";\n" + "goto " + tempFalso + ";\n";
                         argumento += tempVerdadero + ":";
                         cosasGlobalesewe.concatenarAccion(argumento);
-                        
+
                         hacerTraduccion(node.ChildNodes.ElementAt(4), ref tablaActual, ambito, verdadero, falso, xd);
                         argumento = "goto " + tempSalida + ";\n";
                         argumento += tempFalso + ":\n";
@@ -109,13 +108,13 @@ namespace OC2_P2_201800523.Arbol.sentencia
                         /*ELSE IF*/
                         ParseTreeNode elseif = node.ChildNodes.ElementAt(6);
                         condicion.IF siguienteelseif = new condicion.IF(noterminales.ELSEIF, elseif);
-                        siguienteelseif.traducir(ref tablaActual, ambito,tempSalida,falso, xd);
+                        siguienteelseif.traducir(ref tablaActual, ambito, tempSalida, falso, xd);
 
                         argumento = tempSalida + ":";
                         cosasGlobalesewe.concatenarAccion(argumento);
                         argumento = "/*Finaliza DECLARACION DE IF COMPUESTO EWE*/";
                         cosasGlobalesewe.concatenarAccion(argumento);
-                       
+
                     }
 
                     return new resultado();
@@ -125,6 +124,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
                     funcBasica.write write = new funcBasica.write(noterminales.PARAMETROSWRITELN, paramWrite);
                     write.traducir(ref tablaActual, ambito, verdadero, falso, xd);
                     return new resultado();
+                
 
                 case "writeln":
                     ParseTreeNode paramWriteln = node.ChildNodes.ElementAt(2);
@@ -132,9 +132,89 @@ namespace OC2_P2_201800523.Arbol.sentencia
                     writeln.traducir(ref tablaActual, ambito, verdadero, falso, xd);
                     cosasGlobalesewe.concatenarAccion("printf(\"\\n\"); ");
                     return new resultado();
+
+                case "while":
+                    cicloWhile ciclowhile = new cicloWhile("WHILE", node);
+                    ciclowhile.traducir(ref tablaActual, ambito, verdadero, falso, xd);
+                    return new resultado();
+
+                case "repeat":
+                    repeatUntil ciclorepeat = new repeatUntil("REPEAT", node);
+                    ciclorepeat.traducir(ref tablaActual, ambito, verdadero, falso, xd);
+                    return new resultado();
+
+                default:
+                    if (palabraClave.Term.ToString() == "id")
+                    {
+                        if (node.ChildNodes.ElementAt(1).Token.Text == ":=")//Asignacion
+                        {
+                            simbolo variable = tablaActual.buscar(palabraClave.Token.Text);
+                            if (variable != null)
+                            {
+                                expresion exp = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
+                                res = exp.traducir(ref tablaActual, ambito,verdadero,falso, xd);
+
+                                if(res.argumento != null)
+                                {
+                                    cosasGlobalesewe.concatenarAccion(res.argumento);
+                                }
+                                //determinarTipo(res, variable);
+                                if (variable.tipo == terminales.rinteger || variable.tipo == terminales.rreal || variable.tipo == terminales.rboolean)
+                                {
+                                    //TIPOS CONCUERDAN
+                                    
+                                    argumento = array + "[(int)" + variable.direccion +"] = " + res.valor +";";
+                                    cosasGlobalesewe.concatenarAccion(argumento);
+                                    //manejadorArbol.imprimirTabla();
+                                }
+                                else
+                                {
+                                    if (variable.tipo == terminales.rstring || res.tipo == terminales.rchar )
+                                    {
+                                        /*Cosas de strings*/
+                                    }
+                                }
+
+                            }
+                            else
+                            {
+                                //ERROR
+                            }
+                        }
+                        else //LLAMADAFUNCION
+                        {
+                            //string id = node.ChildNodes.ElementAt(0).Token.Text;
+                            //string ambitoanterior = manejadorArbol.ambitoActual.Clone().ToString();
+                            //manejadorArbol.ambitoActual = id;
+                            //simbolo fn = manejadorArbol.tabladeSimbolos.buscarFuncion(id);
+                            //if (fn != null)
+                            //{
+                            //    Funcion_Procedimiento.objetoFuncion of = fn.fn;
+                            //    hacerEjecucion(of.lstSent);
+                            //}
+
+                            //manejadorArbol.ambitoActual = "global";
+                        }
+
+                    }
+                    return new resultado();
             }
             return new resultado();
 
+        }
+        void determinarTipo(resultado res, simbolo variable)
+        {
+            if (res.tipo == "numero")
+            {
+                if (int.TryParse(res.valor, out int i) == true)
+                {
+                    res.tipo = "integer";
+                }
+                else
+                {
+                    res.tipo = "real";
+                }
+            }
         }
         void hacerTraduccion(ParseTreeNode lstSent, ref tabla tablaActual, string ambito, string verdadero, string falso, string xd)
         {

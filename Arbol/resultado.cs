@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Irony.Ast;
 using Irony.Parsing;
+using OC2_P2_201800523.tablaSimbolos;
 
 namespace OC2_P2_201800523.Arbol
 {
@@ -16,6 +17,7 @@ namespace OC2_P2_201800523.Arbol
         public string falso;
         public string salida;
         public string argumento;
+        public simbolo simbolo;
         LinkedList<ParseTreeNode> nodo;
 
 
@@ -23,6 +25,12 @@ namespace OC2_P2_201800523.Arbol
         {
             this.tipo = tipo;
             this.valor = valor;
+        }
+        public resultado(string tipo, string valor,simbolo simbolo) //Para cadenas 
+        {
+            this.tipo = tipo;
+            this.valor = valor;
+            this.simbolo = simbolo;
         }
 
         public resultado(string tipo, string valor, string argumento) //Otras cosas ewe

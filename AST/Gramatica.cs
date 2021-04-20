@@ -275,21 +275,21 @@ namespace OC2_P2_201800523.AST
                 |Empty
                 ;
 
-            SENTENCIA.Rule = id + dos_puntos_igual + EXPRESION + punto_coma
+            SENTENCIA.Rule = id + dos_puntos_igual + EXPRESION + punto_coma////
                 | id + abrir_parentesis + cerrar_parentesis + punto_coma //LLAMADA
                 | id + abrir_parentesis +PARAMETROS+ cerrar_parentesis + punto_coma //LLAMADA
-                | rif + EXPRESION + rthen + begin + SENTENCIAS + end + punto_coma
-                | rif + EXPRESION + rthen + begin + SENTENCIAS + end + PreferShiftHere() + ELSEIF + punto_coma
+                | rif + EXPRESION + rthen + begin + SENTENCIAS + end + punto_coma////
+                | rif + EXPRESION + rthen + begin + SENTENCIAS + end + PreferShiftHere() + ELSEIF + punto_coma////
                 | rcase + EXPRESION + rof + CASOS + end + punto_coma
                 | rcase + EXPRESION + rof + CASOS +  PreferShiftHere() + relse + begin + SENTENCIAS + end + punto_coma + end + punto_coma
-                | rwhile + EXPRESION + rdo + begin + SENTENCIAS + end + punto_coma
+                | rwhile + EXPRESION + rdo + begin + SENTENCIAS + end + punto_coma////
                 | rfor + id + dos_puntos_igual + EXPRESION + to + EXPRESION + rdo + begin + SENTENCIAS + end + punto_coma
                 | repeat + begin + SENTENCIAS + end + until + EXPRESION + punto_coma
                 | repeat + SENTENCIAS + until + EXPRESION + punto_coma
                 | writeln  + punto_coma
                 | write + punto_coma
-                | write + abrir_parentesis + PARAMETROSWRITELN + cerrar_parentesis + punto_coma
-                | writeln + abrir_parentesis+ PARAMETROSWRITELN + cerrar_parentesis + punto_coma
+                | write + abrir_parentesis + PARAMETROSWRITELN + cerrar_parentesis + punto_coma////
+                | writeln + abrir_parentesis+ PARAMETROSWRITELN + cerrar_parentesis + punto_coma////
                 | rbreak + punto_coma
                 | rcontinue + punto_coma
                 | exit + abrir_parentesis + EXPRESION + cerrar_parentesis + punto_coma
