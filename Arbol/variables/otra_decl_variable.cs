@@ -19,12 +19,12 @@ namespace OC2_P2_201800523.Arbol.variables
             return new resultado();
         }
 
-        public void nuevaEjecucion(LinkedList<ParseTreeNode> lista)
+        public void nuevaTraduccion(LinkedList<ParseTreeNode> lista)
         {
             if (node.ChildNodes.Count != 1)
             {
                 otra_decl_variable siguiente = new otra_decl_variable(noterminales.OTRA_DECL_VARIABLE, node.ChildNodes.ElementAt(0));
-                siguiente.nuevaEjecucion(lista);
+                siguiente.nuevaTraduccion(lista);
                 lista.AddLast(node.ChildNodes.ElementAt(2));
             }
             else

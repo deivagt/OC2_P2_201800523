@@ -208,10 +208,77 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            if (resIzq.tipo == terminales.rstring || resIzq.tipo == terminales.rchar || resDer.tipo == terminales.rstring || resDer.tipo == terminales.rchar)
+                            if ((resIzq.tipo == terminales.rstring || resIzq.tipo == terminales.rchar) )
                             {
-                                /*Concatenar cadena*/
-                                return new resultado(terminales.rstring, "xd");
+                                if(resDer.tipo == terminales.rstring || resDer.tipo == terminales.rchar)
+                                {
+                                    argumento = "";
+                                    string inicioNuevaCadena = cosasGlobalesewe.nuevoTemp();
+                                    string inicioIzq, inicioDer;
+
+
+
+                                    if (resIzq.argumento != null)
+                                    {
+                                        cosasGlobalesewe.concatenarAccion(resIzq.argumento);
+                                        inicioIzq = resIzq.valor;
+                                    }
+                                    else if (resIzq.simbolo != null)
+                                    {
+                                        inicioIzq = resIzq.valor;
+                                    }
+                                    else
+                                    {
+                                        inicioIzq = cosasGlobalesewe.nuevoTemp();
+                                        argumento += inicioIzq + " = hp;\n";
+                                        foreach (char caracter in resIzq.valor)
+                                        {
+                                            argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
+                                            argumento += "hp = hp + 1;\n";
+                                        }
+                                        argumento += "heap[(int)hp] = " + "-1" + ";\n";
+                                        argumento += "hp = hp + 1;\n";
+                                    }
+                                    
+                                    if(resDer.argumento != null)
+                                    {
+                                        cosasGlobalesewe.concatenarAccion(resDer.argumento);
+                                        inicioDer = resDer.valor;
+                                    }
+                                    else if (resDer.simbolo != null)
+                                    {
+                                        inicioDer = resDer.valor;
+                                    }
+                                    else
+                                    {
+                                        inicioDer = cosasGlobalesewe.nuevoTemp();
+                                        argumento += inicioDer + " = hp;\n";
+                                        foreach (char caracter in resDer.valor)
+                                        {
+                                            argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
+                                            argumento += "hp = hp + 1;\n";
+                                        }
+
+                                        argumento += "heap[(int)hp] = " + "-1" + ";\n";
+                                        argumento += "hp = hp + 1;\n";
+                                    }
+                                    
+
+                                    argumento += inicioNuevaCadena + " = hp;\n";
+                                    argumento += "t0 = " + inicioIzq +";\n";
+                                    argumento += "t2 = " + inicioDer + ";\n";
+
+                                    argumento += "concatenacion();\n";
+                                    return new resultado(terminales.rstring, inicioNuevaCadena, argumento);
+
+                                }
+                                else
+                                {
+                                    Program.form.richTextBox5.Text += "Error Sintactico: No se pueden concatenar tipos distintos\n";
+                                    return new resultado(terminales.rstring, "");
+                                }
+                                
+                                
                             }
 
                             else if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
@@ -893,7 +960,78 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
+                            if ((resIzq.tipo == terminales.rstring || resIzq.tipo == terminales.rchar))
+                            {
+                                if (resDer.tipo == terminales.rstring || resDer.tipo == terminales.rchar)
+                                {
+                                    argumento = "";
+                                    string inicioNuevaCadena = cosasGlobalesewe.nuevoTemp();
+                                    string inicioIzq, inicioDer;
 
+
+
+                                    if (resIzq.argumento != null)
+                                    {
+                                        cosasGlobalesewe.concatenarAccion(resIzq.argumento);
+                                        inicioIzq = resIzq.valor;
+                                    }
+                                    else if (resIzq.simbolo != null)
+                                    {
+                                        inicioIzq = resIzq.valor;
+                                    }
+                                    else
+                                    {
+                                        inicioIzq = cosasGlobalesewe.nuevoTemp();
+                                        argumento += inicioIzq + " = hp;\n";
+                                        foreach (char caracter in resIzq.valor)
+                                        {
+                                            argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
+                                            argumento += "hp = hp + 1;\n";
+                                        }
+                                        argumento += "heap[(int)hp] = " + "-1" + ";\n";
+                                        argumento += "hp = hp + 1;\n";
+                                    }
+
+                                    if (resDer.argumento != null)
+                                    {
+                                        cosasGlobalesewe.concatenarAccion(resDer.argumento);
+                                        inicioDer = resDer.valor;
+                                    }
+                                    else if (resDer.simbolo != null)
+                                    {
+                                        inicioDer = resDer.valor;
+                                    }
+                                    else
+                                    {
+                                        inicioDer = cosasGlobalesewe.nuevoTemp();
+                                        argumento += inicioDer + " = hp;\n";
+                                        foreach (char caracter in resDer.valor)
+                                        {
+                                            argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
+                                            argumento += "hp = hp + 1;\n";
+                                        }
+
+                                        argumento += "heap[(int)hp] = " + "-1" + ";\n";
+                                        argumento += "hp = hp + 1;\n";
+                                    }
+
+
+                                    argumento += inicioNuevaCadena + " = hp;\n";
+                                    argumento += "t0 = " + inicioIzq + ";\n";
+                                    argumento += "t2 = " + inicioDer + ";\n";
+
+                                    argumento += "concatenacion();\n";
+                                    return new resultado(terminales.rstring, inicioNuevaCadena, argumento);
+
+                                }
+                                else
+                                {
+                                    Program.form.richTextBox5.Text += "Error Sintactico: No se pueden concatenar tipos distintos\n";
+                                    return new resultado(terminales.rstring, "");
+                                }
+
+
+                            }
                             if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
                             {
                                 if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a==a

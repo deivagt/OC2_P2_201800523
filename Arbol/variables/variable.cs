@@ -89,7 +89,7 @@ namespace OC2_P2_201800523.Arbol.variables
 
                     otra_decl_variable variasVariables = new otra_decl_variable(noterminales.OTRA_DECL_VARIABLE, ids);
 
-                    variasVariables.nuevaEjecucion(listaVar);
+                    variasVariables.nuevaTraduccion(listaVar);
                     string array = "";
                     string pointer = "";
                     if (ambito == "global")//Escribir en heap
@@ -187,27 +187,33 @@ namespace OC2_P2_201800523.Arbol.variables
 
                     }
                     argumento = "/*EMPIEZA DECLARACION VARIABLE " + id.Token.Text + "*/\n";
-                    argumento += temp + " = " + pointer + ";\n";
+                    
 
-                    if (res.tipo == terminales.cadena || res.tipo == terminales.rchar)
+                    if (res.tipo == terminales.rstring || res.tipo == terminales.rchar)
                     {
-                        //if (array != "heap") /*Hacer que el stack apunte al heap*/ //SIGUE EN DESARROLLO
-                        //{
-                        //    argumento += array + "[(int)" + temp + "] = " + "hp" + ";\n";
-                        //}
-
-                        foreach (char caracter in res.valor)
+                        if(res.argumento != null)
                         {
-                            argumento += array + "[(int)" + pointer + "] = " + (int)caracter + ";\n";
+                            cosasGlobalesewe.concatenarAccion(res.argumento);
+                            argumento += temp + " = " + res.valor + ";\n";
+                        }
+                        else
+                        {
+                            argumento += temp + " = " + pointer + ";\n";
+                            foreach (char caracter in res.valor)
+                            {
+                                argumento +="heap[(int)" + pointer + "] = " + (int)caracter + ";\n";
+                                argumento += pointer + " = " + pointer + " + 1;\n";
+                            }
+
+                            argumento += "heap[(int)" + pointer + "] = " + "-1" + ";\n";
                             argumento += pointer + " = " + pointer + " + 1;\n";
                         }
 
-                        argumento += array + "[(int)" + pointer + "] = " + "-1" + ";\n";
-                        argumento += pointer + " = " + pointer + " + 1;\n";
+                        
                     }
                     else
                     {
-
+                        argumento += temp + " = " + pointer + ";\n";
                         argumento += pointer + " = " + pointer + " + 1;\n";
                         argumento += array + "[(int)" + temp + "] = " + res.valor + ";\n";
 

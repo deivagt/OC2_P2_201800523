@@ -37,13 +37,14 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
 
 
                 expresion expr = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
-                resultado res = expr.traducir(ref tablaActual, ambito, verdadero, falso, xd);
+                resultado res = expr.traducir(ref tablaActual, ambito, "", "", xd);
 
                 if (res.simbolo != null)
                 {
+                    temp = cosasGlobalesewe.nuevoTemp(array + "[(int)" + res.valor + "]");
                     if (res.tipo == terminales.rinteger || res.tipo == terminales.rreal || res.tipo == terminales.rboolean)
                     {
-                        temp = cosasGlobalesewe.nuevoTemp(array + "[(int)" + res.valor + "]");
+                        
 
 
                         if (res.tipo == terminales.rinteger)
@@ -57,36 +58,49 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
                         }
                         else//SUMAS RESTAS Y DEMAS
                         {
-                            argumento += "N3 = " + temp + " ;";
+                            argumento += "t3 = " + temp + " ;";
                             argumento += "booleanoCadena();";
                         }
                     }
-                    else // Cadena o char
+                    else//Cadena o char
                     {
-                    
+                        
+                        argumento = "t0 = " + res.simbolo.direccion + ";\n";
+                        argumento += "imprimirLn();\n";
                     }
+                    
                 }
                 else
                 {
 
                     if (res.tipo == terminales.rstring || res.tipo == terminales.rchar)
                     {
-                        //if (array != "heap") /*Hacer que el stack apunte al heap*/ //SIGUE EN DESARROLLO
-                        //{
-                        //    argumento += array + "[(int)" + temp + "] = " + "hp" + ";\n";
-                        //}
-                        temp = cosasGlobalesewe.nuevoTemp();
-                        argumento += temp + " = hp;\n";
-                        foreach (char caracter in res.valor)
+                        
+                        if (res.argumento != null)
                         {
-                            argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
+                            cosasGlobalesewe.concatenarAccion(res.argumento);
+
+                            argumento += "t0 = " + res.valor + ";\n";
+                            argumento += "imprimirLn();\n";
+
+                        }
+                        else
+                        {
+                            temp = cosasGlobalesewe.nuevoTemp();
+                            argumento += temp + " = hp;\n";
+                            foreach (char caracter in res.valor)
+                            {
+                                argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
+                                argumento += "hp = hp + 1;\n";
+                            }
+
+                            argumento += "heap[(int)hp] = " + "-1" + ";\n";
                             argumento += "hp = hp + 1;\n";
+                            argumento += "t0 = " + temp + ";\n";
+                            argumento += "imprimirLn();\n";
                         }
 
-                        argumento += "heap[(int)hp] = " + "-1" + ";\n";
-                        argumento += "hp = hp + 1;\n";
-                        argumento += "N0 = " + temp + ";\n";
-                        argumento += "imprimirLn();\n";
+                        
                     }
                     else
                     {
@@ -109,7 +123,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
                         }
                         else if (res.tipo == "true" || res.tipo == "false")
                         {
-                            argumento += "N3 = " + res.valor + " ;\n";
+                            argumento += "t3 = " + res.valor + " ;\n";
                             argumento += "booleanoCadena();\n";
                         }
                         else
@@ -118,7 +132,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
                             {
                                 if (res.tipo == terminales.and || res.tipo == terminales.or || res.tipo == terminales.not)
                                     cosasGlobalesewe.concatenarAccion(res.argumento);
-                                argumento += "N3 = " + res.valor + " ;\n";
+                                argumento += "t3 = " + res.valor + " ;\n";
                                 argumento += "booleanoCadena();\n";
                             }
                         }
@@ -128,17 +142,112 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
             }
             else
             {
-                //LinkedList<expresion> listaExpresiones = new LinkedList<expresion>();
+                LinkedList<expresion> listaExpresiones = new LinkedList<expresion>();
 
-                //parametrosWrite par = new parametrosWrite(noterminales.PARAMETROSWRITELN, node.ChildNodes.ElementAt(0));
-                //par.nuevoParametro(listaExpresiones);
+                parametrosWrite par = new parametrosWrite(noterminales.PARAMETROSWRITELN, node);
+                par.nuevoParametro(listaExpresiones);
 
-                //foreach (var a in listaExpresiones)
-                //{
-                //    resultado res = a.traducir(ref tablaActual, ambito, verdadero, falso, xd);
-                //    cadenaSalida += res.getValor();
-                //}
+                argumento = "";
+                foreach (var a in listaExpresiones)
+                {
+                    resultado res = a.traducir(ref tablaActual, ambito, verdadero, falso, xd);
+                    if (res.simbolo != null)
+                    {
+                        if (res.tipo == terminales.rinteger || res.tipo == terminales.rreal || res.tipo == terminales.rboolean)
+                        {
+                            temp = cosasGlobalesewe.nuevoTemp(array + "[(int)" + res.valor + "]");
 
+
+                            if (res.tipo == terminales.rinteger)
+                            {
+                                argumento += "printf(\"%d\", (int)" + temp + ");";
+                            }
+                            else if (res.tipo == terminales.rreal)
+                            {
+
+                                argumento += "printf(\"%f\", (double)" + temp + ");";
+                            }
+                            else//SUMAS RESTAS Y DEMAS
+                            {
+                                argumento += "t3 = " + temp + " ;";
+                                argumento += "booleanoCadena();";
+                            }
+                        }
+                        else // Cadena o char
+                        {
+                            argumento += "t0 = " + res.simbolo.direccion + ";\n";
+                            argumento += "imprimirLn();\n";
+                        }
+                    }
+                    else
+                    {
+
+                        if (res.tipo == terminales.rstring || res.tipo == terminales.rchar)
+                        {
+                            if (res.argumento != null)
+                            {
+                                cosasGlobalesewe.concatenarAccion(res.argumento);
+
+                                argumento += "t0 = " + res.valor + ";\n";
+                                argumento += "imprimirLn();\n";
+
+                            }
+                            else
+                            {
+                                temp = cosasGlobalesewe.nuevoTemp();
+                                argumento += temp + " = hp;\n";
+                                foreach (char caracter in res.valor)
+                                {
+                                    argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
+                                    argumento += "hp = hp + 1;\n";
+                                }
+
+                                argumento += "heap[(int)hp] = " + "-1" + ";\n";
+                                argumento += "hp = hp + 1;\n";
+                                argumento += "t0 = " + temp + ";\n";
+                                argumento += "imprimirLn();\n";
+                            }
+                        }
+                        else
+                        {
+                            if (res.tipo.ToString() == "numero")
+                            {
+                                if (int.TryParse(res.valor, out int i) == true)
+                                {
+                                    argumento += "printf(\"%d\", (int)" + res.valor + ");\n";
+                                }
+                                else if (double.TryParse(res.valor, out double j) == true)
+                                {
+
+                                    argumento += "printf(\"%f\", (double)" + res.valor + ");\n";
+                                }
+                                else//SUMAS RESTAS Y DEMAS
+                                {
+                                    argumento += "printf(\"%f\", " + res.valor + ");\n";
+                                }
+
+                            }
+                            else if (res.tipo == "true" || res.tipo == "false")
+                            {
+                                argumento += "t3 = " + res.valor + " ;\n";
+                                argumento += "booleanoCadena();\n";
+                            }
+                            else
+                            {
+                                if (res.argumento != null)
+                                {
+                                    if (res.tipo == terminales.and || res.tipo == terminales.or || res.tipo == terminales.not)
+                                        cosasGlobalesewe.concatenarAccion(res.argumento);
+                                    argumento += "t3 = " + res.valor + " ;\n";
+                                    argumento += "booleanoCadena();\n";
+                                }
+                            }
+                        }
+                    }
+                    
+
+                }
+                cosasGlobalesewe.concatenarAccion(argumento);
                 //expresion laultima = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
                 //resultado res1 = laultima.Ejecutar();
                 //cadenaSalida += res1.getValor();

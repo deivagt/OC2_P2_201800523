@@ -59,16 +59,21 @@ namespace OC2_P2_201800523.Arbol.sentencia.ciclo
             cosasGlobalesewe.concatenarAccion(argumento);
 
             expresion exp = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(3));
-            res = exp.traducir(ref tablaActual, ambito, verdadero, falso, xd);
+            res = exp.traducir(ref tablaActual, ambito, "", "", xd);
 
             if (res.argumento != null)
             {
                 cosasGlobalesewe.concatenarAccion(res.argumento);
             }
 
+            temp = res.valor;
 
+            if (res.simbolo != null)
+            {
+                temp = cosasGlobalesewe.nuevoTemp(array + "[(int)" + res.valor + "]");
+            }
 
-            argumento = "if(" + res.valor + ") goto " + tempSalida + ";\n"
+            argumento = "if(" + temp + ") goto " + tempSalida + ";\n"
                 + "goto " + tempCiclo + ";\n"
                  + tempSalida + ":\n"
             + "/*FIN DE REPEAT UNTIL*/";    

@@ -7,6 +7,7 @@ using OC2_P2_201800523.Arbol.Expresion;
 using OC2_P2_201800523.AST;
 using System.Collections.Generic;
 using OC2_P2_201800523.Arbol.sentencia.ciclo;
+using OC2_P2_201800523.Arbol.sentencia.condicion;
 using System;
 
 namespace OC2_P2_201800523.Arbol.sentencia
@@ -50,7 +51,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
                         /*Condicion del if*/
                         ParseTreeNode expresion = node.ChildNodes.ElementAt(1);
                         expresion expr = new expresion(noterminales.EXPRESION, expresion);
-                        res = expr.traducir(ref tablaActual, ambito, verdadero, falso, xd);
+                        res = expr.traducir(ref tablaActual, ambito, "", "", xd);
 
 
                         tempVerdadero = cosasGlobalesewe.crearEtiqueta();
@@ -82,7 +83,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
                         /*Condicion del if*/
                         ParseTreeNode expresion = node.ChildNodes.ElementAt(1);
                         expresion expr = new expresion(noterminales.EXPRESION, expresion);
-                        res = expr.traducir(ref tablaActual, ambito, verdadero, falso, xd);
+                        res = expr.traducir(ref tablaActual, ambito, "", "", xd);
 
                         if (res.argumento != null)
                         {
@@ -143,6 +144,24 @@ namespace OC2_P2_201800523.Arbol.sentencia
                     ciclorepeat.traducir(ref tablaActual, ambito, verdadero, falso, xd);
                     return new resultado();
 
+                case "case":
+                    casos casos = new casos("CASOS", node);
+                    casos.traducir(ref tablaActual, ambito, verdadero, falso, xd);
+                    return new resultado();
+
+                case "for":
+                    For FOR = new For("FOR", node);
+                    FOR.traducir(ref tablaActual, ambito, verdadero, falso, xd);
+                    return new resultado();
+
+                case "break":
+                    cosasGlobalesewe.concatenarAccion("goto " + falso + ";");
+                    return new resultado();
+
+                case "continue":
+                    cosasGlobalesewe.concatenarAccion("goto " + verdadero + ";");
+                    return new resultado();
+
                 default:
                     if (palabraClave.Term.ToString() == "id")
                     {
@@ -152,7 +171,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
                             if (variable != null)
                             {
                                 expresion exp = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
-                                res = exp.traducir(ref tablaActual, ambito,verdadero,falso, xd);
+                                res = exp.traducir(ref tablaActual, ambito,"","", xd);
 
                                 if(res.argumento != null)
                                 {

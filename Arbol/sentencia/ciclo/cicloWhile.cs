@@ -19,7 +19,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
             resultado res;
             string argumento;
             string temporal;
-            string temp = "";
+            string temp;
             string array, pointer;
 
 
@@ -54,15 +54,20 @@ namespace OC2_P2_201800523.Arbol.sentencia
             argumento += tempCondicion + ":\n";
             cosasGlobalesewe.concatenarAccion(argumento);
             expresion exp = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(1));
-            res = exp.traducir(ref tablaActual, ambito, verdadero, falso, xd);
+            res = exp.traducir(ref tablaActual, ambito, "", "", xd);
 
             if (res.argumento != null)
             {
                 cosasGlobalesewe.concatenarAccion(res.argumento);
             }
+            temp = res.valor;
 
-
-            argumento = "if(" + res.valor + ") goto " + tempCiclo + ";\n"
+            if(res.simbolo != null)
+            {
+                temp = cosasGlobalesewe.nuevoTemp(array + "[(int)" + res.valor + "]");
+            }
+            
+            argumento = "if(" + temp + ") goto " + tempCiclo + ";\n"
                 + "goto " + tempSalida + ";\n"
                 + tempCiclo + ":";
 

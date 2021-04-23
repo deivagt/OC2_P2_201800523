@@ -34,7 +34,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
                 /*Condicion del if*/
                 ParseTreeNode expresion = node.ChildNodes.ElementAt(2);
                 expresion expr = new expresion(noterminales.EXPRESION, expresion);
-                res = expr.traducir(ref tablaActual, ambito, verdadero, falso, xd);
+                res = expr.traducir(ref tablaActual, ambito, "", "", xd);
 
                 if (res.argumento != null)
                 {

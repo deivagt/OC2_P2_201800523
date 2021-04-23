@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Irony.Parsing;
-using Irony.Ast;
+﻿using Irony.Parsing;
 
 namespace OC2_P2_201800523.AST
 {
     class Gramatica : Grammar
     {
-        public Gramatica() : base(caseSensitive: false )
-        {         
+        public Gramatica() : base(caseSensitive: false)
+        {
             #region Declaracion de Terminales
             IdentifierTerminal id = new IdentifierTerminal(terminales.id);
-            NumberLiteral numero = new NumberLiteral(terminales.numero,NumberOptions.AllowSign);
+            NumberLiteral numero = new NumberLiteral(terminales.numero, NumberOptions.AllowSign);
             var program = ToTerm(terminales.program);
             var var = ToTerm(terminales.var);
             var rconst = ToTerm(terminales.rconst);
@@ -53,7 +49,7 @@ namespace OC2_P2_201800523.AST
             var comentarioUL = new CommentTerminal(terminales.comentarioUL, "//", new[] { "\n" });
             var comentarioMLTipo1 = new CommentTerminal(terminales.comentarioMLTipo1, "(*", new[] { "*)" });
             var comentarioMLTipo2 = new CommentTerminal(terminales.comentarioMLTipo2, "{", new[] { "}" });
-            
+
             /*TIPOS*/
             var rstring = ToTerm(terminales.rstring);
             var rinteger = ToTerm(terminales.rinteger);
@@ -155,11 +151,11 @@ namespace OC2_P2_201800523.AST
             #endregion
 
             #region DEFINICION OWO
-            
+
             INI.Rule = COSAS
                 ;
 
-            COSAS.Rule = program + id + punto_coma +USES + INSTRUCCIONES + CUERPO_PROGRAMA
+            COSAS.Rule = program + id + punto_coma + USES + INSTRUCCIONES + CUERPO_PROGRAMA
                 ;
             COSAS.ErrorRule = SyntaxError + Eof;
 
@@ -171,7 +167,7 @@ namespace OC2_P2_201800523.AST
 
             USES.Rule = uses + id + punto_coma
                 | uses + id + coma + OTRO_USES
-                | Empty                
+                | Empty
                 ;
 
             OTRO_USES.Rule = id + coma + OTRO_USES
@@ -191,15 +187,15 @@ namespace OC2_P2_201800523.AST
 
             INSTRUCCION.ErrorRule = SyntaxError + punto_coma;
 
-            CONSTANTE.Rule = id +dos_puntos + TIPO  + igual + EXPRESION + punto_coma + CONSTANTE
+            CONSTANTE.Rule = id + dos_puntos + TIPO + igual + EXPRESION + punto_coma + CONSTANTE
                 | Empty
                 ;
 
             CONSTANTE.ErrorRule = SyntaxError + punto_coma;
 
-            VARIABLE.Rule = id + dos_puntos + TIPO + igual + EXPRESION + punto_coma + VARIABLE 
+            VARIABLE.Rule = id + dos_puntos + TIPO + igual + EXPRESION + punto_coma + VARIABLE
                 | id + dos_puntos + TIPO + punto_coma + VARIABLE
-                | OTRA_DECL_VARIABLE + dos_puntos + TIPO + punto_coma + VARIABLE         
+                | OTRA_DECL_VARIABLE + dos_puntos + TIPO + punto_coma + VARIABLE
                 | Empty
                 ;
 
@@ -208,10 +204,10 @@ namespace OC2_P2_201800523.AST
                 ;
 
             DECLTIPOS.Rule =
-                 DECLVARIOST + igual + TIPO + punto_coma + DECLTIPOS
-                | id + igual + TIPO + punto_coma + DECLTIPOS
+                 DECLVARIOST + igual + TIPO + punto_coma + DECLTIPOS//No importa parte1
+                | id + igual + TIPO + punto_coma + DECLTIPOS//No importa parte2
                 | id + igual + robject + var + DECLARACIONATRIBUTOS + end + punto_coma
-                | id + igual + rarray + abrir_corchete + INDEXADO + cerrar_corchete + rof + TIPO + punto_coma + DECLTIPOS               
+                | id + igual + rarray + abrir_corchete + INDEXADO + cerrar_corchete + rof + TIPO + punto_coma + DECLTIPOS
                 | Empty
                 ;
 
@@ -224,10 +220,10 @@ namespace OC2_P2_201800523.AST
 
             DECLARACIONATRIBUTOS.Rule = id + dos_puntos + TIPO + punto_coma + DECLARACIONATRIBUTOS
                 | OTRADECLARACIONATRIBUTOS + dos_puntos + TIPO + punto_coma + DECLARACIONATRIBUTOS
-                | Empty                 
+                | Empty
                 ;
 
-            OTRADECLARACIONATRIBUTOS.Rule = OTRADECLARACIONATRIBUTOS +coma + id
+            OTRADECLARACIONATRIBUTOS.Rule = OTRADECLARACIONATRIBUTOS + coma + id
                 | id
                 ;
 
@@ -235,15 +231,13 @@ namespace OC2_P2_201800523.AST
                 | EXPRESION + dospunticos + EXPRESION
                 ;
 
-           
+
 
             FUNCION.Rule =
-                 procedure + id + abrir_parentesis + cerrar_parentesis + punto_coma + DECLARARENFUNC + OTRA_FUNCION + begin + SENTENCIAS + end + punto_coma
-                | procedure + id + abrir_parentesis + VALOR_REFERENCIA + cerrar_parentesis + punto_coma + DECLARARENFUNC + OTRA_FUNCION + begin + SENTENCIAS + end + punto_coma
-                | function + id + abrir_parentesis + cerrar_parentesis + dos_puntos + TRETORNO + punto_coma + DECLARARENFUNC + OTRA_FUNCION + begin + SENTENCIAS + end + punto_coma
-                | function + id + abrir_parentesis + VALOR_REFERENCIA + cerrar_parentesis + dos_puntos + TRETORNO + punto_coma  + DECLARARENFUNC + OTRA_FUNCION + begin + SENTENCIAS + end + punto_coma
-                            
+                 procedure + id + abrir_parentesis + VALOR_REFERENCIA + cerrar_parentesis + punto_coma + DECLARARENFUNC + OTRA_FUNCION + begin + SENTENCIAS + end + punto_coma
+                | function + id + abrir_parentesis + VALOR_REFERENCIA + cerrar_parentesis + dos_puntos + TRETORNO + punto_coma + DECLARARENFUNC + OTRA_FUNCION + begin + SENTENCIAS + end + punto_coma
                 ;
+
             OTRA_FUNCION.Rule = FUNCION
                 | Empty
                 ;
@@ -253,55 +247,49 @@ namespace OC2_P2_201800523.AST
                 | Empty
                 ;
 
-            VALOR_REFERENCIA.Rule = var + REFERENCIA /*VALORES POR REFERENCIA*/
-                | VALOR /*VALORES POR VALOR*/
+            VALOR_REFERENCIA.Rule = VALOR_REFERENCIA + punto_coma + var + VALOR + dos_puntos + TIPO  /*VALORES POR REFERENCIA*/
+                | var + VALOR + dos_puntos + TIPO
+                | VALOR_REFERENCIA + punto_coma + VALOR + dos_puntos + TIPO  /*VALORES POR VALOR*/
+                | VALOR + dos_puntos + TIPO
+                | Empty
                 ;
 
-            VALOR.Rule = id + dos_puntos + TIPO + punto_coma + VALOR_REFERENCIA
-                | id + coma + VALOR
-                | id + dos_puntos + TIPO                
+            VALOR.Rule = id 
+                | VALOR + coma + id 
                 ;
-
-            REFERENCIA.Rule = id + dos_puntos + TIPO + punto_coma + VALOR_REFERENCIA
-                | id + coma + REFERENCIA
-                | id + dos_puntos + TIPO
-                ;
-
-
-            
 
             SENTENCIAS.Rule = SENTENCIAS + SENTENCIA
                 | SENTENCIA
-                |Empty
+                | Empty
                 ;
 
             SENTENCIA.Rule = id + dos_puntos_igual + EXPRESION + punto_coma////
                 | id + abrir_parentesis + cerrar_parentesis + punto_coma //LLAMADA
-                | id + abrir_parentesis +PARAMETROS+ cerrar_parentesis + punto_coma //LLAMADA
+                | id + abrir_parentesis + PARAMETROS + cerrar_parentesis + punto_coma //LLAMADA
                 | rif + EXPRESION + rthen + begin + SENTENCIAS + end + punto_coma////
                 | rif + EXPRESION + rthen + begin + SENTENCIAS + end + PreferShiftHere() + ELSEIF + punto_coma////
-                | rcase + EXPRESION + rof + CASOS + end + punto_coma
-                | rcase + EXPRESION + rof + CASOS +  PreferShiftHere() + relse + begin + SENTENCIAS + end + punto_coma + end + punto_coma
+                | rcase + EXPRESION + rof + CASOS + end + punto_coma////
+                | rcase + EXPRESION + rof + CASOS + PreferShiftHere() + relse + begin + SENTENCIAS + end + punto_coma + end + punto_coma////
                 | rwhile + EXPRESION + rdo + begin + SENTENCIAS + end + punto_coma////
                 | rfor + id + dos_puntos_igual + EXPRESION + to + EXPRESION + rdo + begin + SENTENCIAS + end + punto_coma
-                | repeat + begin + SENTENCIAS + end + until + EXPRESION + punto_coma
+                | repeat + begin + SENTENCIAS + end + until + EXPRESION + punto_coma////
                 | repeat + SENTENCIAS + until + EXPRESION + punto_coma
-                | writeln  + punto_coma
+                | writeln + punto_coma
                 | write + punto_coma
                 | write + abrir_parentesis + PARAMETROSWRITELN + cerrar_parentesis + punto_coma////
-                | writeln + abrir_parentesis+ PARAMETROSWRITELN + cerrar_parentesis + punto_coma////
+                | writeln + abrir_parentesis + PARAMETROSWRITELN + cerrar_parentesis + punto_coma////
                 | rbreak + punto_coma
                 | rcontinue + punto_coma
                 | exit + abrir_parentesis + EXPRESION + cerrar_parentesis + punto_coma
-                | graficar_ts + abrir_parentesis+ cerrar_parentesis + punto_coma
+                | graficar_ts + abrir_parentesis + cerrar_parentesis + punto_coma
                 ;
 
-            ELSEIF.Rule = relse + rif + EXPRESION + rthen + begin + SENTENCIAS + end  + ELSEIF
+            ELSEIF.Rule = relse + rif + EXPRESION + rthen + begin + SENTENCIAS + end + ELSEIF
                 | relse + begin + SENTENCIAS + end
                 | Empty
                 ;
 
-            SENTENCIA.ErrorRule = SyntaxError+ punto_coma
+            SENTENCIA.ErrorRule = SyntaxError + punto_coma
                 ;
 
             PARAMETROSWRITELN.Rule = PARAMETROSWRITELN + coma + EXPRESION
@@ -313,7 +301,7 @@ namespace OC2_P2_201800523.AST
                 ;
 
             CASO.Rule = EXPRESION + dos_puntos + begin + SENTENCIAS + end + punto_coma
-                ;            
+                ;
 
             EXPRESION.Rule = uminus + EXPRESION + PreferShiftHere()
                 | not + EXPRESION
@@ -321,24 +309,24 @@ namespace OC2_P2_201800523.AST
                 | EXPRESION + div + EXPRESION
                 | EXPRESION + barra_div + EXPRESION
                 | EXPRESION + mod + EXPRESION
-                | EXPRESION + and + EXPRESION 
+                | EXPRESION + and + EXPRESION
                 | EXPRESION + mas + EXPRESION
                 | EXPRESION + menos + EXPRESION
-                | EXPRESION + or + EXPRESION 
-                | EXPRESION + igual + EXPRESION 
+                | EXPRESION + or + EXPRESION
+                | EXPRESION + igual + EXPRESION
                 | EXPRESION + distinto + EXPRESION
-                | EXPRESION + menor + EXPRESION 
-                | EXPRESION + menor_igual + EXPRESION 
-                | EXPRESION + mayor +EXPRESION 
-                | EXPRESION + mayor_igual + EXPRESION 
-                | id                
-                | id + PreferShiftHere() +abrir_parentesis  + cerrar_parentesis//
+                | EXPRESION + menor + EXPRESION
+                | EXPRESION + menor_igual + EXPRESION
+                | EXPRESION + mayor + EXPRESION
+                | EXPRESION + mayor_igual + EXPRESION
+                | id
+                | id + PreferShiftHere() + abrir_parentesis + cerrar_parentesis//
                 | numero
-                | cadena                
+                | cadena
                 | rtrue
                 | rfalse
-                | abrir_parentesis + EXPRESION + cerrar_parentesis                
-                ;           
+                | abrir_parentesis + EXPRESION + cerrar_parentesis
+                ;
 
             PARAMETROS.Rule = PARAMETROS + coma + EXPRESION
                 | EXPRESION
@@ -361,14 +349,14 @@ namespace OC2_P2_201800523.AST
                 | id
                 ;
 
-           
-            #endregion            
+
+            #endregion
             this.Root = INI;
             this.RegisterOperators(5, Associativity.Left, terminales.uminus);
             this.RegisterOperators(4, Associativity.Left, terminales.not);
-            this.RegisterOperators(3, Associativity.Left,terminales.por, terminales.barra_div, terminales.div, terminales.mod, terminales.and);
-            this.RegisterOperators(2, Associativity.Left,terminales.mas, terminales.menos, terminales.or);
-            this.RegisterOperators(1, Associativity.Left,terminales.distinto, terminales.menor, terminales.menor_igual,
+            this.RegisterOperators(3, Associativity.Left, terminales.por, terminales.barra_div, terminales.div, terminales.mod, terminales.and);
+            this.RegisterOperators(2, Associativity.Left, terminales.mas, terminales.menos, terminales.or);
+            this.RegisterOperators(1, Associativity.Left, terminales.distinto, terminales.menor, terminales.menor_igual,
                 terminales.mayor, terminales.mayor_igual, terminales.rin, terminales.igual);
             this.RegisterOperators(0, Associativity.Left, terminales.igual);
             AddToNoReportGroup(punto_coma);

@@ -18,8 +18,8 @@ namespace OC2_P2_201800523.Arbol.etc
         {
             if (node.ChildNodes.Count == 1) //Funcion
             {
-                //Funcion_Procedimiento.Procedimiento_Funcion fn = new Funcion_Procedimiento.Procedimiento_Funcion(noterminales.FUNCION, node.ChildNodes.ElementAt(0));
-                //fn.Ejecutar();
+                funcProce.funcionProce fn = new funcProce.funcionProce(noterminales.FUNCION, node.ChildNodes.ElementAt(0));
+                fn.traducir(ref tablaActual, ambito, verdadero, falso, xd);
             }
             else //Los demas jjjjj
             {

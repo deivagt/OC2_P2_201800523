@@ -19,15 +19,13 @@ namespace OC2_P2_201800523.tablaSimbolos
         public string tipo;
         public string direccion;
         public int fila;
+        public string temporal;
         public int columna;
-        public bool esFuncion;
-        public bool esTipo;
-        public bool esAtributo;
         public bool esConstante;
-
+        public LinkedList<parametroCustom> listaParam;
         public ParseTreeNode nodo;
 
-        public simbolo(string ambito, string id, string tipo, string direccion, int fila, int columna,string categoria)
+        public simbolo(string ambito, string id, string tipo, string direccion, int fila, int columna,string categoria )
         {
             this.ambito = ambito;
             this.id = id;
@@ -37,6 +35,20 @@ namespace OC2_P2_201800523.tablaSimbolos
             this.fila = fila;
             this.columna = columna;
             this.esConstante = false;
+        }
+
+        public simbolo(string ambito, string id, string tipo, string temporal, int fila, int columna, string categoria, LinkedList<parametroCustom> listaParam)
+        {
+            this.ambito = ambito;
+            this.id = id;
+            this.tipo = tipo;
+            this.categoria = categoria;
+            this.direccion = "";
+            this.temporal = temporal;
+            this.fila = fila;
+            this.columna = columna;
+            this.esConstante = false;
+            this.listaParam = listaParam;
         }
         public simbolo(string ambito, string id, string tipo, string direccion, int fila, int columna, bool esConstante)//Constructor de constantes
         {

@@ -4,9 +4,9 @@ using System.Text;
 using System.Linq;
 //using OC2_P2_201800523.Arbol.Ejecucion.Funcion_Procedimiento;
 
-namespace OC2_P2_201800523.tablaSimbolos
+namespace OC2_P2_201800523.tablaSimbolos 
 {
-    class tabla
+    class tabla :ICloneable
     {
         LinkedList<simbolo> tablaSimbolos;
 
@@ -51,7 +51,10 @@ namespace OC2_P2_201800523.tablaSimbolos
             }
             return null;
         }
-
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
         //public simbolo buscarSimbolo(string id, string ambito)
         //{
 
