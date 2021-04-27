@@ -25,22 +25,12 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
             string tempFalso = "";
             string tempSiguiente = "";
             string tempSalida = "";
-            string array, pointer;
+            //string array, pointer;
 
             ParseTreeNode exprCase;
             expresion expCase;
 
-            if (ambito == "global")//Escribir en heap
-            {
-                array = "heap";
-                pointer = "hp";
-            }
-            else //Escribir en stack
-            {
-                array = "stack";
-                pointer = "sp";
-
-            }
+            
 
 
 
@@ -60,7 +50,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
 
             if (res.simbolo != null)
             {
-                temp = cosasGlobalesewe.nuevoTemp(array + "[(int)" + res.valor + "]");
+                temp = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + res.valor + "]");
             }
             LinkedList<ParseTreeNode> listaCasos = new LinkedList<ParseTreeNode>();
             ParseTreeNode uncaso = node.ChildNodes.ElementAt(3);
@@ -85,7 +75,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
 
                     if (res1.simbolo != null)
                     {
-                        temp1 = cosasGlobalesewe.nuevoTemp(array + "[(int)" + res.valor + "]");
+                        temp1 = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + res.valor + "]");
                     }
 
                     argumento = "if(" + temp + " == " + temp1 + ") goto " + tempVerdadero + ";\n"

@@ -37,14 +37,13 @@ namespace OC2_P2_201800523.tablaSimbolos
             this.esConstante = false;
         }
 
-        public simbolo(string ambito, string id, string tipo, string temporal, int fila, int columna, string categoria, LinkedList<parametroCustom> listaParam)
+        public simbolo(string ambito, string id, string tipo, string direccion, int fila, int columna, string categoria, LinkedList<parametroCustom> listaParam)
         {
             this.ambito = ambito;
             this.id = id;
             this.tipo = tipo;
             this.categoria = categoria;
-            this.direccion = "";
-            this.temporal = temporal;
+            this.direccion = direccion;
             this.fila = fila;
             this.columna = columna;
             this.esConstante = false;

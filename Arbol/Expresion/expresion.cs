@@ -19,7 +19,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
             string argumento;
             string temporal;
             string temp = "";
-            string array, pointer;
+            //string array, pointer;
 
 
             string tempIzquierdo;
@@ -34,17 +34,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
             expresion derecha;
             resultado resIzq;
             resultado resDer;
-            if (ambito == "global")//Escribir en heap
-            {
-                array = "heap";
-                pointer = "hp";
-            }
-            else //Escribir en stack
-            {
-                array = "stack";
-                pointer = "sp";
-
-            }
+            
 
 
             if (node.ChildNodes.Count == 1)
@@ -95,7 +85,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                 }
                 else
                 {
-                    simbolo a = tablaActual.buscar(salida.Token.Text);
+                    simbolo a = tablaActual.buscar(salida.Token.Text,ambito);
                     if (a != null)
                     {
                         if (a.tipo == "integer")
@@ -143,7 +133,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     tempDerecho = resDer.valor;
                     if(resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resDer.tipo == terminales.rboolean)
                     {
-                        tempDerecho = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resDer.valor + "]");
+                        tempDerecho = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resDer.valor + "]");
                     }
                     argumento = tempEtiqueta + " = - " + tempDerecho + ";\n";
                     cosasGlobalesewe.concatenarAccion(argumento);
@@ -164,7 +154,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     
                     if (resDer.tipo == terminales.rboolean)
                     {
-                        tempDerecho = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resDer.valor + "]");
+                        tempDerecho = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resDer.valor + "]");
                     }
 
 
@@ -287,8 +277,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
                                     temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " + " + temporal;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
                                     return new resultado(terminales.numero, temp);
@@ -298,7 +288,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " + " + resDer.valor;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -316,7 +306,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " + " + temp;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -355,8 +345,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
                                     temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " - " + temporal;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
                                     return new resultado(terminales.numero, temp);
@@ -366,7 +356,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " - " + resDer.valor;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -384,7 +374,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " - " + temp;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -423,8 +413,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
                                     temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " * " + temporal;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
                                     return new resultado(terminales.numero, temp);
@@ -434,7 +424,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " * " + resDer.valor;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -452,7 +442,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " * " + temp;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -492,8 +482,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
                                     temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " / " + temporal;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
                                     return new resultado(terminales.numero, temp);
@@ -503,7 +493,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " / " + resDer.valor;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -521,7 +511,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " / " + temp;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -560,8 +550,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
                                     temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " % " + temporal;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
                                     return new resultado(terminales.numero, temp);
@@ -571,7 +561,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " % " + resDer.valor;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -589,7 +579,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " % " + temp;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -643,12 +633,12 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             if(resIzq.tipo == terminales.rboolean)
                             {
                                 
-                                tempIzquierdo = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resIzq.valor + "]");
+                                tempIzquierdo = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resIzq.valor + "]");
                             }
 
                             if(resDer.tipo == terminales.rboolean)
                             {
-                                tempDerecho = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resDer.valor + "]");
+                                tempDerecho = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resDer.valor + "]");
                             }
 
 
@@ -729,12 +719,12 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             if (resIzq.tipo == terminales.rboolean)
                             {
 
-                                tempIzquierdo = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resIzq.valor + "]");
+                                tempIzquierdo = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resIzq.valor + "]");
                             }
 
                             if (resDer.tipo == terminales.rboolean)
                             {
-                                tempDerecho = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resDer.valor + "]");
+                                tempDerecho = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resDer.valor + "]");
                             }
 
                             if (verdadero == "" && falso == "") //ULTIMO AND OR NOT
@@ -813,12 +803,12 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             if (resIzq.tipo == terminales.rboolean)
                             {
 
-                                tempIzquierdo = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resIzq.valor + "]");
+                                tempIzquierdo = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resIzq.valor + "]");
                             }
 
                             if (resDer.tipo == terminales.rboolean)
                             {
-                                tempDerecho = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resDer.valor + "]");
+                                tempDerecho = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resDer.valor + "]");
                             }
 
                             if (verdadero == "" && falso == "") //ULTIMO AND OR NOT
@@ -898,12 +888,12 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             if (resIzq.tipo == terminales.rboolean)
                             {
 
-                                tempIzquierdo = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resIzq.valor + "]");
+                                tempIzquierdo = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resIzq.valor + "]");
                             }
 
                             if (resDer.tipo == terminales.rboolean)
                             {
-                                tempDerecho = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resDer.valor + "]");
+                                tempDerecho = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resDer.valor + "]");
                             }
                             if (verdadero == "" && falso == "") //ULTIMO AND OR NOT
                             {
@@ -1038,8 +1028,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
                                     temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " == " + temporal;
                                     return new resultado(terminales.numero, argumento);
                                 }
@@ -1048,7 +1038,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " == " + resDer.valor;
                                     return new resultado(terminales.numero, argumento);
@@ -1065,7 +1055,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " == " + temp;
                                     return new resultado(terminales.numero, argumento);
@@ -1101,8 +1091,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
                                     temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " <> " + temporal;
                                     return new resultado(terminales.numero, argumento);
                                 }
@@ -1111,9 +1101,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
 
-                                    argumento = temp + " <> " + resDer.valor;
+                                    argumento = temp + " != " + resDer.valor;
                                     return new resultado(terminales.numero, argumento);
                                 }
                                 else
@@ -1128,7 +1118,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " <> " + temp;
                                     return new resultado(terminales.numero, argumento);
@@ -1164,8 +1154,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
                                     temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " < " + temporal;
                                     return new resultado(terminales.numero, argumento);
                                 }
@@ -1174,7 +1164,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " < " + resDer.valor;
                                     return new resultado(terminales.numero, argumento);
@@ -1191,7 +1181,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " < " + temp;
 
@@ -1228,8 +1218,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
                                     temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " > " + temporal;
                                     return new resultado(terminales.numero, argumento);
                                 }
@@ -1238,7 +1228,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " > " + resDer.valor;
                                     return new resultado(terminales.numero, argumento);
@@ -1255,7 +1245,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " > " + temp;
                                     return new resultado(terminales.numero, argumento);
@@ -1291,8 +1281,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
                                     temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " <= " + temporal;
                                     return new resultado(terminales.numero, argumento);
                                 }
@@ -1301,7 +1291,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " <= " + resDer.valor;
                                     return new resultado(terminales.numero, argumento);
@@ -1318,7 +1308,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " <= " + temp;
                                     return new resultado(terminales.numero, argumento);
@@ -1354,8 +1344,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
                                     temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
                                     argumento = temp + " >= " + temporal;
                                     return new resultado(terminales.numero, argumento);
                                 }
@@ -1364,7 +1354,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resIzq.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
 
                                     argumento = temp + " >= " + resDer.valor;
                                     return new resultado(terminales.numero, argumento);
@@ -1381,7 +1371,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     temp = cosasGlobalesewe.nuevoTemp();
 
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + array + "[(int)" + resDer.valor + "];");
+                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
 
                                     argumento = resIzq.valor + " >= " + temp;
 
@@ -1410,21 +1400,115 @@ namespace OC2_P2_201800523.Arbol.Expresion
             }
             else
             {
-                //simbolo s = manejadorArbol.tabladeSimbolos.buscarFuncion(node.ChildNodes.ElementAt(0).Token.Text);
-                //if (s != null)
-                //{
-                //    manejadorArbol.ambitoActual = s.id;
-                //    Funcion_Procedimiento.objetoFuncion of = s.fn;
-                //    hacerEjecucion(of.lstSent);
-                //    if (manejadorArbol.controlExit == true)
-                //    {
-                //        manejadorArbol.controlExit = false;
-                //    }
+                LinkedList<expresion> listaParam = new LinkedList<expresion>();
+                string id = node.ChildNodes.ElementAt(0).Token.Text;
+                funcProce.parametros lp = new funcProce.parametros(noterminales.PARAMETROS, node.ChildNodes.ElementAt(2));
+                if (node.ChildNodes.ElementAt(2).ChildNodes.Count != 0)
+                {
+                    lp.nuevaTraduccion(listaParam);
+                }
 
-                //    manejadorArbol.ambitoActual = "global";
+                argumento = "";
+                simbolo fn = tablaActual.buscarFuncion(id);
+                if (fn != null)
+                {
+                    string tempResetear = cosasGlobalesewe.nuevoTemp();
+                    argumento += tempResetear + " = sp;\n";
+                    if (fn.listaParam.Count != 0)
+                    {
+                        
+                        string tempInterno;
+                        LinkedList<parametroCustom> listaParamFunc = fn.listaParam;
+                        for (int i = 0; i <= listaParam.Count - 1; i++)
+                        {
+                            resultado respuesta = listaParam.ElementAt(i).traducir(ref tablaActual, ambito, "", "", xd);
+                            parametroCustom comparador = listaParamFunc.ElementAt(i);
 
-                //    return new resultado(s.tipo, s.valor);
-                //}
+                            temp = cosasGlobalesewe.nuevoTemp();
+
+                            if (respuesta.argumento != null)
+                            {
+                                cosasGlobalesewe.concatenarAccion(respuesta.argumento);
+                            }
+
+                           
+
+                            if (respuesta.tipo == terminales.rinteger || respuesta.tipo == terminales.rreal || respuesta.tipo == terminales.numero || respuesta.tipo == terminales.rboolean)
+                            {
+                                if (comparador.tipo == terminales.rinteger || comparador.tipo == terminales.rreal || comparador.tipo == terminales.numero || comparador.tipo == terminales.rboolean)
+                                {
+                                    if (respuesta.simbolo != null)// para variables
+                                    {
+
+                                        if (comparador.porValor == true)//En el parametro se asigna el valor
+                                        {
+                                            tempInterno = cosasGlobalesewe.nuevoTemp();
+                                            argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                            argumento += tempInterno + " = " + "stack" + "[(int)" + respuesta.valor + "];\n";
+                                            argumento += "stack[(int)" + temp + "] = " + tempInterno + ";\n";
+
+                                        }
+                                        else
+                                        {
+
+                                            argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                            argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                        argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
+                                    }
+                                }
+                                else
+                                {
+
+                                }
+                            }
+                            else if (respuesta.tipo == terminales.rstring || respuesta.tipo == terminales.rchar)
+                            {
+                                if (comparador.tipo == terminales.rstring || comparador.tipo == terminales.rchar)
+                                {
+                                    string otroTempPuta = cosasGlobalesewe.nuevoTemp();
+                                    if (respuesta.simbolo != null)
+                                    {
+                                        argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                        argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
+                                    }
+                                    else
+                                    {
+
+                                        argumento += otroTempPuta + " = hp;\n";
+                                        foreach (char caracter in respuesta.valor)
+                                        {
+                                            argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
+                                            argumento += "hp = hp + 1;\n";
+                                        }
+
+                                        argumento += "heap[(int)hp] = " + "-1" + ";\n";
+                                        argumento += "hp = hp + 1;\n";
+                                        argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                        argumento += "stack[(int)" + temp + "] = " + otroTempPuta + ";\n";
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //Error
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //Error
+                    }
+
+                    argumento += id + "();\n";
+                    argumento += "sp = " + tempResetear + ";\n";
+                    cosasGlobalesewe.concatenarAccion(argumento);
+                    return new resultado(fn.tipo, fn.direccion,fn);
+                }
 
 
             }

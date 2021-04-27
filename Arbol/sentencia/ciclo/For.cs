@@ -20,7 +20,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
             string argumento;
             string tempIncremento;
             string temp, temp1;
-            string array, pointer;
+            //string array, pointer;
 
 
             string tempCondicion;
@@ -31,20 +31,10 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
             expresion derecha;
             resultado resIzq;
             resultado resDer;
-            if (ambito == "global")//Escribir en heap
-            {
-                array = "heap";
-                pointer = "hp";
-            }
-            else //Escribir en stack
-            {
-                array = "stack";
-                pointer = "sp";
-
-            }
+            
 
 
-            simbolo variable = tablaActual.buscar(node.ChildNodes.ElementAt(1).Token.Text);
+            simbolo variable = tablaActual.buscar(node.ChildNodes.ElementAt(1).Token.Text,ambito);
             if (variable == null)
             {
                 return new resultado();
@@ -74,13 +64,13 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
             temp = resExprIni.valor;
             if (resExprIni.simbolo != null)
             {
-                temp = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resExprIni.valor + "]");
+                temp = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resExprIni.valor + "]");
             }
 
             #region Codigo de asignar            
 
            
-            argumento = array + "[(int)" + variable.direccion + "] = " + temp + ";";
+            argumento = "stack" + "[(int)" + variable.direccion + "] = " + temp + ";";
             cosasGlobalesewe.concatenarAccion(argumento);
 
             #endregion
@@ -97,13 +87,13 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
             temp1 = res.valor;
             if (res.simbolo != null)
             {
-                temp1 = cosasGlobalesewe.nuevoTemp(array + "[(int)" + resExprIni.valor + "]");
+                temp1 = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resExprIni.valor + "]");
             }
 
             argumento = tempCondicion + ":\n";
             temp = cosasGlobalesewe.nuevoTemp();
             cosasGlobalesewe.concatenarAccion(argumento);
-            argumento =  temp + " = " + array + "[(int)" + variable.direccion + "];\n"
+            argumento =  temp + " = " + "stack" + "[(int)" + variable.direccion + "];\n"
                 
                 + "if(" +temp +"<="+ temp1 + ") goto " + tempCiclo + ";\n"
             + "goto " + tempSalida + ";\n"
@@ -111,7 +101,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
 
             cosasGlobalesewe.concatenarAccion(argumento);
             //EL incremento ewe
-            argumento = array + "[(int)" + variable.direccion + "]" + " = " + temp + " + 1;\n"
+            argumento = "stack" + "[(int)" + variable.direccion + "]" + " = " + temp + " + 1;\n"
             + "goto " + tempCondicion + ";\n"
             +tempCiclo +":";
             cosasGlobalesewe.concatenarAccion(argumento);

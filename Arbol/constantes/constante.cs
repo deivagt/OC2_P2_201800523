@@ -18,29 +18,11 @@ namespace OC2_P2_201800523.Arbol.constantes
         {
             string argumento = "";
             string temp;
-            //ParseTreeNode id = node.ChildNodes.ElementAt(0);
-            //ParseTreeNode tipo = node.ChildNodes.ElementAt(2);
-            //ParseTreeNode expresion = node.ChildNodes.ElementAt(4);
-            //ParseTreeNode otraConstante = node.ChildNodes.ElementAt(6);
 
-            //int fila = id.Token.Location.Line;
-            //int columna = id.Token.Location.Column;
-
-            //expresion expr = new expresion(noterminales.EXPRESION, expresion);
-            //resultado res = expr.Ejecutar();
-            //string eltipo = tipo.ChildNodes.ElementAt(0).Token.Text;
-            //simbolo nuevoSimbolo = new simbolo(manejadorArbol.ambitoActual, id.Token.Text, res.getValor(),eltipo, fila + 1, columna + 1,false,true);
-            //manejadorArbol.tabladeSimbolos.agregarSimbolo(nuevoSimbolo);
-
-            //if (otraConstante.ChildNodes.Count != 0)
-            //{
-            //    constante otraVar = new constante(noterminales.CONSTANTE, otraConstante);
-            //    otraVar.Ejecutar();
-            //}
             ParseTreeNode id = node.ChildNodes.ElementAt(0);
             ParseTreeNode tipo = node.ChildNodes.ElementAt(2);
             ParseTreeNode expresion = node.ChildNodes.ElementAt(4);
-            ParseTreeNode otraConstante = node.ChildNodes.ElementAt(6);
+            ParseTreeNode otraVariable = node.ChildNodes.ElementAt(6);
 
             expresion expr = new expresion(noterminales.EXPRESION, expresion);
             resultado res = expr.traducir(ref tablaActual, ambito, "", "", "");
@@ -56,60 +38,59 @@ namespace OC2_P2_201800523.Arbol.constantes
             {
                 temp = cosasGlobalesewe.nuevoTemp();
 
-                simbolo nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, true);
+                simbolo nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable");
 
                 tablaActual.agregarSimbolo(nuevoSimbolo);
-                string array = "";
-                string pointer = "";
+
                 /*Escribir en C3D*/
-                if (ambito == "global")//Escribir en heap
-                {
-                    array = "heap";
-                    pointer = "hp";
-                }
-                else //Escribir en stack
-                {
-                    array = "stack";
-                    pointer = "sp";
 
-                }
-                argumento = "/*EMPIEZA DECLARACION CONSTANTE " + id.Token.Text + "*/\n";
-                argumento += temp + " = " + pointer + ";\n";
+                argumento = "/*EMPIEZA DECLARACION VARIABLE " + id.Token.Text + "*/\n";
 
-                if (res.tipo == terminales.cadena || res.tipo == terminales.rchar)
+
+                if (res.tipo == terminales.rstring || res.tipo == terminales.rchar)
                 {
-                    //if (array != "heap") /*Hacer que el stack apunte al heap*/ //SIGUE EN DESARROLLO
-                    //{
-                    //    argumento += array + "[(int)" + temp + "] = " + "hp" + ";\n";
-                    //}
-
-                    foreach (char caracter in res.valor)
+                    if (res.argumento != null)
                     {
-                        argumento += array + "[(int)" + pointer + "] = " + (int)caracter + ";\n";
-                        argumento += pointer + " = " + pointer + " + 1;\n";
+                        cosasGlobalesewe.concatenarAccion(res.argumento);
+                        argumento += temp + " = " + res.valor + ";\n";
+                    }
+                    else
+                    {
+                        argumento += temp + " = " + "hp" + ";\n";
+                        foreach (char caracter in res.valor)
+                        {
+                            argumento += "heap[(int)" + "hp" + "] = " + (int)caracter + ";\n";
+                            argumento += "hp" + " = " + "hp" + " + 1;\n";
+                        }
+
+                        argumento += "heap[(int)" + "hp" + "] = " + "-1" + ";\n";
+                        argumento += "hp" + " = " + "hp" + " + 1;\n";
                     }
 
-                    argumento += array + "[(int)" + pointer + "] = " + "-1" + ";\n";
-                    argumento += pointer + " = " + pointer + " + 1;\n";
+
                 }
                 else
                 {
-
-                    argumento += pointer + " = " + pointer + " + 1;\n";
-                    argumento += array + "[(int)" + temp + "] = " + res.valor + ";\n";
+                    argumento += temp + " = " + "sp" + ";\n";
+                    argumento += "sp" + " = " + "sp" + " + 1;\n";
+                    argumento += "stack" + "[(int)" + temp + "] = " + res.valor + ";\n";
 
                 }
 
-                argumento += "/*FINALIZA DECLARACION CONSTANTE " + id.Token.Text + "*/";
+                argumento += "/*FINALIZA DECLARACION VARIABLE " + id.Token.Text + "*/";
                 /*Agregar a la salida*/
                 cosasGlobalesewe.concatenarAccion(argumento);
 
-                if (otraConstante.ChildNodes.Count != 0)
+                if (otraVariable.ChildNodes.Count != 0)
                 {
-                    constante otraVar = new constante(noterminales.VARIABLE, otraConstante);
+                    constante otraVar = new constante(noterminales.VARIABLE, otraVariable);
                     otraVar.traducir(ref tablaActual, ambito, "", "", "");
                 }
 
+            }
+            else
+            {
+                //CAGASTE XD
             }
             return new resultado();
         }

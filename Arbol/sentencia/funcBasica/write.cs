@@ -19,19 +19,9 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
         {
             string argumento = "";
             string temp;
-            string array, pointer;
+            //string array, pointer;
 
-            if (ambito == "global")//Escribir en heap
-            {
-                array = "heap";
-                pointer = "hp";
-            }
-            else //Escribir en stack
-            {
-                array = "stack";
-                pointer = "sp";
-
-            }
+            
             if (node.ChildNodes.Count == 1)//Write de un termino
             {
 
@@ -41,11 +31,11 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
 
                 if (res.simbolo != null)
                 {
-                    temp = cosasGlobalesewe.nuevoTemp(array + "[(int)" + res.valor + "]");
+                   
                     if (res.tipo == terminales.rinteger || res.tipo == terminales.rreal || res.tipo == terminales.rboolean)
                     {
-                        
 
+                        temp = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + res.valor + "]");
 
                         if (res.tipo == terminales.rinteger)
                         {
@@ -64,7 +54,6 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
                     }
                     else//Cadena o char
                     {
-                        
                         argumento = "t0 = " + res.simbolo.direccion + ";\n";
                         argumento += "imprimirLn();\n";
                     }
@@ -155,7 +144,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
                     {
                         if (res.tipo == terminales.rinteger || res.tipo == terminales.rreal || res.tipo == terminales.rboolean)
                         {
-                            temp = cosasGlobalesewe.nuevoTemp(array + "[(int)" + res.valor + "]");
+                            temp = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + res.valor + "]");
 
 
                             if (res.tipo == terminales.rinteger)

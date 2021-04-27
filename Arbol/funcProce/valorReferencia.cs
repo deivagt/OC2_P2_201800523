@@ -33,7 +33,7 @@ namespace OC2_P2_201800523.Arbol.funcProce
 
                 variables = new valor(noterminales.VALOR, node.ChildNodes.ElementAt(3));
                 variables.nuevaTraduccion(listaVar);
-                tipo = node.ChildNodes.ElementAt(5).Token.Text;
+                tipo = node.ChildNodes.ElementAt(5).ChildNodes.ElementAt(0).Token.Text;
                 foreach (var Var in listaVar)
                 {
                     string id = Var.Token.Text;
@@ -48,7 +48,8 @@ namespace OC2_P2_201800523.Arbol.funcProce
 
                 variables = new valor(noterminales.VALOR, node.ChildNodes.ElementAt(2));
                 variables.nuevaTraduccion(listaVar);
-                tipo = node.ChildNodes.ElementAt(4).Token.Text;
+                tipo = node.ChildNodes.ElementAt(4).ChildNodes.ElementAt(0).Token.Text;
+                if (tipo == terminales.rstring) { esPorValor = false; }
                 foreach (var Var in listaVar)
                 {
                     string id = Var.Token.Text;
@@ -63,24 +64,29 @@ namespace OC2_P2_201800523.Arbol.funcProce
                 esPorValor = false;
                 variables = new valor(noterminales.VALOR, node.ChildNodes.ElementAt(1));
                 variables.nuevaTraduccion(listaVar);
-                tipo = node.ChildNodes.ElementAt(3).Token.Text;
+                tipo = node.ChildNodes.ElementAt(3).ChildNodes.ElementAt(0).Token.Text;
                 foreach (var Var in listaVar)
                 {
                     string id = Var.Token.Text;
                     listaParam.AddLast(new parametroCustom(id, esPorValor,tipo));
                 }
             }
-            else // VALOR + dos_puntos + TIPO /*POR VALOR*/ 
+            else if (node.ChildNodes.Count == 3) // VALOR + dos_puntos + TIPO /*POR VALOR*/ 
             {
                 esPorValor = true;
                 variables = new valor(noterminales.VALOR, node.ChildNodes.ElementAt(0));
                 variables.nuevaTraduccion(listaVar);
-                tipo = node.ChildNodes.ElementAt(2).Token.Text;
+                tipo = node.ChildNodes.ElementAt(2).ChildNodes.ElementAt(0).Token.Text;
+                if(tipo == terminales.rstring) { esPorValor = false; }
                 foreach (var Var in listaVar)
                 {
                     string id = Var.Token.Text;
                     listaParam.AddLast(new parametroCustom(id, esPorValor,tipo));
                 }
+            }
+            else
+            {
+
             }
         }
     }

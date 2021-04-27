@@ -9,9 +9,9 @@ namespace OC2_P2_201800523.tablaSimbolos
         public string id;
         public bool porValor;
         public string tipo;
+        public string direccion;
 
-        public parametroCustom(string id, bool porValor, string tipo)
-        {
+        public parametroCustom(string id, bool porValor, string tipo) { 
             this.id = id;
             this.porValor = porValor;
             this.tipo = tipo;

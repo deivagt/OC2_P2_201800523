@@ -14,7 +14,7 @@ namespace OC2_P2_201800523
         public static bool controlExit = false;
         public static string salida = "";
         static string args;
-        static LinkedList<string> funcionesC3D;
+        public static LinkedList<string> funcionesC3D;
 
         public static void inicializar()
         {
@@ -51,6 +51,13 @@ namespace OC2_P2_201800523
             string etiqueta1 = "L" + etiqueta;
             etiqueta++;
             return etiqueta1;
+        }
+
+        public static string tomarSalida()
+        {
+            string newSalida = salida;
+            salida = "";
+            return newSalida;
         }
 
         public static void cocinar()

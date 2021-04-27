@@ -20,7 +20,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.ciclo
             string argumento;
             string temporal;
             string temp = "";
-            string array, pointer;
+            //string array, pointer;
 
 
             string tempCondicion;
@@ -32,17 +32,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.ciclo
             expresion derecha;
             resultado resIzq;
             resultado resDer;
-            if (ambito == "global")//Escribir en heap
-            {
-                array = "heap";
-                pointer = "hp";
-            }
-            else //Escribir en stack
-            {
-                array = "stack";
-                pointer = "sp";
-
-            }
+            
 
 
 
@@ -70,7 +60,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.ciclo
 
             if (res.simbolo != null)
             {
-                temp = cosasGlobalesewe.nuevoTemp(array + "[(int)" + res.valor + "]");
+                temp = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + res.valor + "]");
             }
 
             argumento = "if(" + temp + ") goto " + tempSalida + ";\n"

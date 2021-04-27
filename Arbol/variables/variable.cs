@@ -36,38 +36,34 @@ namespace OC2_P2_201800523.Arbol.variables
 
                     simbolo nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1,"variable");
                     tablaActual.agregarSimbolo(nuevoSimbolo);
-                    string array = "";
-                    string pointer = "";
+                   
                     /*Escribir en C3D*/
-                    if (ambito == "global")//Escribir en heap
-                    {
-                        array = "heap";
-                        pointer = "hp";
-                    }
-                    else //Escribir en stack
-                    {
-                        array = "stack";
-                        pointer = "sp";
-
-                    }
+                    
                     argumento = "/*EMPIEZA DECLARACION VARIABLE " + id.Token.Text + "*/\n";
 
-                    argumento += temp + " = " + pointer + ";\n";
-                    argumento += pointer + " = " + pointer + " + 1;\n";
+                    
 
                     if (eltipo == terminales.rstring || eltipo == terminales.rchar)
                     {
-                        argumento += array + "[(int)" + temp + "] = " + "-1" + ";\n";
+                        argumento += temp + " = " + "hp" + ";\n";
+                        argumento += "hp" + " = " + "hp" + " + 1;\n";
+                        argumento += "heap" + "[(int)" + temp + "] = " + "-1" + ";\n";
                     }else if(eltipo == terminales.rinteger)
                     {
-                        argumento += array + "[(int)" + temp + "] = " + "0" + ";\n";
+                        argumento += temp + " = " + "sp" + ";\n";
+                        argumento += "sp" + " = " + "sp" + " + 1;\n";
+                        argumento += "stack" + "[(int)" + temp + "] = " + "0" + ";\n";
                     }else if(eltipo == terminales.rreal)
                     {
-                        argumento += array + "[(int)" + temp + "] = " + "0.0" + ";\n";
+                        argumento += temp + " = " + "sp" + ";\n";
+                        argumento += "sp" + " = " + "sp" + " + 1;\n";
+                        argumento += "stack" + "[(int)" + temp + "] = " + "0.0" + ";\n";
                     }
                     else if (eltipo == terminales.rboolean)
                     {
-                        argumento += array + "[(int)" + temp + "] = " + "0" + ";\n";
+                        argumento += temp + " = " + "sp" + ";\n";
+                        argumento += "sp" + " = " + "sp" + " + 1;\n";
+                        argumento += "stack" + "[(int)" + temp + "] = " + "0" + ";\n";
                     }
 
                     argumento += "/*FINALIZA DECLARACION VARIABLE " + id.Token.Text + "*/";
@@ -90,19 +86,8 @@ namespace OC2_P2_201800523.Arbol.variables
                     otra_decl_variable variasVariables = new otra_decl_variable(noterminales.OTRA_DECL_VARIABLE, ids);
 
                     variasVariables.nuevaTraduccion(listaVar);
-                    string array = "";
-                    string pointer = "";
-                    if (ambito == "global")//Escribir en heap
-                    {
-                        array = "heap";
-                        pointer = "hp";
-                    }
-                    else //Escribir en stack
-                    {
-                        array = "stack";
-                        pointer = "sp";
-
-                    }
+                    
+                    
                     foreach (var id in listaVar)
                     {
                         int fila = id.Token.Location.Line;
@@ -115,24 +100,29 @@ namespace OC2_P2_201800523.Arbol.variables
                         tablaActual.agregarSimbolo(nuevoSimbolo);
                         argumento = "/*EMPIEZA DECLARACION VARIABLE " + id.Token.Text + "*/\n";
 
-                        argumento += temp + " = " + pointer + ";\n";
-                        argumento += pointer + " = " + pointer + " + 1;\n";
-
                         if (eltipo == terminales.rstring || eltipo == terminales.rchar)
                         {
-                            argumento += array + "[(int)" + temp + "] = " + "-1" + ";\n";
+                            argumento += temp + " = " + "hp" + ";\n";
+                            argumento += "hp" + " = " + "hp" + " + 1;\n";
+                            argumento += "heap" + "[(int)" + temp + "] = " + "-1" + ";\n";
                         }
                         else if (eltipo == terminales.rinteger)
                         {
-                            argumento += array + "[(int)" + temp + "] = " + "0" + ";\n";
+                            argumento += temp + " = " + "sp" + ";\n";
+                            argumento += "sp" + " = " + "sp" + " + 1;\n";
+                            argumento += "stack" + "[(int)" + temp + "] = " + "0" + ";\n";
                         }
                         else if (eltipo == terminales.rreal)
                         {
-                            argumento += array + "[(int)" + temp + "] = " + "0.0" + ";\n";
+                            argumento += temp + " = " + "sp" + ";\n";
+                            argumento += "sp" + " = " + "sp" + " + 1;\n";
+                            argumento += "stack" + "[(int)" + temp + "] = " + "0.0" + ";\n";
                         }
                         else if (eltipo == terminales.rboolean)
                         {
-                            argumento += array + "[(int)" + temp + "] = " + "0" + ";\n";
+                            argumento += temp + " = " + "sp" + ";\n";
+                            argumento += "sp" + " = " + "sp" + " + 1;\n";
+                            argumento += "stack" + "[(int)" + temp + "] = " + "0" + ";\n";
                         }
 
                         argumento += "/*FINALIZA DECLARACION VARIABLE " + id.Token.Text + "*/";
@@ -141,11 +131,7 @@ namespace OC2_P2_201800523.Arbol.variables
                     }
 
                 }
-                //if (otraVariable.ChildNodes.Count != 0)
-                //{
-                //    variable otraVar = new variable(noterminales.VARIABLE, otraVariable);
-                //    otraVar.Ejecutar();
-                //}
+                
             }
             else
             {
@@ -172,20 +158,9 @@ namespace OC2_P2_201800523.Arbol.variables
                     simbolo nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable");
 
                     tablaActual.agregarSimbolo(nuevoSimbolo);
-                    string array = "";
-                    string pointer = "";
+                    
                     /*Escribir en C3D*/
-                    if (ambito == "global")//Escribir en heap
-                    {
-                        array = "heap";
-                        pointer = "hp";
-                    }
-                    else //Escribir en stack
-                    {
-                        array = "stack";
-                        pointer = "sp";
-
-                    }
+                    
                     argumento = "/*EMPIEZA DECLARACION VARIABLE " + id.Token.Text + "*/\n";
                     
 
@@ -198,24 +173,24 @@ namespace OC2_P2_201800523.Arbol.variables
                         }
                         else
                         {
-                            argumento += temp + " = " + pointer + ";\n";
+                            argumento += temp + " = " + "hp" + ";\n";
                             foreach (char caracter in res.valor)
                             {
-                                argumento +="heap[(int)" + pointer + "] = " + (int)caracter + ";\n";
-                                argumento += pointer + " = " + pointer + " + 1;\n";
+                                argumento +="heap[(int)" + "hp" + "] = " + (int)caracter + ";\n";
+                                argumento += "hp" + " = " + "hp" + " + 1;\n";
                             }
 
-                            argumento += "heap[(int)" + pointer + "] = " + "-1" + ";\n";
-                            argumento += pointer + " = " + pointer + " + 1;\n";
+                            argumento += "heap[(int)" + "hp" + "] = " + "-1" + ";\n";
+                            argumento += "hp" + " = " + "hp" + " + 1;\n";
                         }
 
                         
                     }
                     else
                     {
-                        argumento += temp + " = " + pointer + ";\n";
-                        argumento += pointer + " = " + pointer + " + 1;\n";
-                        argumento += array + "[(int)" + temp + "] = " + res.valor + ";\n";
+                        argumento += temp + " = " + "sp" + ";\n";
+                        argumento += "sp" + " = " + "sp" + " + 1;\n";
+                        argumento += "stack" + "[(int)" + temp + "] = " + res.valor + ";\n";
 
                     }
 
