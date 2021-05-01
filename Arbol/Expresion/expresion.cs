@@ -34,7 +34,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
             expresion derecha;
             resultado resIzq;
             resultado resDer;
-            
+
 
 
             if (node.ChildNodes.Count == 1)
@@ -85,34 +85,34 @@ namespace OC2_P2_201800523.Arbol.Expresion
                 }
                 else
                 {
-                    simbolo a = tablaActual.buscar(salida.Token.Text,ambito);
+                    simbolo a = tablaActual.buscar(salida.Token.Text, ambito);
                     if (a != null)
                     {
                         if (a.tipo == "integer")
                         {
 
-                            return new resultado(terminales.rinteger, a.direccion,a);
+                            return new resultado(terminales.rinteger, a.direccion, a);
                         }
                         else if (a.tipo == "real")
                         {
-                            return new resultado(terminales.rreal, a.direccion,a);
+                            return new resultado(terminales.rreal, a.direccion, a);
                         }
 
                         else if (a.tipo == "string")
                         {
-                            return new resultado(terminales.rstring, a.direccion,a);
+                            return new resultado(terminales.rstring, a.direccion, a);
                         }
                         else if (a.tipo == "char")
                         {
-                            return new resultado(terminales.rchar, a.direccion,a);
+                            return new resultado(terminales.rchar, a.direccion, a);
                         }
                         else if (a.tipo == "boolean")
                         {
-                            return new resultado(terminales.rboolean, a.direccion,a);
+                            return new resultado(terminales.rboolean, a.direccion, a);
                         }
                         else
                         {
-                            return new resultado("etc", a.direccion,a);
+                            return new resultado("etc", a.direccion, a);
                         }
                     }
 
@@ -131,7 +131,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
                     tempDerecho = resDer.valor;
-                    if(resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resDer.tipo == terminales.rboolean)
+                    if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resDer.tipo == terminales.rboolean)
                     {
                         tempDerecho = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resDer.valor + "]");
                     }
@@ -149,9 +149,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     derecha = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(1));
 
                     resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
-                                        
+
                     tempDerecho = resDer.valor;
-                    
+
                     if (resDer.tipo == terminales.rboolean)
                     {
                         tempDerecho = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resDer.valor + "]");
@@ -198,9 +198,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            if ((resIzq.tipo == terminales.rstring || resIzq.tipo == terminales.rchar) )
+                            if ((resIzq.tipo == terminales.rstring || resIzq.tipo == terminales.rchar))
                             {
-                                if(resDer.tipo == terminales.rstring || resDer.tipo == terminales.rchar)
+                                if (resDer.tipo == terminales.rstring || resDer.tipo == terminales.rchar)
                                 {
                                     argumento = "";
                                     string inicioNuevaCadena = cosasGlobalesewe.nuevoTemp();
@@ -229,8 +229,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                         argumento += "heap[(int)hp] = " + "-1" + ";\n";
                                         argumento += "hp = hp + 1;\n";
                                     }
-                                    
-                                    if(resDer.argumento != null)
+
+                                    if (resDer.argumento != null)
                                     {
                                         cosasGlobalesewe.concatenarAccion(resDer.argumento);
                                         inicioDer = resDer.valor;
@@ -252,10 +252,10 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                         argumento += "heap[(int)hp] = " + "-1" + ";\n";
                                         argumento += "hp = hp + 1;\n";
                                     }
-                                    
+
 
                                     argumento += inicioNuevaCadena + " = hp;\n";
-                                    argumento += "t0 = " + inicioIzq +";\n";
+                                    argumento += "t0 = " + inicioIzq + ";\n";
                                     argumento += "t2 = " + inicioDer + ";\n";
 
                                     argumento += "concatenacion();\n";
@@ -267,14 +267,15 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     Program.form.richTextBox5.Text += "Error Sintactico: No se pueden concatenar tipos distintos\n";
                                     return new resultado(terminales.rstring, "");
                                 }
-                                
-                                
+
+
                             }
 
                             else if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
                             {
                                 if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a+a
                                 {
+                                    
                                     temp = cosasGlobalesewe.nuevoTemp();
                                     temporal = cosasGlobalesewe.nuevoTemp();
                                     cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
@@ -543,7 +544,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
-
+                            
                             if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
                             {
                                 if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a%a
@@ -599,6 +600,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             }
                             else
                             {
+
                                 //ERROR
                             }
 
@@ -630,13 +632,13 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             tempIzquierdo = resIzq.valor;
                             tempDerecho = resDer.valor;
 
-                            if(resIzq.tipo == terminales.rboolean)
+                            if (resIzq.tipo == terminales.rboolean)
                             {
-                                
+
                                 tempIzquierdo = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resIzq.valor + "]");
                             }
 
-                            if(resDer.tipo == terminales.rboolean)
+                            if (resDer.tipo == terminales.rboolean)
                             {
                                 tempDerecho = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resDer.valor + "]");
                             }
@@ -1400,122 +1402,209 @@ namespace OC2_P2_201800523.Arbol.Expresion
             }
             else
             {
-                LinkedList<expresion> listaParam = new LinkedList<expresion>();
-                string id = node.ChildNodes.ElementAt(0).Token.Text;
-                funcProce.parametros lp = new funcProce.parametros(noterminales.PARAMETROS, node.ChildNodes.ElementAt(2));
-                if (node.ChildNodes.ElementAt(2).ChildNodes.Count != 0)
+                if (node.ChildNodes.ElementAt(1).Token.Text == "(")// Function
                 {
-                    lp.nuevaTraduccion(listaParam);
-                }
-
-                argumento = "";
-                simbolo fn = tablaActual.buscarFuncion(id);
-                if (fn != null)
-                {
-                    string tempResetear = cosasGlobalesewe.nuevoTemp();
-                    argumento += tempResetear + " = sp;\n";
-                    if (fn.listaParam.Count != 0)
+                    LinkedList<expresion> listaParam = new LinkedList<expresion>();
+                    string id = node.ChildNodes.ElementAt(0).Token.Text;
+                    funcProce.parametros lp = new funcProce.parametros(noterminales.PARAMETROS, node.ChildNodes.ElementAt(2));
+                    if (node.ChildNodes.ElementAt(2).ChildNodes.Count != 0)
                     {
-                        
-                        string tempInterno;
-                        LinkedList<parametroCustom> listaParamFunc = fn.listaParam;
-                        for (int i = 0; i <= listaParam.Count - 1; i++)
+                        lp.nuevaTraduccion(listaParam);
+                    }
+
+                    argumento = "";
+                    simbolo fn = tablaActual.buscarFuncion(id);
+                    if (fn != null)
+                    {
+                        string tempResetear = cosasGlobalesewe.nuevoTemp();
+                        argumento += tempResetear + " = sp;\n";
+                        if (fn.listaParam.Count != 0)
                         {
-                            resultado respuesta = listaParam.ElementAt(i).traducir(ref tablaActual, ambito, "", "", xd);
-                            parametroCustom comparador = listaParamFunc.ElementAt(i);
 
-                            temp = cosasGlobalesewe.nuevoTemp();
-
-                            if (respuesta.argumento != null)
+                            string tempInterno;
+                            LinkedList<parametroCustom> listaParamFunc = fn.listaParam;
+                            for (int i = 0; i <= listaParam.Count - 1; i++)
                             {
-                                cosasGlobalesewe.concatenarAccion(respuesta.argumento);
-                            }
+                                resultado respuesta = listaParam.ElementAt(i).traducir(ref tablaActual, ambito, "", "", xd);
+                                parametroCustom comparador = listaParamFunc.ElementAt(i);
 
-                           
+                                temp = cosasGlobalesewe.nuevoTemp();
 
-                            if (respuesta.tipo == terminales.rinteger || respuesta.tipo == terminales.rreal || respuesta.tipo == terminales.numero || respuesta.tipo == terminales.rboolean)
-                            {
-                                if (comparador.tipo == terminales.rinteger || comparador.tipo == terminales.rreal || comparador.tipo == terminales.numero || comparador.tipo == terminales.rboolean)
+                                if (respuesta.argumento != null)
                                 {
-                                    if (respuesta.simbolo != null)// para variables
+                                    cosasGlobalesewe.concatenarAccion(respuesta.argumento);
+                                }
+
+
+
+                                if (respuesta.tipo == terminales.rinteger || respuesta.tipo == terminales.rreal || respuesta.tipo == terminales.numero || respuesta.tipo == terminales.rboolean)
+                                {
+                                    if (comparador.tipo == terminales.rinteger || comparador.tipo == terminales.rreal || comparador.tipo == terminales.numero || comparador.tipo == terminales.rboolean)
                                     {
-
-                                        if (comparador.porValor == true)//En el parametro se asigna el valor
+                                        if (respuesta.simbolo != null)// para variables
                                         {
-                                            tempInterno = cosasGlobalesewe.nuevoTemp();
-                                            argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                            argumento += tempInterno + " = " + "stack" + "[(int)" + respuesta.valor + "];\n";
-                                            argumento += "stack[(int)" + temp + "] = " + tempInterno + ";\n";
 
+                                            if (comparador.porValor == true)//En el parametro se asigna el valor
+                                            {
+                                                tempInterno = cosasGlobalesewe.nuevoTemp();
+                                                argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                                argumento += tempInterno + " = " + "stack" + "[(int)" + respuesta.valor + "];\n";
+                                                argumento += "stack[(int)" + temp + "] = " + tempInterno + ";\n";
+
+                                            }
+                                            else
+                                            {
+
+                                                argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                                argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
+                                            }
                                         }
                                         else
                                         {
-
                                             argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
                                             argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
                                         }
                                     }
                                     else
                                     {
-                                        argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                        argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
+
+                                    }
+                                }
+                                else if (respuesta.tipo == terminales.rstring || respuesta.tipo == terminales.rchar)
+                                {
+                                    if (comparador.tipo == terminales.rstring || comparador.tipo == terminales.rchar)
+                                    {
+                                        string otroTempPuta = cosasGlobalesewe.nuevoTemp();
+                                        if (respuesta.simbolo != null)
+                                        {
+                                            argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                            argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
+                                        }
+                                        else
+                                        {
+
+                                            argumento += otroTempPuta + " = hp;\n";
+                                            foreach (char caracter in respuesta.valor)
+                                            {
+                                                argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
+                                                argumento += "hp = hp + 1;\n";
+                                            }
+
+                                            argumento += "heap[(int)hp] = " + "-1" + ";\n";
+                                            argumento += "hp = hp + 1;\n";
+                                            argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                            argumento += "stack[(int)" + temp + "] = " + otroTempPuta + ";\n";
+                                        }
                                     }
                                 }
                                 else
                                 {
-
+                                    //Error
                                 }
-                            }
-                            else if (respuesta.tipo == terminales.rstring || respuesta.tipo == terminales.rchar)
-                            {
-                                if (comparador.tipo == terminales.rstring || comparador.tipo == terminales.rchar)
-                                {
-                                    string otroTempPuta = cosasGlobalesewe.nuevoTemp();
-                                    if (respuesta.simbolo != null)
-                                    {
-                                        argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                        argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
-                                    }
-                                    else
-                                    {
-
-                                        argumento += otroTempPuta + " = hp;\n";
-                                        foreach (char caracter in respuesta.valor)
-                                        {
-                                            argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
-                                            argumento += "hp = hp + 1;\n";
-                                        }
-
-                                        argumento += "heap[(int)hp] = " + "-1" + ";\n";
-                                        argumento += "hp = hp + 1;\n";
-                                        argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                        argumento += "stack[(int)" + temp + "] = " + otroTempPuta + ";\n";
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                //Error
                             }
                         }
+                        else
+                        {
+                            //Error
+                        }
+
+                        argumento += id + "();\n";
+                        argumento += "sp = " + tempResetear + ";\n";
+                        cosasGlobalesewe.concatenarAccion(argumento);
+                        return new resultado(fn.tipo, fn.direccion, fn);
                     }
-                    else
+                }
+                else if (node.ChildNodes.ElementAt(1).Token.Text == "[")
+                {
+                    //ARRAY
+                    argumento = "";
+                    ParseTreeNode id = node.ChildNodes.ElementAt(0);
+                    simbolo a = tablaActual.buscar(id.Token.Text, ambito);
+                    string retorno = "";
+                    if (a != null && a.esArray == true)
                     {
-                        //Error
+
+                        LinkedList<int> listaPos = new LinkedList<int>();
+                        ParseTreeNode auxi = node.ChildNodes.ElementAt(2);
+                        int posicion = 0;
+                        while (auxi != null)
+                        {
+                            if (auxi.ChildNodes.Count == 3)
+                            {
+                                posicion = int.Parse(auxi.ChildNodes.ElementAt(2).Token.Text);
+                                listaPos.AddFirst(posicion);
+                                auxi = auxi.ChildNodes.ElementAt(0);
+                            }
+                            else if (auxi.ChildNodes.Count == 1)
+                            {
+                                posicion = int.Parse(auxi.ChildNodes.ElementAt(0).Token.Text);
+                                listaPos.AddFirst(posicion);
+                                auxi = null;
+                            }
+                        }
+                        //foreach (int b in listaPos)
+                        //{
+                        //    System.Diagnostics.Debug.WriteLine(b);
+                        //}
+
+                        if (listaPos.Count == 1)//C3D para un array normalito
+                        {
+                            temp = cosasGlobalesewe.nuevoTemp();
+                            temporal = cosasGlobalesewe.nuevoTemp();
+                            retorno = cosasGlobalesewe.nuevoTemp();
+                            argumento += temp + " = " + "stack[(int)" + a.direccion + "];\n";
+                            argumento+= temporal + " = " + temp + " + " + listaPos.ElementAt(0) + ";\n";
+                            argumento += retorno + " = heap[(int)" + temporal + "];\n";
+                            cosasGlobalesewe.concatenarAccion(argumento);
+
+
+                        }
+                        else//Matriz y demás
+                        {
+
+                        }
+
+
+
+
+
+
+
+                        if (a.tipo == "integer")
+                        {
+
+                            return new resultado(terminales.rinteger, retorno,  a,true);
+                        }
+                        else if (a.tipo == "real")
+                        {
+                            return new resultado(terminales.rreal, retorno,  a, true);
+                        }
+
+                        else if (a.tipo == "string")
+                        {
+                            return new resultado(terminales.rstring, retorno,  a, true);
+                        }
+                        else if (a.tipo == "char")
+                        {
+                            return new resultado(terminales.rchar, retorno,  a, true);
+                        }
+                        else if (a.tipo == "boolean")
+                        {
+                            return new resultado(terminales.rboolean, retorno,  a, true);
+                        }
+                        else
+                        {
+                            return new resultado("etc", retorno,  a, true);
+                        }
+
                     }
 
-                    argumento += id + "();\n";
-                    argumento += "sp = " + tempResetear + ";\n";
-                    cosasGlobalesewe.concatenarAccion(argumento);
-                    return new resultado(fn.tipo, fn.direccion,fn);
                 }
 
-
+                return new resultado();
             }
 
             return new resultado();
         }
-
-
     }
 }

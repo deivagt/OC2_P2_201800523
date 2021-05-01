@@ -99,6 +99,24 @@ namespace OC2_P2_201800523.tablaSimbolos
             }
             return null;
         }
+
+        public simbolo buscarTipo(string id)
+        {
+
+            id = id.ToLower();
+            foreach (var a in tablaSimbolos)
+            {
+                if (a.esTipo == true)
+                {
+                    if (a.id == id)
+                    {
+                        return a;
+                    }
+                }
+
+            }
+            return null;
+        }
         //public simbolo buscarSimbolo(string id, string ambito)
         //{
 

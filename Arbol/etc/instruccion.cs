@@ -35,8 +35,8 @@ namespace OC2_P2_201800523.Arbol.etc
                 }
                 else if (node.ChildNodes.ElementAt(0).Token.Text == "type")
                 {
-                    //Tipos.decltipos tipo = new Tipos.decltipos(noterminales.DECLTIPOS, node.ChildNodes.ElementAt(1));
-                    //tipo.Ejecutar();
+                    tipos.types tipo = new tipos.types(noterminales.DECLTIPOS, node.ChildNodes.ElementAt(1));
+                    tipo.traducir(ref tablaActual, ambito, verdadero, falso, xd);
                 }
             }
 

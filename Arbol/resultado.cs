@@ -13,9 +13,7 @@ namespace OC2_P2_201800523.Arbol
         public string tipo;
         public string valor;
         public int temporal;
-        public string verdadero;
-        public string falso;
-        public string salida;
+        public bool esArray;
         public string argumento;
         public simbolo simbolo;
         LinkedList<ParseTreeNode> nodo;
@@ -32,7 +30,20 @@ namespace OC2_P2_201800523.Arbol
             this.valor = valor;
             this.simbolo = simbolo;
         }
-
+        public resultado(string tipo, string valor, simbolo simbolo,bool esArray) //Para cadenas 
+        {
+            this.tipo = tipo;
+            this.valor = valor;
+            this.simbolo = simbolo;
+            this.esArray = esArray;
+        }
+        public resultado(string tipo, string valor, string argumento, simbolo simbolo) //Otras cosas ewe
+        {
+            this.tipo = tipo;
+            this.valor = valor;
+            this.argumento = argumento;
+            this.simbolo = simbolo;
+        }
         public resultado(string tipo, string valor, string argumento) //Otras cosas ewe
         {
             this.tipo = tipo;

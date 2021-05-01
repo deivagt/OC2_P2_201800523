@@ -108,9 +108,9 @@ namespace OC2_P2_201800523.AST
             NonTerminal OTRA_DECL_VARIABLE = new NonTerminal(noterminales.OTRA_DECL_VARIABLE);
 
             NonTerminal CONSTANTE = new NonTerminal(noterminales.CONSTANTE);
-            NonTerminal OTRA_CONSTANTE = new NonTerminal(noterminales.OTRA_CONSTANTE);
 
             NonTerminal INDEXADO = new NonTerminal(noterminales.INDEXADO);
+            NonTerminal POSICION = new NonTerminal(noterminales.POSICION);
 
             NonTerminal DECLTIPOS = new NonTerminal(noterminales.DECLTIPOS);
             NonTerminal DECLVARIOST = new NonTerminal(noterminales.DECLVARIOST);
@@ -118,7 +118,6 @@ namespace OC2_P2_201800523.AST
             NonTerminal TIPO = new NonTerminal(noterminales.TIPO);
             NonTerminal TRETORNO = new NonTerminal(noterminales.TRETORNO);
 
-            NonTerminal FUNCION_O_PROCEDIMIENTO = new NonTerminal(noterminales.FUNCION_O_PROCEDIMIENTO);
             NonTerminal FUNCION = new NonTerminal(noterminales.FUNCION);
             NonTerminal OTRA_FUNCION = new NonTerminal(noterminales.OTRA_FUNCION);
 
@@ -133,7 +132,6 @@ namespace OC2_P2_201800523.AST
 
             NonTerminal VALOR_REFERENCIA = new NonTerminal(noterminales.VALOR_REFERENCIA);
             NonTerminal VALOR = new NonTerminal(noterminales.VALOR);
-            NonTerminal REFERENCIA = new NonTerminal(noterminales.REFERENCIA);
 
             NonTerminal PARAMETROSWRITELN = new NonTerminal(noterminales.PARAMETROSWRITELN);
             NonTerminal DECLARACIONATRIBUTOS = new NonTerminal(noterminales.DECLARACIONATRIBUTOS);
@@ -227,8 +225,8 @@ namespace OC2_P2_201800523.AST
                 | id
                 ;
 
-            INDEXADO.Rule = INDEXADO + coma + EXPRESION + dospunticos + EXPRESION
-                | EXPRESION + dospunticos + EXPRESION
+            INDEXADO.Rule = INDEXADO + coma + numero + dospunticos + numero
+                | numero + dospunticos + numero
                 ;
 
 
@@ -264,6 +262,7 @@ namespace OC2_P2_201800523.AST
                 ;
 
             SENTENCIA.Rule = id + dos_puntos_igual + EXPRESION + punto_coma
+                | id + abrir_corchete + POSICION + cerrar_corchete + dos_puntos_igual + EXPRESION + punto_coma
                 | id + abrir_parentesis + PARAMETROS + cerrar_parentesis + punto_coma 
                 | rif + EXPRESION + rthen + begin + SENTENCIAS + end + punto_coma
                 | rif + EXPRESION + rthen + begin + SENTENCIAS + end + PreferShiftHere() + ELSEIF + punto_coma
@@ -321,11 +320,16 @@ namespace OC2_P2_201800523.AST
                 | EXPRESION + mayor_igual + EXPRESION
                 | id
                 | id + abrir_parentesis + PARAMETROS + cerrar_parentesis
+                | id + abrir_corchete + POSICION + cerrar_corchete
                 | numero
                 | cadena
                 | rtrue
                 | rfalse
                 | abrir_parentesis + EXPRESION + cerrar_parentesis
+                ;
+
+            POSICION.Rule = POSICION + coma + numero
+                | numero
                 ;
 
             PARAMETROS.Rule = PARAMETROS + coma + EXPRESION
@@ -339,6 +343,7 @@ namespace OC2_P2_201800523.AST
                 | rchar
                 | rboolean
                 | id
+                | rarray + abrir_corchete + INDEXADO + cerrar_corchete + rof + TIPO 
                 ;
 
             TRETORNO.Rule = rstring
