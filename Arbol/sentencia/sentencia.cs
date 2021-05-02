@@ -170,17 +170,10 @@ namespace OC2_P2_201800523.Arbol.sentencia
                             argumento = res.argumento;
                         }
 
-                        if(res.simbolo != null)
-                        {
-                            string tempExtra = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + res.valor + "]");
-                            argumento += "stack" + "[(int)" + partido[1] + "] = " + tempExtra + ";";
-                            cosasGlobalesewe.concatenarAccion(argumento);
-                        }
-                        else
-                        {
+                        
                             argumento += "stack" + "[(int)" + partido[1] + "] = " + res.valor + ";";
                             cosasGlobalesewe.concatenarAccion(argumento);
-                        }
+                        
                         
                     }
                     cosasGlobalesewe.concatenarAccion("goto " + partido[0] + ";");
@@ -215,7 +208,6 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                     if (variable.tipo == terminales.rstring || res.tipo == terminales.rchar)
                                     {
                                         variable.direccion = res.valor;
-
                                     }
                                 }
                             }

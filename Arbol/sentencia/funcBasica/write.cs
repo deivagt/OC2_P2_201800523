@@ -35,20 +35,20 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
                     if (res.tipo == terminales.rinteger || res.tipo == terminales.rreal || res.tipo == terminales.rboolean)
                     {
 
-                        temp = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + res.valor + "]");
+                        
 
                         if (res.tipo == terminales.rinteger)
                         {
-                            argumento += "printf(\"%d\", (int)" + temp + ");";
+                            argumento += "printf(\"%d\", (int)" + res.valor + ");";
                         }
                         else if (res.tipo == terminales.rreal)
                         {
 
-                            argumento += "printf(\"%f\", (double)" + temp + ");";
+                            argumento += "printf(\"%f\", (double)" + res.valor + ");";
                         }
                         else//SUMAS RESTAS Y DEMAS
                         {
-                            argumento += "t3 = " + temp + " ;";
+                            argumento += "t3 = " + res.valor + " ;";
                             argumento += "booleanoCadena();";
                         }
                     }
@@ -144,21 +144,20 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
                     {
                         if (res.tipo == terminales.rinteger || res.tipo == terminales.rreal || res.tipo == terminales.rboolean)
                         {
-                            temp = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + res.valor + "]");
-
+                           
 
                             if (res.tipo == terminales.rinteger)
                             {
-                                argumento += "printf(\"%d\", (int)" + temp + ");";
+                                argumento += "printf(\"%d\", (int)" + res.valor + ");";
                             }
                             else if (res.tipo == terminales.rreal)
                             {
 
-                                argumento += "printf(\"%f\", (double)" + temp + ");";
+                                argumento += "printf(\"%f\", (double)" + res.valor + ");";
                             }
                             else//SUMAS RESTAS Y DEMAS
                             {
-                                argumento += "t3 = " + temp + " ;";
+                                argumento += "t3 = " + res.valor + " ;";
                                 argumento += "booleanoCadena();";
                             }
                         }

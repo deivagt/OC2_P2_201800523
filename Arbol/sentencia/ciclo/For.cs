@@ -62,10 +62,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
                 cosasGlobalesewe.concatenarAccion(resExprIni.argumento);
             }
             temp = resExprIni.valor;
-            if (resExprIni.simbolo != null)
-            {
-                temp = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resExprIni.valor + "]");
-            }
+            
 
             #region Codigo de asignar            
 
@@ -85,10 +82,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
                 cosasGlobalesewe.concatenarAccion(res.argumento);
             }
             temp1 = res.valor;
-            if (res.simbolo != null)
-            {
-                temp1 = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + resExprIni.valor + "]");
-            }
+            
 
             argumento = tempCondicion + ":\n";
             temp = cosasGlobalesewe.nuevoTemp();

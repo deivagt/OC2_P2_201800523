@@ -88,31 +88,32 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     simbolo a = tablaActual.buscar(salida.Token.Text, ambito);
                     if (a != null)
                     {
+                        temp = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + a.direccion + "]");
                         if (a.tipo == "integer")
                         {
 
-                            return new resultado(terminales.rinteger, a.direccion, a);
+                            return new resultado(terminales.rinteger, temp, a);
                         }
                         else if (a.tipo == "real")
                         {
-                            return new resultado(terminales.rreal, a.direccion, a);
+                            return new resultado(terminales.rreal, temp, a);
                         }
 
                         else if (a.tipo == "string")
                         {
-                            return new resultado(terminales.rstring, a.direccion, a);
+                            return new resultado(terminales.rstring, temp, a);
                         }
                         else if (a.tipo == "char")
                         {
-                            return new resultado(terminales.rchar, a.direccion, a);
+                            return new resultado(terminales.rchar, temp, a);
                         }
                         else if (a.tipo == "boolean")
                         {
-                            return new resultado(terminales.rboolean, a.direccion, a);
+                            return new resultado(terminales.rboolean, temp, a);
                         }
                         else
                         {
-                            return new resultado("etc", a.direccion, a);
+                            return new resultado("etc", temp, a);
                         }
                     }
 
@@ -271,50 +272,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                             }
 
-                            else if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            else if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean || resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
                             {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a+a
-                                {
-                                    
-                                    temp = cosasGlobalesewe.nuevoTemp();
-                                    temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
-                                    argumento = temp + " + " + temporal;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a+num
-                                {
-
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-
-                                    argumento = temp + " + " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-
-                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num+a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
-
-                                    argumento = resIzq.valor + " + " + temp;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num + num
+                                if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse || resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
                                 {
                                     argumento = resIzq.valor + " + " + resDer.valor;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -327,8 +287,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             }
                             else
                             {
-                                //ERROR
+                                //Error
                             }
+                            
 
                             return new resultado();
                         #endregion
@@ -340,49 +301,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean || resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
                             {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a-a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-                                    temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
-                                    argumento = temp + " - " + temporal;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a-num
-                                {
-
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-
-                                    argumento = temp + " - " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-
-                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num-a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
-
-                                    argumento = resIzq.valor + " - " + temp;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num - num
+                                if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse || resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
                                 {
                                     argumento = resIzq.valor + " - " + resDer.valor;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -395,8 +316,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             }
                             else
                             {
-                                //ERROR
+                                //Error
                             }
+
 
                             return new resultado();
                         #endregion
@@ -408,49 +330,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean || resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
                             {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a*a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-                                    temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
-                                    argumento = temp + " * " + temporal;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a*num
-                                {
-
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-
-                                    argumento = temp + " * " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-
-                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num*a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
-
-                                    argumento = resIzq.valor + " * " + temp;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num * num
+                                if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse || resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
                                 {
                                     argumento = resIzq.valor + " * " + resDer.valor;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -463,8 +345,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             }
                             else
                             {
-                                //ERROR
+                                //Error
                             }
+
 
                             return new resultado();
                         #endregion
@@ -477,49 +360,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean || resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
                             {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a/a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-                                    temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
-                                    argumento = temp + " / " + temporal;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a/num
-                                {
-
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-
-                                    argumento = temp + " / " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-
-                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num/a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
-
-                                    argumento = resIzq.valor + " / " + temp;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num / num
+                                if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse || resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
                                 {
                                     argumento = resIzq.valor + " / " + resDer.valor;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -532,8 +375,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             }
                             else
                             {
-                                //ERROR
+                                //Error
                             }
+
 
                             return new resultado();
                         #endregion
@@ -544,50 +388,10 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
-                            
-                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
+
+                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean || resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
                             {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a%a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-                                    temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
-                                    argumento = temp + " % " + temporal;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a%num
-                                {
-
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-
-                                    argumento = temp + " % " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-
-                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num%a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
-
-                                    argumento = resIzq.valor + " % " + temp;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-
-                                    return new resultado(terminales.numero, temp);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num % num
+                                if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse || resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
                                 {
                                     argumento = resIzq.valor + " % " + resDer.valor;
                                     temp = cosasGlobalesewe.nuevoTemp(argumento);
@@ -600,8 +404,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             }
                             else
                             {
-
-                                //ERROR
+                                //Error
                             }
 
                             return new resultado();
@@ -952,132 +755,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
-                            if ((resIzq.tipo == terminales.rstring || resIzq.tipo == terminales.rchar))
-                            {
-                                if (resDer.tipo == terminales.rstring || resDer.tipo == terminales.rchar)
-                                {
-                                    argumento = "";
-                                    string inicioNuevaCadena = cosasGlobalesewe.nuevoTemp();
-                                    string inicioIzq, inicioDer;
-
-
-
-                                    if (resIzq.argumento != null)
-                                    {
-                                        cosasGlobalesewe.concatenarAccion(resIzq.argumento);
-                                        inicioIzq = resIzq.valor;
-                                    }
-                                    else if (resIzq.simbolo != null)
-                                    {
-                                        inicioIzq = resIzq.valor;
-                                    }
-                                    else
-                                    {
-                                        inicioIzq = cosasGlobalesewe.nuevoTemp();
-                                        argumento += inicioIzq + " = hp;\n";
-                                        foreach (char caracter in resIzq.valor)
-                                        {
-                                            argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
-                                            argumento += "hp = hp + 1;\n";
-                                        }
-                                        argumento += "heap[(int)hp] = " + "-1" + ";\n";
-                                        argumento += "hp = hp + 1;\n";
-                                    }
-
-                                    if (resDer.argumento != null)
-                                    {
-                                        cosasGlobalesewe.concatenarAccion(resDer.argumento);
-                                        inicioDer = resDer.valor;
-                                    }
-                                    else if (resDer.simbolo != null)
-                                    {
-                                        inicioDer = resDer.valor;
-                                    }
-                                    else
-                                    {
-                                        inicioDer = cosasGlobalesewe.nuevoTemp();
-                                        argumento += inicioDer + " = hp;\n";
-                                        foreach (char caracter in resDer.valor)
-                                        {
-                                            argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
-                                            argumento += "hp = hp + 1;\n";
-                                        }
-
-                                        argumento += "heap[(int)hp] = " + "-1" + ";\n";
-                                        argumento += "hp = hp + 1;\n";
-                                    }
-
-
-                                    argumento += inicioNuevaCadena + " = hp;\n";
-                                    argumento += "t0 = " + inicioIzq + ";\n";
-                                    argumento += "t2 = " + inicioDer + ";\n";
-
-                                    argumento += "concatenacion();\n";
-                                    return new resultado(terminales.rstring, inicioNuevaCadena, argumento);
-
-                                }
-                                else
-                                {
-                                    Program.form.richTextBox5.Text += "Error Sintactico: No se pueden concatenar tipos distintos\n";
-                                    return new resultado(terminales.rstring, "");
-                                }
-
-
-                            }
-                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a==a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-                                    temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
-                                    argumento = temp + " == " + temporal;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a==num
-                                {
-
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-
-                                    argumento = temp + " == " + resDer.valor;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-
-                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num==a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
-
-                                    argumento = resIzq.valor + " == " + temp;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num == num
-                                {
-                                    argumento = resIzq.valor + " == " + resDer.valor;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-                            else
-                            {
-                                //ERROR
-                            }
-
-                            return new resultado();
+                            argumento = resIzq.valor + " == " + resDer.valor;
+                            temp = cosasGlobalesewe.nuevoTemp(argumento);
+                            return new resultado(terminales.numero, temp);
                         #endregion
                         case "<>":
                             #region distinto
@@ -1087,60 +767,10 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a<>a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-                                    temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
-                                    argumento = temp + " <> " + temporal;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a<>num
-                                {
+                            argumento = resIzq.valor + " != " + resDer.valor;
+                            temp = cosasGlobalesewe.nuevoTemp(argumento);
+                            return new resultado(terminales.numero, temp);
 
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-
-                                    argumento = temp + " != " + resDer.valor;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-
-                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num<>a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
-
-                                    argumento = resIzq.valor + " <> " + temp;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num <> num
-                                {
-                                    argumento = resIzq.valor + " <> " + resDer.valor;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-                            else
-                            {
-                                //ERROR
-                            }
-
-                            return new resultado();
                         #endregion
                         case "<":
                             #region menor
@@ -1150,61 +780,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a<a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-                                    temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
-                                    argumento = temp + " < " + temporal;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a<num
-                                {
-
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-
-                                    argumento = temp + " < " + resDer.valor;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-
-                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num<a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
-
-                                    argumento = resIzq.valor + " < " + temp;
-
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num < num
-                                {
-                                    argumento = resIzq.valor + " < " + resDer.valor;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-                            else
-                            {
-                                //ERROR
-                            }
-
-                            return new resultado();
+                            argumento = resIzq.valor + " < " + resDer.valor;
+                            temp = cosasGlobalesewe.nuevoTemp(argumento);
+                            return new resultado(terminales.numero, temp); 
                         #endregion
                         case ">":
                             #region mayor
@@ -1214,60 +792,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a>a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-                                    temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
-                                    argumento = temp + " > " + temporal;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a>num
-                                {
-
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-
-                                    argumento = temp + " > " + resDer.valor;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-
-                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num>a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
-
-                                    argumento = resIzq.valor + " > " + temp;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num > num
-                                {
-                                    argumento = resIzq.valor + " > " + resDer.valor;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-                            else
-                            {
-                                //ERROR
-                            }
-
-                            return new resultado();
+                            argumento = resIzq.valor + " > " + resDer.valor;
+                            temp = cosasGlobalesewe.nuevoTemp(argumento);
+                            return new resultado(terminales.numero, temp);
                         #endregion
                         case "<=":
                             #region menorIgual
@@ -1277,60 +804,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a<=a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-                                    temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
-                                    argumento = temp + " <= " + temporal;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a<=num
-                                {
-
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-
-                                    argumento = temp + " <= " + resDer.valor;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-
-                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num<=a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
-
-                                    argumento = resIzq.valor + " <= " + temp;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num <= num
-                                {
-                                    argumento = resIzq.valor + " <= " + resDer.valor;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-                            else
-                            {
-                                //ERROR
-                            }
-
-                            return new resultado();
+                            argumento = resIzq.valor + " <= " + resDer.valor;
+                            temp = cosasGlobalesewe.nuevoTemp(argumento);
+                            return new resultado(terminales.numero, temp);
                         #endregion
                         case ">=":
                             #region mayorIgual
@@ -1340,61 +816,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             resIzq = izquierda.traducir(ref tablaActual, ambito, "", "", "");
                             resDer = derecha.traducir(ref tablaActual, ambito, "", "", "");
 
-                            if (resIzq.tipo == terminales.rinteger || resIzq.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//a>=a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-                                    temporal = cosasGlobalesewe.nuevoTemp();
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-                                    cosasGlobalesewe.concatenarAccion(temporal + " = " + "stack" + "[(int)" + resDer.valor + "];");
-                                    argumento = temp + " >= " + temporal;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//a>=num
-                                {
-
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resIzq.valor + "];");
-
-                                    argumento = temp + " >= " + resDer.valor;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-
-                            else if (resIzq.tipo == terminales.numero || resIzq.tipo == terminales.rtrue || resIzq.tipo == terminales.rfalse)
-                            {
-                                if (resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)//num>=a
-                                {
-                                    temp = cosasGlobalesewe.nuevoTemp();
-
-                                    cosasGlobalesewe.concatenarAccion(temp + " = " + "stack" + "[(int)" + resDer.valor + "];");
-
-                                    argumento = resIzq.valor + " >= " + temp;
-
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse)//num >= num
-                                {
-                                    argumento = resIzq.valor + " >= " + resDer.valor;
-                                    return new resultado(terminales.numero, argumento);
-                                }
-                                else
-                                {
-                                    //ERROR
-                                }
-                            }
-                            else
-                            {
-                                //ERROR
-                            }
-
-                            return new resultado();
+                            argumento = resIzq.valor + " >= " + resDer.valor;
+                            temp = cosasGlobalesewe.nuevoTemp(argumento);
+                            return new resultado(terminales.numero, temp);
                             #endregion
 
                     }
@@ -1441,33 +865,15 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     if (comparador.tipo == terminales.rinteger || comparador.tipo == terminales.rreal || comparador.tipo == terminales.numero || comparador.tipo == terminales.rboolean)
                                     {
-                                        if (respuesta.simbolo != null)// para variables
-                                        {
-
-                                            if (comparador.porValor == true)//En el parametro se asigna el valor
-                                            {
-                                                tempInterno = cosasGlobalesewe.nuevoTemp();
-                                                argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                                argumento += tempInterno + " = " + "stack" + "[(int)" + respuesta.valor + "];\n";
-                                                argumento += "stack[(int)" + temp + "] = " + tempInterno + ";\n";
-
-                                            }
-                                            else
-                                            {
-
-                                                argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                                argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
-                                            }
-                                        }
-                                        else
-                                        {
+                                        
+                                        
                                             argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
                                             argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
-                                        }
+                                        
                                     }
                                     else
                                     {
-
+                                        //Error
                                     }
                                 }
                                 else if (respuesta.tipo == terminales.rstring || respuesta.tipo == terminales.rchar)
@@ -1511,7 +917,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                         argumento += id + "();\n";
                         argumento += "sp = " + tempResetear + ";\n";
                         cosasGlobalesewe.concatenarAccion(argumento);
-                        return new resultado(fn.tipo, fn.direccion, fn);
+                        temp = cosasGlobalesewe.nuevoTemp("stack[(int)" + fn.direccion + "]");
+                        return new resultado(fn.tipo, temp, fn);
                     }
                 }
                 else if (node.ChildNodes.ElementAt(1).Token.Text == "[")

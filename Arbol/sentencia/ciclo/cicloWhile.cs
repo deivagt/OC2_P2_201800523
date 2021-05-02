@@ -52,10 +52,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
             }
             temp = res.valor;
 
-            if(res.simbolo != null)
-            {
-                temp = cosasGlobalesewe.nuevoTemp("stack" + "[(int)" + res.valor + "]");
-            }
+            
             
             argumento = "if(" + temp + ") goto " + tempCiclo + ";\n"
                 + "goto " + tempSalida + ";\n"
