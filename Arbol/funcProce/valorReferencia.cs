@@ -49,7 +49,7 @@ namespace OC2_P2_201800523.Arbol.funcProce
                 variables = new valor(noterminales.VALOR, node.ChildNodes.ElementAt(2));
                 variables.nuevaTraduccion(listaVar);
                 tipo = node.ChildNodes.ElementAt(4).ChildNodes.ElementAt(0).Token.Text;
-                if (tipo == terminales.rstring) { esPorValor = false; }
+              
                 foreach (var Var in listaVar)
                 {
                     string id = Var.Token.Text;
@@ -77,7 +77,7 @@ namespace OC2_P2_201800523.Arbol.funcProce
                 variables = new valor(noterminales.VALOR, node.ChildNodes.ElementAt(0));
                 variables.nuevaTraduccion(listaVar);
                 tipo = node.ChildNodes.ElementAt(2).ChildNodes.ElementAt(0).Token.Text;
-                if(tipo == terminales.rstring) { esPorValor = false; }
+              
                 foreach (var Var in listaVar)
                 {
                     string id = Var.Token.Text;

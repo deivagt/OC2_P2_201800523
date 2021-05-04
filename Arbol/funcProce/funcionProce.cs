@@ -109,7 +109,7 @@ namespace OC2_P2_201800523.Arbol.funcProce
                         variable.traducir(ref nuevaTabla, id.Token.Text, verdadero, falso, xd);
                     }
                    
-                    argumento += "/*Finaliza de variables internas*/\n";
+                    argumento += "/*Finaliza declaracion de variables internas*/\n";
 
                     hacerTraduccion(node.ChildNodes.ElementAt(11), ref nuevaTabla, id.Token.Text, "", "", etiquetaRetorno+";"+puntero);
                     argumento += cosasGlobalesewe.tomarSalida();
@@ -198,7 +198,7 @@ namespace OC2_P2_201800523.Arbol.funcProce
                         variable.traducir(ref nuevaTabla, id.Token.Text, verdadero, falso, xd);
                     }
 
-                    argumento += "/*Finaliza de variables internas*/\n";
+                    argumento += "/*Finaliza declaracion de variables internas*/\n";
                     hacerTraduccion(node.ChildNodes.ElementAt(9), ref nuevaTabla, id.Token.Text, "", "", etiquetaRetorno);
                     argumento += cosasGlobalesewe.tomarSalida();
                     argumento += etiquetaRetorno + ":\n" + "return;\n}\n";

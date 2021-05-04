@@ -31,12 +31,10 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
 
                 if (res.simbolo != null)
                 {
+                    
                    
                     if (res.tipo == terminales.rinteger || res.tipo == terminales.rreal || res.tipo == terminales.rboolean)
                     {
-
-                        
-
                         if (res.tipo == terminales.rinteger)
                         {
                             argumento += "printf(\"%d\", (int)" + res.valor + ");";
@@ -52,42 +50,24 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
                             argumento += "booleanoCadena();";
                         }
                     }
-                    else//Cadena o char
+                    else if(res.tipo == terminales.rstring || res.tipo == terminales.rchar)//Cadena o char
                     {
-                        argumento = "t0 = " + res.simbolo.direccion + ";\n";
+                        argumento = "t0 = " + res.valor + ";\n";
                         argumento += "imprimirLn();\n";
                     }
+                    
                     
                 }
                 else
                 {
 
                     if (res.tipo == terminales.rstring || res.tipo == terminales.rchar)
-                    {
-                        
-                        if (res.argumento != null)
-                        {
-                            cosasGlobalesewe.concatenarAccion(res.argumento);
+                    {                       
+                      
 
                             argumento += "t0 = " + res.valor + ";\n";
                             argumento += "imprimirLn();\n";
-
-                        }
-                        else
-                        {
-                            temp = cosasGlobalesewe.nuevoTemp();
-                            argumento += temp + " = hp;\n";
-                            foreach (char caracter in res.valor)
-                            {
-                                argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
-                                argumento += "hp = hp + 1;\n";
-                            }
-
-                            argumento += "heap[(int)hp] = " + "-1" + ";\n";
-                            argumento += "hp = hp + 1;\n";
-                            argumento += "t0 = " + temp + ";\n";
-                            argumento += "imprimirLn();\n";
-                        }
+                                              
 
                         
                     }
@@ -163,7 +143,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
                         }
                         else // Cadena o char
                         {
-                            argumento += "t0 = " + res.simbolo.direccion + ";\n";
+                            argumento = "t0 = " + res.valor + ";\n";
                             argumento += "imprimirLn();\n";
                         }
                     }
@@ -172,29 +152,8 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
 
                         if (res.tipo == terminales.rstring || res.tipo == terminales.rchar)
                         {
-                            if (res.argumento != null)
-                            {
-                                cosasGlobalesewe.concatenarAccion(res.argumento);
-
-                                argumento += "t0 = " + res.valor + ";\n";
-                                argumento += "imprimirLn();\n";
-
-                            }
-                            else
-                            {
-                                temp = cosasGlobalesewe.nuevoTemp();
-                                argumento += temp + " = hp;\n";
-                                foreach (char caracter in res.valor)
-                                {
-                                    argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
-                                    argumento += "hp = hp + 1;\n";
-                                }
-
-                                argumento += "heap[(int)hp] = " + "-1" + ";\n";
-                                argumento += "hp = hp + 1;\n";
-                                argumento += "t0 = " + temp + ";\n";
-                                argumento += "imprimirLn();\n";
-                            }
+                            argumento += "t0 = " + res.valor + ";\n";
+                            argumento += "imprimirLn();\n";
                         }
                         else
                         {

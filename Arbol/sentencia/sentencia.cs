@@ -22,6 +22,10 @@ namespace OC2_P2_201800523.Arbol.sentencia
             ParseTreeNode palabraClave = node.ChildNodes.ElementAt(0);
             string argumento;
 
+            string temp;
+            string temporal;
+            string retorno;
+
             string tempVerdadero = "";
             string tempFalso = "";
             string tempSiguiente = "";
@@ -152,7 +156,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
                     cosasGlobalesewe.concatenarAccion("goto " + falso + ";");
                     return new resultado();
 
-                
+
                 case "Exit":
                     string[] partido = xd.Split(';');
                     if (node.ChildNodes.Count == 4)// No return
@@ -161,20 +165,20 @@ namespace OC2_P2_201800523.Arbol.sentencia
                     }
                     else
                     {
-                        
+
                         expresion exp = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
                         res = exp.traducir(ref tablaActual, ambito, "", "", xd);
                         argumento = "";
-                        if(res.argumento != null)
+                        if (res.argumento != null)
                         {
                             argumento = res.argumento;
                         }
 
-                        
-                            argumento += "stack" + "[(int)" + partido[1] + "] = " + res.valor + ";";
-                            cosasGlobalesewe.concatenarAccion(argumento);
-                        
-                        
+
+                        argumento += "stack" + "[(int)" + partido[1] + "] = " + res.valor + ";";
+                        cosasGlobalesewe.concatenarAccion(argumento);
+
+
                     }
                     cosasGlobalesewe.concatenarAccion("goto " + partido[0] + ";");
 
@@ -195,7 +199,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                 if (res.argumento != null)
                                 {
                                     cosasGlobalesewe.concatenarAccion(res.argumento);
-                                }                                
+                                }
                                 if (variable.tipo == terminales.rinteger || variable.tipo == terminales.rreal || variable.tipo == terminales.rboolean)
                                 {
                                     //TIPOS CONCUERDAN
@@ -207,7 +211,8 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                 {
                                     if (variable.tipo == terminales.rstring || res.tipo == terminales.rchar)
                                     {
-                                        variable.direccion = res.valor;
+                                        argumento = "stack" + "[(int)" + variable.direccion + "] = " + res.valor + ";";
+                                        cosasGlobalesewe.concatenarAccion(argumento);
                                     }
                                 }
                             }
@@ -216,16 +221,108 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                 //ERROR
                             }
                         }
-                        else 
+                        else if (node.ChildNodes.ElementAt(1).Token.Text == "[")//Asignacion array
+                        {
+                            argumento = "";
+                            retorno = "";
+                            expresion expr = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(5));
+                            res = expr.traducir(ref tablaActual, ambito, "", "", "");
+
+                            if( res.argumento != null)
+                            {
+                                argumento += res.argumento;
+                            }
+
+                            ParseTreeNode id = node.ChildNodes.ElementAt(0);
+                            simbolo a = tablaActual.buscar(id.Token.Text, ambito);
+                            if (a != null )
+                            {
+                                LinkedList<resultado> listaPos = new LinkedList<resultado>();
+                                ParseTreeNode auxi = node.ChildNodes.ElementAt(2);
+                                resultado posicion = null;
+                                while (auxi != null)
+                                {
+                                    if (auxi.ChildNodes.Count == 3)
+                                    {
+                                        expresion thisExpr = new expresion(noterminales.EXPRESION, auxi.ChildNodes.ElementAt(2));
+                                        posicion = thisExpr.traducir(ref tablaActual, ambito, "", "", "");
+                                        listaPos.AddFirst(posicion);
+                                        auxi = auxi.ChildNodes.ElementAt(0);
+                                    }
+                                    else if (auxi.ChildNodes.Count == 1)
+                                    {
+                                        expresion thisExpr = new expresion(noterminales.EXPRESION, auxi.ChildNodes.ElementAt(0));
+                                        posicion = thisExpr.traducir(ref tablaActual, ambito, "", "", "");
+                                        listaPos.AddFirst(posicion);
+                                        auxi = null;
+                                    }
+                                }
+
+
+                                if (listaPos.Count == 1)//C3D para un array normalito
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+
+                                    argumento += temp + " = " + "stack[(int)" + a.direccion + "];\n";
+                                    argumento += temporal + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
+                                    argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
+                                    argumento += "heap[(int)" + temporal + "]"+ " = " + res.valor +";\n";
+                                    cosasGlobalesewe.concatenarAccion(argumento);
+
+                                }
+                                else
+                                {
+                                    int contador = 0;
+                                    foreach (var pos in listaPos)
+                                    {
+                                        if (contador == 0)
+                                        {
+                                            temp = cosasGlobalesewe.nuevoTemp();
+                                            temporal = cosasGlobalesewe.nuevoTemp();
+                                            retorno = cosasGlobalesewe.nuevoTemp();
+                                            argumento += temp + " = " + "stack[(int)" + a.direccion + "];\n";
+                                            argumento += temporal + " = " + temp + " + " + pos.valor + ";\n";
+                                            argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
+                                            argumento += retorno + " = heap[(int)" + temporal + "];\n";
+                                        }
+                                        else
+                                        {
+                                            if(contador == listaPos.Count - 1)
+                                            {
+                                                temporal = cosasGlobalesewe.nuevoTemp();
+                                                argumento += temporal + " = " + retorno + " + " + pos.valor + ";\n";
+                                                argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
+                                                retorno = cosasGlobalesewe.nuevoTemp();
+                                                argumento += "heap[(int)" + temporal + "]" + " = " + res.valor+";\n";
+                                            }
+                                            else
+                                            {
+                                                temporal = cosasGlobalesewe.nuevoTemp();
+                                                argumento += temporal + " = " + retorno + " + " + pos.valor + ";\n";
+                                                argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
+                                                retorno = cosasGlobalesewe.nuevoTemp();
+                                                argumento += retorno + " = heap[(int)" + temporal + "];\n";
+                                            }
+                                            
+                                        }
+                                        contador++;
+                                    }
+                                    cosasGlobalesewe.concatenarAccion(argumento);
+                                }
+                            }
+
+                        }
+                        else //Funcion
                         {
                             LinkedList<expresion> listaParam = new LinkedList<expresion>();
                             string id = node.ChildNodes.ElementAt(0).Token.Text;
                             funcProce.parametros lp = new funcProce.parametros(noterminales.PARAMETROS, node.ChildNodes.ElementAt(2));
-                            if(node.ChildNodes.ElementAt(2).ChildNodes.Count != 0)
+                            if (node.ChildNodes.ElementAt(2).ChildNodes.Count != 0)
                             {
                                 lp.nuevaTraduccion(listaParam);
                             }
-                            
+
                             argumento = "";
                             simbolo fn = tablaActual.buscarFuncion(id);
                             if (fn != null)
@@ -234,8 +331,8 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                 argumento += tempResetear + " = sp;\n";
                                 if (fn.listaParam.Count != 0)
                                 {
-                                    string temp;
-                                    string tempInterno;
+                                    
+                                  
                                     LinkedList<parametroCustom> listaParamFunc = fn.listaParam;
                                     for (int i = 0; i <= listaParam.Count - 1; i++)
                                     {
@@ -249,7 +346,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                             cosasGlobalesewe.concatenarAccion(respuesta.argumento);
                                         }
 
-                                        
+
 
                                         if (respuesta.tipo == terminales.rinteger || respuesta.tipo == terminales.rreal || respuesta.tipo == terminales.numero || respuesta.tipo == terminales.rboolean)
                                         {
@@ -258,19 +355,18 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                                 if (respuesta.simbolo != null)// para variables
                                                 {
 
-                                                    if (comparador.porValor == true)//En el parametro se asigna el valor
+                                                    if (comparador.porValor == true)
                                                     {
-                                                        tempInterno = cosasGlobalesewe.nuevoTemp();
                                                         argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                                        argumento += tempInterno + " = " + "stack" + "[(int)" + respuesta.valor + "];\n";
-                                                        argumento += "stack[(int)" + temp + "] = " + tempInterno + ";\n";
+                                                        argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";                                                        
 
                                                     }
                                                     else
                                                     {
-
+                                              
                                                         argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                                        argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
+                                                        argumento += "stack[(int)" + temp + "] = " + respuesta.simbolo.direccion + ";\n";
+
                                                     }
                                                 }
                                                 else
@@ -289,27 +385,35 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                             if (comparador.tipo == terminales.rstring || comparador.tipo == terminales.rchar)
                                             {
                                                 string otroTempPuta = cosasGlobalesewe.nuevoTemp();
-                                                if(respuesta.simbolo != null)
+                                                if (respuesta.simbolo != null)
                                                 {
-                                                    argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                                    argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
+                                                    if (comparador.porValor == true)
+                                                    {
+                                                        argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                                        argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
+
+                                                    }
+                                                    else
+                                                    {
+                                                       
+                                                        argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                                        argumento += "stack[(int)" + temp + "] = " + respuesta.simbolo.direccion + ";\n";
+
+                                                    }
+                                                    
                                                 }
                                                 else
                                                 {
 
-                                                    argumento += otroTempPuta + " = hp;\n";
-                                                    foreach (char caracter in respuesta.valor)
-                                                    {
-                                                        argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
-                                                        argumento += "hp = hp + 1;\n";
-                                                    }
-
-                                                    argumento += "heap[(int)hp] = " + "-1" + ";\n";
-                                                    argumento += "hp = hp + 1;\n";
                                                     argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                                    argumento += "stack[(int)" + temp + "] = " + otroTempPuta + ";\n";
+                                                    argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
                                                 }
                                             }
+                                        }
+                                        else if( respuesta.tipo == comparador.tipo) // Paso tipico por referencia
+                                        {
+                                            argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                            argumento += "stack[(int)" + temp + "] = " + respuesta.simbolo.direccion + ";\n";
                                         }
                                         else
                                         {

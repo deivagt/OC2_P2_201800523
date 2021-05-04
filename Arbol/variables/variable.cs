@@ -89,12 +89,12 @@ namespace OC2_P2_201800523.Arbol.variables
                                 argumento += "stack" + "[(int)" + temp + "] = " + "hp" + ";\n";
 
                                 /*Guardar en tabla de simbolos*/
-                                nuevoSimbolo = new simbolo(ambito, id.Token.Text, tipoCustom.tipo, temp, fila + 1, columna + 1, "variable", tipoCustom.listaIndex,true);
+                                nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable", tipoCustom.listaIndex, true);
                                 tablaActual.agregarSimbolo(nuevoSimbolo);
 
                                 int inicio = tipoCustom.listaIndex.ElementAt(0).inicio;
                                 int final = tipoCustom.listaIndex.ElementAt(0).final;
-                                int tamanioArray = final - inicio;
+                                int tamanioArray = final - inicio + 1;
 
 
                                 LinkedList<string> temporalesEwe = new LinkedList<string>();
@@ -106,6 +106,8 @@ namespace OC2_P2_201800523.Arbol.variables
                                     temporalesEwe.AddLast(temp);
                                 }
                                 bool asignartamanio = true;
+
+
                                 foreach (var temporal in temporalesEwe)
                                 {
                                     if (asignartamanio == true)
@@ -125,7 +127,7 @@ namespace OC2_P2_201800523.Arbol.variables
                                 argumento += "sp" + " = " + "sp" + " + 1;\n";
                                 argumento += "stack" + "[(int)" + temp + "] = " + "hp" + ";\n";
                                 /*Guardar en tabla de simbolos*/
-                                nuevoSimbolo = new simbolo(ambito, id.Token.Text, tipoCustom.tipo, temp, fila + 1, columna + 1, "variable", tipoCustom.listaIndex,true);
+                                nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable", tipoCustom.listaIndex, true);
                                 tablaActual.agregarSimbolo(nuevoSimbolo);
                                 LinkedList<tipos.arreglos.index> listaActual = tipoCustom.listaIndex;
                                 int multiplicador = 1;
@@ -133,14 +135,14 @@ namespace OC2_P2_201800523.Arbol.variables
                                 {
                                     if (j < listaActual.Count - 1)
                                     {
-                                        
+
                                         int inicio = listaActual.ElementAt(j).inicio;
                                         int final = listaActual.ElementAt(j).final;
-                                        int tamanioArray = final - inicio;
+                                        int tamanioArray = final - inicio + 1;
                                         /*ASUMIENDO 2D*/
                                         int inicioSiguiente = listaActual.ElementAt(j + 1).inicio;
                                         int finalSiguiente = listaActual.ElementAt(j + 1).final;
-                                        int tamanioSig = finalSiguiente - inicioSiguiente;
+                                        int tamanioSig = finalSiguiente - inicioSiguiente + 1;
                                         multiplicador = multiplicador * tamanioArray;
 
 
@@ -165,7 +167,7 @@ namespace OC2_P2_201800523.Arbol.variables
                                                 continue;
                                             }
                                             int result = ((tamanioArray + (tamanioSig + 1) * contador) + 1);
-                                            argumento += "heap[(int)" + temporal + "] = "+ temphp +" + "+ result +";\n";
+                                            argumento += "heap[(int)" + temporal + "] = " + temphp + " + " + result + ";\n";
                                             contador++;
                                         }
                                     }
@@ -173,14 +175,14 @@ namespace OC2_P2_201800523.Arbol.variables
                                     {
                                         int inicio = listaActual.ElementAt(j).inicio;
                                         int final = listaActual.ElementAt(j).final;
-                                        int tamanioArray = final - inicio;
+                                        int tamanioArray = final - inicio + 1;
                                         /*ASUMIENDO 2D*/
-                                        
-                                        
+
+
 
                                         for (int k = 0; k < multiplicador; k++)
                                         {
-                                            
+
                                             LinkedList<string> temporalesEwe = new LinkedList<string>();
                                             for (int i = 0; i <= tamanioArray; i++)//Crear Temporales
                                             {
@@ -190,7 +192,7 @@ namespace OC2_P2_201800523.Arbol.variables
                                                 temporalesEwe.AddLast(temp);
                                             }
                                             bool asignartamanio = true;
-                                           
+
                                             foreach (var temporal in temporalesEwe)
                                             {
                                                 if (asignartamanio == true)
@@ -202,7 +204,7 @@ namespace OC2_P2_201800523.Arbol.variables
                                                 argumento += "heap[(int)" + temporal + "] = 0;\n";
                                             }
                                         }
-                                        
+
                                     }
 
 
@@ -228,7 +230,7 @@ namespace OC2_P2_201800523.Arbol.variables
                     LinkedList<ParseTreeNode> listaVar = new LinkedList<ParseTreeNode>();
                     ParseTreeNode ids = node.ChildNodes.ElementAt(0);
                     ParseTreeNode tipo = node.ChildNodes.ElementAt(2);
-
+                    simbolo nuevoSimbolo;
                     otra_decl_variable variasVariables = new otra_decl_variable(noterminales.OTRA_DECL_VARIABLE, ids);
 
                     variasVariables.nuevaTraduccion(listaVar);
@@ -247,30 +249,37 @@ namespace OC2_P2_201800523.Arbol.variables
 
                             temp = cosasGlobalesewe.nuevoTemp();
 
-                            simbolo nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable");
-                            tablaActual.agregarSimbolo(nuevoSimbolo);
+
                             argumento = "/*EMPIEZA DECLARACION VARIABLE " + id.Token.Text + "*/\n";
 
                             if (eltipo == terminales.rstring || eltipo == terminales.rchar)
                             {
+                                nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable");
+                                tablaActual.agregarSimbolo(nuevoSimbolo);
                                 argumento += temp + " = " + "hp" + ";\n";
                                 argumento += "hp" + " = " + "hp" + " + 1;\n";
                                 argumento += "heap" + "[(int)" + temp + "] = " + "-1" + ";\n";
                             }
                             else if (eltipo == terminales.rinteger)
                             {
+                                nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable");
+                                tablaActual.agregarSimbolo(nuevoSimbolo);
                                 argumento += temp + " = " + "sp" + ";\n";
                                 argumento += "sp" + " = " + "sp" + " + 1;\n";
                                 argumento += "stack" + "[(int)" + temp + "] = " + "0" + ";\n";
                             }
                             else if (eltipo == terminales.rreal)
                             {
+                                nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable");
+                                tablaActual.agregarSimbolo(nuevoSimbolo);
                                 argumento += temp + " = " + "sp" + ";\n";
                                 argumento += "sp" + " = " + "sp" + " + 1;\n";
                                 argumento += "stack" + "[(int)" + temp + "] = " + "0.0" + ";\n";
                             }
                             else if (eltipo == terminales.rboolean)
                             {
+                                nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable");
+                                tablaActual.agregarSimbolo(nuevoSimbolo);
                                 argumento += temp + " = " + "sp" + ";\n";
                                 argumento += "sp" + " = " + "sp" + " + 1;\n";
                                 argumento += "stack" + "[(int)" + temp + "] = " + "0" + ";\n";
@@ -282,20 +291,19 @@ namespace OC2_P2_201800523.Arbol.variables
                                 if (tipoCustom.categoria == "array")
                                 {
                                     tipos.arreglos.arreglo newArr = new tipos.arreglos.arreglo(terminales.rarray, node);
-
+                                    nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable", tipoCustom.listaIndex, true);
+                                    tablaActual.agregarSimbolo(nuevoSimbolo);
                                     if (tipoCustom.listaIndex.Count == 1)
                                     {
                                         argumento += temp + " = " + "sp" + ";\n";
                                         argumento += "sp" + " = " + "sp" + " + 1;\n";
                                         argumento += "stack" + "[(int)" + temp + "] = " + "hp" + ";\n";
 
-                                        /*Guardar en tabla de simbolos*/
-                                        nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable", tipoCustom.listaIndex,true);
-                                        tablaActual.agregarSimbolo(nuevoSimbolo);
+
 
                                         int inicio = tipoCustom.listaIndex.ElementAt(0).inicio;
                                         int final = tipoCustom.listaIndex.ElementAt(0).final;
-                                        int tamanioArray = final - inicio;
+                                        int tamanioArray = final - inicio + 1;
 
 
                                         LinkedList<string> temporalesEwe = new LinkedList<string>();
@@ -307,6 +315,8 @@ namespace OC2_P2_201800523.Arbol.variables
                                             temporalesEwe.AddLast(temp);
                                         }
                                         bool asignartamanio = true;
+
+
                                         foreach (var temporal in temporalesEwe)
                                         {
                                             if (asignartamanio == true)
@@ -325,9 +335,8 @@ namespace OC2_P2_201800523.Arbol.variables
                                         argumento += temp + " = " + "sp" + ";\n";
                                         argumento += "sp" + " = " + "sp" + " + 1;\n";
                                         argumento += "stack" + "[(int)" + temp + "] = " + "hp" + ";\n";
-                                        /*Guardar en tabla de simbolos*/
-                                         nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable", tipoCustom.listaIndex,true);
-                                        tablaActual.agregarSimbolo(nuevoSimbolo);
+
+
                                         LinkedList<tipos.arreglos.index> listaActual = tipoCustom.listaIndex;
                                         int multiplicador = 1;
                                         for (int j = 0; j < listaActual.Count; j++)
@@ -337,11 +346,11 @@ namespace OC2_P2_201800523.Arbol.variables
 
                                                 int inicio = listaActual.ElementAt(j).inicio;
                                                 int final = listaActual.ElementAt(j).final;
-                                                int tamanioArray = final - inicio;
+                                                int tamanioArray = final - inicio + 1;
                                                 /*ASUMIENDO 2D*/
                                                 int inicioSiguiente = listaActual.ElementAt(j + 1).inicio;
                                                 int finalSiguiente = listaActual.ElementAt(j + 1).final;
-                                                int tamanioSig = finalSiguiente - inicioSiguiente;
+                                                int tamanioSig = finalSiguiente - inicioSiguiente + 1;
                                                 multiplicador = multiplicador * tamanioArray;
 
 
@@ -374,12 +383,12 @@ namespace OC2_P2_201800523.Arbol.variables
                                             {
                                                 int inicio = listaActual.ElementAt(j).inicio;
                                                 int final = listaActual.ElementAt(j).final;
-                                                int tamanioArray = final - inicio;
+                                                int tamanioArray = final - inicio + 1;
                                                 /*ASUMIENDO 2D*/
 
-                                                
 
-                                                for (int k = 0; k <= multiplicador; k++)
+
+                                                for (int k = 0; k < multiplicador; k++)
                                                 {
 
                                                     LinkedList<string> temporalesEwe = new LinkedList<string>();
@@ -455,35 +464,13 @@ namespace OC2_P2_201800523.Arbol.variables
                     argumento = "/*EMPIEZA DECLARACION VARIABLE " + id.Token.Text + "*/\n";
 
 
-                    if (res.tipo == terminales.rstring || res.tipo == terminales.rchar)
-                    {
-                        if (res.argumento != null)
-                        {
-                            cosasGlobalesewe.concatenarAccion(res.argumento);
-                            argumento += temp + " = " + res.valor + ";\n";
-                        }
-                        else
-                        {
-                            argumento += temp + " = " + "hp" + ";\n";
-                            foreach (char caracter in res.valor)
-                            {
-                                argumento += "heap[(int)" + "hp" + "] = " + (int)caracter + ";\n";
-                                argumento += "hp" + " = " + "hp" + " + 1;\n";
-                            }
-
-                            argumento += "heap[(int)" + "hp" + "] = " + "-1" + ";\n";
-                            argumento += "hp" + " = " + "hp" + " + 1;\n";
-                        }
 
 
-                    }
-                    else
-                    {
-                        argumento += temp + " = " + "sp" + ";\n";
-                        argumento += "sp" + " = " + "sp" + " + 1;\n";
-                        argumento += "stack" + "[(int)" + temp + "] = " + res.valor + ";\n";
+                    argumento += temp + " = " + "sp" + ";\n";
+                    argumento += "sp" + " = " + "sp" + " + 1;\n";
+                    argumento += "stack" + "[(int)" + temp + "] = " + res.valor + ";\n";
 
-                    }
+
 
                     argumento += "/*FINALIZA DECLARACION VARIABLE " + id.Token.Text + "*/";
                     /*Agregar a la salida*/

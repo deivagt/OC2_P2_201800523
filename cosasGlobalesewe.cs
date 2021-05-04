@@ -174,7 +174,7 @@ namespace OC2_P2_201800523
                 + "heap[(int)hp] = t1;\n"
                 + "hp = hp + 1;\n"
                 + "t2 = t2 + 1;\n"
-                + "goto L1;\n"
+                + "goto L2;\n"
                 + "L4:\n"
                 + "/*Finalizar Cadena*/\n"
                 + "heap[(int)hp] = -1;\n"

@@ -252,8 +252,8 @@ namespace OC2_P2_201800523.AST
                 | Empty
                 ;
 
-            VALOR.Rule = id 
-                | VALOR + coma + id 
+            VALOR.Rule = id
+                | VALOR + coma + id
                 ;
 
             SENTENCIAS.Rule = SENTENCIAS + SENTENCIA
@@ -263,7 +263,7 @@ namespace OC2_P2_201800523.AST
 
             SENTENCIA.Rule = id + dos_puntos_igual + EXPRESION + punto_coma
                 | id + abrir_corchete + POSICION + cerrar_corchete + dos_puntos_igual + EXPRESION + punto_coma
-                | id + abrir_parentesis + PARAMETROS + cerrar_parentesis + punto_coma 
+                | id + abrir_parentesis + PARAMETROS + cerrar_parentesis + punto_coma
                 | rif + EXPRESION + rthen + begin + SENTENCIAS + end + punto_coma
                 | rif + EXPRESION + rthen + begin + SENTENCIAS + end + PreferShiftHere() + ELSEIF + punto_coma
                 | rcase + EXPRESION + rof + CASOS + end + punto_coma
@@ -328,13 +328,13 @@ namespace OC2_P2_201800523.AST
                 | abrir_parentesis + EXPRESION + cerrar_parentesis
                 ;
 
-            POSICION.Rule = POSICION + coma + numero
-                | numero
+            POSICION.Rule = POSICION + coma + EXPRESION
+                | EXPRESION
                 ;
 
             PARAMETROS.Rule = PARAMETROS + coma + EXPRESION
                 | EXPRESION
-                |Empty
+                | Empty
                 ;
 
             TIPO.Rule = rstring
@@ -343,7 +343,7 @@ namespace OC2_P2_201800523.AST
                 | rchar
                 | rboolean
                 | id
-                | rarray + abrir_corchete + INDEXADO + cerrar_corchete + rof + TIPO 
+                | rarray + abrir_corchete + INDEXADO + cerrar_corchete + rof + TIPO
                 ;
 
             TRETORNO.Rule = rstring

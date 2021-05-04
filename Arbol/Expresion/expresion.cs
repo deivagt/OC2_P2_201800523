@@ -60,13 +60,24 @@ namespace OC2_P2_201800523.Arbol.Expresion
                 else if (salida.Term.ToString() == "cadena")
                 {
                     string retorno = salida.Token.Text.Replace("'", "");
+
+                    string inicio = cosasGlobalesewe.nuevoTemp();
+                    argumento = inicio + " = hp;\n";
+                    foreach (char caracter in retorno)
+                    {
+                        argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
+                        argumento += "hp = hp + 1;\n";
+                    }
+                    argumento += "heap[(int)hp] = " + "-1" + ";\n";
+                    argumento += "hp = hp + 1;\n";
+                    cosasGlobalesewe.concatenarAccion(argumento);
                     if (retorno.Length == 1)
                     {
-                        return new resultado(terminales.rchar, retorno);
+                        return new resultado(terminales.rchar, inicio);
                     }
                     else
                     {
-                        return new resultado(terminales.rstring, retorno);
+                        return new resultado(terminales.rstring, inicio);
                     }
 
                 }
@@ -113,7 +124,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                         }
                         else
                         {
-                            return new resultado("etc", temp, a);
+                            return new resultado(a.tipo, temp, a);
                         }
                     }
 
@@ -207,52 +218,10 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     string inicioNuevaCadena = cosasGlobalesewe.nuevoTemp();
                                     string inicioIzq, inicioDer;
 
+                                    inicioIzq = resIzq.valor;
 
+                                    inicioDer = resDer.valor;
 
-                                    if (resIzq.argumento != null)
-                                    {
-                                        cosasGlobalesewe.concatenarAccion(resIzq.argumento);
-                                        inicioIzq = resIzq.valor;
-                                    }
-                                    else if (resIzq.simbolo != null)
-                                    {
-                                        inicioIzq = resIzq.valor;
-                                    }
-                                    else
-                                    {
-                                        inicioIzq = cosasGlobalesewe.nuevoTemp();
-                                        argumento += inicioIzq + " = hp;\n";
-                                        foreach (char caracter in resIzq.valor)
-                                        {
-                                            argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
-                                            argumento += "hp = hp + 1;\n";
-                                        }
-                                        argumento += "heap[(int)hp] = " + "-1" + ";\n";
-                                        argumento += "hp = hp + 1;\n";
-                                    }
-
-                                    if (resDer.argumento != null)
-                                    {
-                                        cosasGlobalesewe.concatenarAccion(resDer.argumento);
-                                        inicioDer = resDer.valor;
-                                    }
-                                    else if (resDer.simbolo != null)
-                                    {
-                                        inicioDer = resDer.valor;
-                                    }
-                                    else
-                                    {
-                                        inicioDer = cosasGlobalesewe.nuevoTemp();
-                                        argumento += inicioDer + " = hp;\n";
-                                        foreach (char caracter in resDer.valor)
-                                        {
-                                            argumento += "heap[(int)hp] = " + (int)caracter + ";\n";
-                                            argumento += "hp = hp + 1;\n";
-                                        }
-
-                                        argumento += "heap[(int)hp] = " + "-1" + ";\n";
-                                        argumento += "hp = hp + 1;\n";
-                                    }
 
 
                                     argumento += inicioNuevaCadena + " = hp;\n";
@@ -289,7 +258,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             {
                                 //Error
                             }
-                            
+
 
                             return new resultado();
                         #endregion
@@ -782,7 +751,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                             argumento = resIzq.valor + " < " + resDer.valor;
                             temp = cosasGlobalesewe.nuevoTemp(argumento);
-                            return new resultado(terminales.numero, temp); 
+                            return new resultado(terminales.numero, temp);
                         #endregion
                         case ">":
                             #region mayor
@@ -865,11 +834,11 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 {
                                     if (comparador.tipo == terminales.rinteger || comparador.tipo == terminales.rreal || comparador.tipo == terminales.numero || comparador.tipo == terminales.rboolean)
                                     {
-                                        
-                                        
-                                            argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                            argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
-                                        
+
+
+                                        argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                        argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
+
                                     }
                                     else
                                     {
@@ -928,31 +897,30 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     ParseTreeNode id = node.ChildNodes.ElementAt(0);
                     simbolo a = tablaActual.buscar(id.Token.Text, ambito);
                     string retorno = "";
-                    if (a != null && a.esArray == true)
+                    if (a != null)
                     {
 
-                        LinkedList<int> listaPos = new LinkedList<int>();
+                        LinkedList<resultado> listaPos = new LinkedList<resultado>();
                         ParseTreeNode auxi = node.ChildNodes.ElementAt(2);
-                        int posicion = 0;
+                        resultado posicion = null;
                         while (auxi != null)
                         {
                             if (auxi.ChildNodes.Count == 3)
                             {
-                                posicion = int.Parse(auxi.ChildNodes.ElementAt(2).Token.Text);
+                                expresion thisExpr = new expresion(noterminales.EXPRESION, auxi.ChildNodes.ElementAt(2));
+                                posicion = thisExpr.traducir(ref tablaActual, ambito, "", "", "");
                                 listaPos.AddFirst(posicion);
                                 auxi = auxi.ChildNodes.ElementAt(0);
                             }
                             else if (auxi.ChildNodes.Count == 1)
                             {
-                                posicion = int.Parse(auxi.ChildNodes.ElementAt(0).Token.Text);
+                                expresion thisExpr = new expresion(noterminales.EXPRESION, auxi.ChildNodes.ElementAt(0));
+                                posicion = thisExpr.traducir(ref tablaActual, ambito, "", "", "");
                                 listaPos.AddFirst(posicion);
                                 auxi = null;
                             }
                         }
-                        //foreach (int b in listaPos)
-                        //{
-                        //    System.Diagnostics.Debug.WriteLine(b);
-                        //}
+
 
                         if (listaPos.Count == 1)//C3D para un array normalito
                         {
@@ -960,50 +928,65 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             temporal = cosasGlobalesewe.nuevoTemp();
                             retorno = cosasGlobalesewe.nuevoTemp();
                             argumento += temp + " = " + "stack[(int)" + a.direccion + "];\n";
-                            argumento+= temporal + " = " + temp + " + " + listaPos.ElementAt(0) + ";\n";
+                            argumento += temporal + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
+                            argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
                             argumento += retorno + " = heap[(int)" + temporal + "];\n";
                             cosasGlobalesewe.concatenarAccion(argumento);
-
-
                         }
                         else//Matriz y demás
                         {
-
+                            int contador = 0;
+                            foreach (var pos in listaPos)
+                            {
+                                if (contador == 0)
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    retorno = cosasGlobalesewe.nuevoTemp();
+                                    argumento += temp + " = " + "stack[(int)" + a.direccion + "];\n";
+                                    argumento += temporal + " = " + temp + " + " + pos.valor + ";\n";
+                                    argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
+                                    argumento += retorno + " = heap[(int)" + temporal + "];\n";
+                                }
+                                else
+                                {
+                                    temporal = cosasGlobalesewe.nuevoTemp();
+                                    argumento += temporal + " = " + retorno + " + " + pos.valor + ";\n";
+                                    argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
+                                    retorno = cosasGlobalesewe.nuevoTemp();
+                                    argumento += retorno + " = heap[(int)" + temporal + "];\n";
+                                }
+                                contador++;
+                            }
+                            cosasGlobalesewe.concatenarAccion(argumento);
                         }
-
-
-
-
-
-
 
                         if (a.tipo == "integer")
                         {
-
-                            return new resultado(terminales.rinteger, retorno,  a,true);
+                            return new resultado(terminales.rinteger, retorno, a, true);
                         }
                         else if (a.tipo == "real")
                         {
-                            return new resultado(terminales.rreal, retorno,  a, true);
+                            return new resultado(terminales.rreal, retorno, a, true);
                         }
-
                         else if (a.tipo == "string")
                         {
-                            return new resultado(terminales.rstring, retorno,  a, true);
+                            return new resultado(terminales.rstring, retorno, a, true);
                         }
                         else if (a.tipo == "char")
                         {
-                            return new resultado(terminales.rchar, retorno,  a, true);
+                            return new resultado(terminales.rchar, retorno, a, true);
                         }
                         else if (a.tipo == "boolean")
                         {
-                            return new resultado(terminales.rboolean, retorno,  a, true);
+                            return new resultado(terminales.rboolean, retorno, a, true);
                         }
                         else
                         {
-                            return new resultado("etc", retorno,  a, true);
-                        }
 
+                            simbolo tipoCustom = tablaActual.buscarTipo(a.tipo);
+                            return new resultado(tipoCustom.tipo, retorno, a, true);
+                        }
                     }
 
                 }
