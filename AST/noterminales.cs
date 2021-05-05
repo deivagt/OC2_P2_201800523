@@ -45,7 +45,9 @@ namespace OC2_P2_201800523.AST
             OTRADECLARACIONATRIBUTOS = "OTRADECLARACIONATRIBUTOS",
             ELSEIF = "ELSEIF",
             DECLARARENFUNC = "DECLARARENFUNC",
-            POSICION = "POSICION"
+            POSICION = "POSICION",
+            ATRIBUTO = "ATRIBUTO",
+            ATRIBUTOS = "ATRIBUTOS"
 
             ;
     }

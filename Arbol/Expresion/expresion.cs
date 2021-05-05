@@ -17,7 +17,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
         {
             resultado res;
             string argumento;
-            string temporal;
+            string temporal = "";
             string temp = "";
             //string array, pointer;
 
@@ -234,7 +234,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 }
                                 else
                                 {
-                                    Program.form.richTextBox5.Text += "Error Sintactico: No se pueden concatenar tipos distintos\n";
+                                    Program.form.consolaErrores.Text += "Error Sintactico: No se pueden concatenar tipos distintos\n";
                                     return new resultado(terminales.rstring, "");
                                 }
 

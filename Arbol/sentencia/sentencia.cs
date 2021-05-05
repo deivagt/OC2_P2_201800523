@@ -8,6 +8,7 @@ using OC2_P2_201800523.AST;
 using System.Collections.Generic;
 using OC2_P2_201800523.Arbol.sentencia.ciclo;
 using OC2_P2_201800523.Arbol.sentencia.condicion;
+using OC2_P2_201800523.Arbol.tipos.objetos;
 using System;
 
 namespace OC2_P2_201800523.Arbol.sentencia
@@ -200,25 +201,22 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                 {
                                     cosasGlobalesewe.concatenarAccion(res.argumento);
                                 }
-                                if (variable.tipo == terminales.rinteger || variable.tipo == terminales.rreal || variable.tipo == terminales.rboolean)
+                                if(res.tipo == variable.tipo)
                                 {
-                                    //TIPOS CONCUERDAN
                                     argumento = "stack" + "[(int)" + variable.direccion + "] = " + res.valor + ";";
                                     cosasGlobalesewe.concatenarAccion(argumento);
-                                    //manejadorArbol.imprimirTabla();
                                 }
                                 else
                                 {
-                                    if (variable.tipo == terminales.rstring || res.tipo == terminales.rchar)
-                                    {
-                                        argumento = "stack" + "[(int)" + variable.direccion + "] = " + res.valor + ";";
-                                        cosasGlobalesewe.concatenarAccion(argumento);
-                                    }
+                                    Program.form.consolaErrores.Text += "Tipos de asignacion incompatibles\n";
                                 }
+                                
+                                
+
                             }
                             else
                             {
-                                //ERROR
+                                Program.form.consolaErrores.Text += "Variable no encontrada\n";
                             }
                         }
                         else if (node.ChildNodes.ElementAt(1).Token.Text == "[")//Asignacion array
@@ -228,14 +226,14 @@ namespace OC2_P2_201800523.Arbol.sentencia
                             expresion expr = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(5));
                             res = expr.traducir(ref tablaActual, ambito, "", "", "");
 
-                            if( res.argumento != null)
+                            if (res.argumento != null)
                             {
                                 argumento += res.argumento;
                             }
 
                             ParseTreeNode id = node.ChildNodes.ElementAt(0);
                             simbolo a = tablaActual.buscar(id.Token.Text, ambito);
-                            if (a != null )
+                            if (a != null)
                             {
                                 LinkedList<resultado> listaPos = new LinkedList<resultado>();
                                 ParseTreeNode auxi = node.ChildNodes.ElementAt(2);
@@ -267,7 +265,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                     argumento += temp + " = " + "stack[(int)" + a.direccion + "];\n";
                                     argumento += temporal + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
                                     argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
-                                    argumento += "heap[(int)" + temporal + "]"+ " = " + res.valor +";\n";
+                                    argumento += "heap[(int)" + temporal + "]" + " = " + res.valor + ";\n";
                                     cosasGlobalesewe.concatenarAccion(argumento);
 
                                 }
@@ -288,13 +286,13 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                         }
                                         else
                                         {
-                                            if(contador == listaPos.Count - 1)
+                                            if (contador == listaPos.Count - 1)
                                             {
                                                 temporal = cosasGlobalesewe.nuevoTemp();
                                                 argumento += temporal + " = " + retorno + " + " + pos.valor + ";\n";
                                                 argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
                                                 retorno = cosasGlobalesewe.nuevoTemp();
-                                                argumento += "heap[(int)" + temporal + "]" + " = " + res.valor+";\n";
+                                                argumento += "heap[(int)" + temporal + "]" + " = " + res.valor + ";\n";
                                             }
                                             else
                                             {
@@ -304,12 +302,107 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                                 retorno = cosasGlobalesewe.nuevoTemp();
                                                 argumento += retorno + " = heap[(int)" + temporal + "];\n";
                                             }
-                                            
+
                                         }
                                         contador++;
                                     }
                                     cosasGlobalesewe.concatenarAccion(argumento);
                                 }
+                            }
+
+                        }
+                        else if (node.ChildNodes.ElementAt(1).Token.Text == ".")//Atributos Objeto
+                        {
+                            argumento = "";
+                            retorno = "";
+                            expresion expr = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(4));
+                            res = expr.traducir(ref tablaActual, ambito, "", "", "");
+
+                            if (res.argumento != null)
+                            {
+                                argumento += res.argumento;
+                            }
+
+                            ParseTreeNode id = node.ChildNodes.ElementAt(0);
+                            simbolo a = tablaActual.buscar(id.Token.Text, ambito);
+
+                            if (a != null)
+                            {
+                                LinkedList<string> listaAtr = new LinkedList<string>();
+                                ParseTreeNode auxi = node.ChildNodes.ElementAt(2);
+                                while (auxi != null)
+                                {
+                                    if (auxi.ChildNodes.Count == 3)
+                                    {
+                                        string thisId = auxi.ChildNodes.ElementAt(2).Token.Text;
+                                        listaAtr.AddFirst(thisId);
+                                        auxi = auxi.ChildNodes.ElementAt(0);
+                                    }
+                                    else if (auxi.ChildNodes.Count == 1)
+                                    {
+                                        string thisId = auxi.ChildNodes.ElementAt(0).Token.Text;
+                                        listaAtr.AddFirst(thisId);
+                                        auxi = null;
+                                    }
+                                }
+
+                                int contador = 0;
+                                bool buscarSimbolo = true;
+                                atributo esteAtr;
+                                atributo auxiliar = null;
+                                foreach (var atr in listaAtr)
+                                {
+
+                                    if (buscarSimbolo == true)
+                                    {
+                                        esteAtr = a.buscarAtributo(atr);
+                                        buscarSimbolo = false;
+                                    }
+                                    else
+                                    {
+                                        if (auxiliar == null)
+                                        {
+                                            Program.form.consolaErrores.Text += "Atributo Invalido\n";
+                                            return new resultado();
+                                        }
+                                        esteAtr = auxiliar.buscarAtributo(atr);
+                                    }
+
+
+                                    if (esteAtr == null)
+                                    {
+                                        Program.form.consolaErrores.Text += "Atributo Invalido\n";
+                                        return new resultado();
+                                    }
+                                    if (contador == listaAtr.Count - 1)//Ultimo atr a buscar
+                                    {
+                                        argumento += "/*INICIA ASIGNACION ATRIBUTO " + esteAtr.id + "*/\n";
+
+                                        
+                                        if (res.tipo == esteAtr.tipo)
+                                        {
+                                            argumento += "heap" + "[(int)" + esteAtr.direccion + "] = " + res.valor + ";\n";                                            
+                                        }
+                                        else
+                                        {
+                                            Program.form.consolaErrores.Text += "Tipos de asignacion incompatibles\n";
+                                        }
+
+
+                                        argumento += "/*FINALIZA ASIGNACION ATRIBUTO " + esteAtr.id + "*/\n";
+                                    }
+                                    else //Seguir buscando Ewe
+                                    {
+                                        auxiliar = esteAtr;
+
+                                    }
+
+
+                                    contador++;
+                                }
+                                cosasGlobalesewe.concatenarAccion(argumento);
+
+
                             }
 
                         }
@@ -331,8 +424,8 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                 argumento += tempResetear + " = sp;\n";
                                 if (fn.listaParam.Count != 0)
                                 {
-                                    
-                                  
+
+
                                     LinkedList<parametroCustom> listaParamFunc = fn.listaParam;
                                     for (int i = 0; i <= listaParam.Count - 1; i++)
                                     {
@@ -358,12 +451,12 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                                     if (comparador.porValor == true)
                                                     {
                                                         argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                                        argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";                                                        
+                                                        argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
 
                                                     }
                                                     else
                                                     {
-                                              
+
                                                         argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
                                                         argumento += "stack[(int)" + temp + "] = " + respuesta.simbolo.direccion + ";\n";
 
@@ -395,12 +488,12 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                                     }
                                                     else
                                                     {
-                                                       
+
                                                         argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
                                                         argumento += "stack[(int)" + temp + "] = " + respuesta.simbolo.direccion + ";\n";
 
                                                     }
-                                                    
+
                                                 }
                                                 else
                                                 {
@@ -410,10 +503,19 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                                 }
                                             }
                                         }
-                                        else if( respuesta.tipo == comparador.tipo) // Paso tipico por referencia
+                                        else if (respuesta.tipo == comparador.tipo) // Paso tipico por referencia
                                         {
-                                            argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
-                                            argumento += "stack[(int)" + temp + "] = " + respuesta.simbolo.direccion + ";\n";
+                                            if (comparador.porValor == true)
+                                            {
+                                                argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                                argumento += "stack[(int)" + temp + "] = " + respuesta.valor + ";\n";
+                                            }
+                                            else
+                                            {
+                                                argumento += temp + " = " + tempResetear + " + " + (i + 1) + ";\n";
+                                                argumento += "stack[(int)" + temp + "] = " + respuesta.simbolo.direccion + ";\n";
+                                            }
+
                                         }
                                         else
                                         {
@@ -432,6 +534,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
                             }
                         }
                     }
+
                     return new resultado();
             }
         }

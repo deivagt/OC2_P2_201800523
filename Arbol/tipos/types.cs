@@ -5,6 +5,7 @@ using System.Linq;
 using Irony.Ast;
 using Irony.Parsing;
 using OC2_P2_201800523.Arbol.tipos.arreglos;
+using OC2_P2_201800523.Arbol.tipos.objetos;
 using OC2_P2_201800523.tablaSimbolos;
 using OC2_P2_201800523.AST;
 
@@ -21,6 +22,10 @@ namespace OC2_P2_201800523.Arbol.tipos
             {
                 arreglo nuevoArreglo = new arreglo(terminales.rarray, node);
                 nuevoArreglo.traducir(ref tablaActual, ambito, verdadero, falso, xd);
+            }else if(node.ChildNodes.Count == 6)//Object
+            {
+                objeto nuevoObjeto = new objeto(terminales.robject, node);
+                nuevoObjeto.traducir(ref tablaActual, ambito, verdadero, falso, xd);
             }
             return new resultado();
         }

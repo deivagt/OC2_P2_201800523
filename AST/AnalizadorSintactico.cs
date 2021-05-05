@@ -15,7 +15,7 @@ namespace OC2_P2_201800523.AST
             Program.form.consola.Text = "";
             Program.form.richTextBox3.Text = "";
             Program.form.richTextBox4.Text = "";
-            Program.form.richTextBox5.Text = "";
+            Program.form.consolaErrores.Text = "";
             cosasGlobalesewe.inicializar();
             Gramatica gram = new Gramatica();
             LanguageData leng = new LanguageData(gram);

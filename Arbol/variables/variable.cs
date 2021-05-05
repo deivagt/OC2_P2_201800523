@@ -7,6 +7,7 @@ using Irony.Parsing;
 using OC2_P2_201800523.tablaSimbolos;
 using OC2_P2_201800523.Arbol.Expresion;
 using OC2_P2_201800523.Arbol.tipos;
+using OC2_P2_201800523.Arbol.tipos.objetos;
 using OC2_P2_201800523.AST;
 
 
@@ -20,6 +21,7 @@ namespace OC2_P2_201800523.Arbol.variables
         {
             string argumento = "";
             string temp;
+            string otroOtroTemp;
             if (node.ChildNodes.Count == 5)
             {
                 ParseTreeNode otraVariable = node.ChildNodes.ElementAt(4);
@@ -36,6 +38,7 @@ namespace OC2_P2_201800523.Arbol.variables
                     string eltipo = tipo.ChildNodes.ElementAt(0).Token.Text;
                     string guardadoEtiqueta;
                     temp = cosasGlobalesewe.nuevoTemp();
+                    string otroTemp;
 
 
 
@@ -79,18 +82,22 @@ namespace OC2_P2_201800523.Arbol.variables
                     {
                         simbolo tipoCustom = tablaActual.buscarTipo(eltipo);
                         if (tipoCustom.categoria == "array")
-                        {
-                            tipos.arreglos.arreglo newArr = new tipos.arreglos.arreglo(terminales.rarray, node);
 
+                        {
+                            #region array
+                            string salidaCadenas = cosasGlobalesewe.nuevoTemp("hp");
+                            argumento += "heap[(int)" + salidaCadenas + "] = -1;\n";
+                            argumento += "hp" + " = " + "hp" + " + 1;\n";
+                            tipos.arreglos.arreglo newArr = new tipos.arreglos.arreglo(terminales.rarray, node);
+                            nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable", tipoCustom.listaIndex, true);
+                            tablaActual.agregarSimbolo(nuevoSimbolo);
                             if (tipoCustom.listaIndex.Count == 1)
                             {
                                 argumento += temp + " = " + "sp" + ";\n";
                                 argumento += "sp" + " = " + "sp" + " + 1;\n";
                                 argumento += "stack" + "[(int)" + temp + "] = " + "hp" + ";\n";
 
-                                /*Guardar en tabla de simbolos*/
-                                nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable", tipoCustom.listaIndex, true);
-                                tablaActual.agregarSimbolo(nuevoSimbolo);
+
 
                                 int inicio = tipoCustom.listaIndex.ElementAt(0).inicio;
                                 int final = tipoCustom.listaIndex.ElementAt(0).final;
@@ -116,7 +123,15 @@ namespace OC2_P2_201800523.Arbol.variables
                                         asignartamanio = false;
                                         continue;
                                     }
-                                    argumento += "heap[(int)" + temporal + "] = 0;\n";
+                                    if (tipoCustom.tipo == "integer" || tipoCustom.tipo == "real" || tipoCustom.tipo == "boolean")
+                                    {
+                                        argumento += "heap[(int)" + temporal + "] = 0;\n";
+                                    }
+                                    else
+                                    {
+                                        argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
+
+                                    }
                                 }
 
 
@@ -126,9 +141,8 @@ namespace OC2_P2_201800523.Arbol.variables
                                 argumento += temp + " = " + "sp" + ";\n";
                                 argumento += "sp" + " = " + "sp" + " + 1;\n";
                                 argumento += "stack" + "[(int)" + temp + "] = " + "hp" + ";\n";
-                                /*Guardar en tabla de simbolos*/
-                                nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable", tipoCustom.listaIndex, true);
-                                tablaActual.agregarSimbolo(nuevoSimbolo);
+
+
                                 LinkedList<tipos.arreglos.index> listaActual = tipoCustom.listaIndex;
                                 int multiplicador = 1;
                                 for (int j = 0; j < listaActual.Count; j++)
@@ -201,7 +215,15 @@ namespace OC2_P2_201800523.Arbol.variables
                                                     asignartamanio = false;
                                                     continue;
                                                 }
-                                                argumento += "heap[(int)" + temporal + "] = 0;\n";
+                                                if (tipoCustom.tipo == "integer" || tipoCustom.tipo == "real" || tipoCustom.tipo == "boolean")
+                                                {
+                                                    argumento += "heap[(int)" + temporal + "] = 0;\n";
+                                                }
+                                                else
+                                                {
+                                                    argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
+
+                                                }
                                             }
                                         }
 
@@ -211,6 +233,80 @@ namespace OC2_P2_201800523.Arbol.variables
 
                                 }
                             }
+                            #endregion
+                        }
+                        else if (tipoCustom.categoria == "objeto")
+                        {
+                            #region objeto
+                            LinkedList<simbolo> listaAtributos = new LinkedList<simbolo>();
+                            /*salida para objetos*/
+                            string salidaCadenas = cosasGlobalesewe.nuevoTemp("hp");
+                            argumento += "heap[(int)" + salidaCadenas + "] = -1;\n";
+                            argumento += "hp" + " = " + "hp" + " + 1;\n";
+                            /*Declarar posicion Objeto*/
+                            argumento += temp + " = " + "sp" + ";\n";
+                            argumento += "sp" + " = " + "sp" + " + 1;\n";
+                            argumento += "stack" + "[(int)" + temp + "] = " + "hp" + ";\n";
+                            //bool repetir = false;
+
+
+                            if (tipoCustom != null)
+                            {
+
+                                if (tipoCustom.listaAtributos != null)
+                                {
+
+
+                                    for (int i = 0; i < tipoCustom.listaAtributos.Count; i++)//Crear Temporales
+                                    {
+                                        temp = cosasGlobalesewe.nuevoTemp();
+                                        argumento += temp + " = " + "hp" + ";\n";
+                                        argumento += "hp" + " = " + "hp" + " + 1;\n";
+                                        tipoCustom.listaAtributos.ElementAt(i).direccion = temp;
+
+                                    }
+
+
+                                    int contador = 0;
+                                    foreach (var atributo in tipoCustom.listaAtributos)
+                                    {
+
+                                        if (atributo.tipo == "integer" || atributo.tipo == "real" || atributo.tipo == "boolean")
+                                        {
+                                            argumento += "heap[(int)" + atributo.direccion + "] = 0;\n";
+                                        }
+                                        else if (atributo.tipo == "string" || atributo.tipo == "char")
+                                        {
+                                            argumento += "heap[(int)" + atributo.direccion + "] = " + salidaCadenas + ";\n";
+                                        }
+                                        else
+                                        {
+                                            temp = cosasGlobalesewe.nuevoTemp();
+                                            argumento += "heap[(int)" + atributo.direccion + "] = " + temp + ";\n";
+                                            atributo atributoComplejo = iniciarAtributos(ref tablaActual, atributo, temp, ref argumento, salidaCadenas);
+
+                                            tipoCustom.listaAtributos.ElementAt(contador).listaAtributos = atributoComplejo.listaAtributos;
+
+
+                                        }
+
+
+                                        nuevoSimbolo = new simbolo("", atributo.id, atributo.tipo, atributo.direccion, fila + 1, columna + 1, "atributo");
+                                        listaAtributos.AddLast(nuevoSimbolo);
+                                        contador++;
+                                    }
+                                }
+                                else//Array
+                                {
+
+                                }
+                            }
+
+
+                            /*Guardar en tabla de simbolos*/
+                            nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "objeto", tipoCustom.listaAtributos, true);
+                            tablaActual.agregarSimbolo(nuevoSimbolo);
+                            #endregion
                         }
                     }
 
@@ -290,6 +386,10 @@ namespace OC2_P2_201800523.Arbol.variables
                                 simbolo tipoCustom = tablaActual.buscarTipo(eltipo);
                                 if (tipoCustom.categoria == "array")
                                 {
+                                    #region array
+                                    string salidaCadenas = cosasGlobalesewe.nuevoTemp("hp");
+                                    argumento += "heap[(int)" + salidaCadenas + "] = -1;\n";
+                                    argumento += "hp" + " = " + "hp" + " + 1;\n";
                                     tipos.arreglos.arreglo newArr = new tipos.arreglos.arreglo(terminales.rarray, node);
                                     nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "variable", tipoCustom.listaIndex, true);
                                     tablaActual.agregarSimbolo(nuevoSimbolo);
@@ -325,7 +425,15 @@ namespace OC2_P2_201800523.Arbol.variables
                                                 asignartamanio = false;
                                                 continue;
                                             }
-                                            argumento += "heap[(int)" + temporal + "] = 0;\n";
+                                            if (tipoCustom.tipo == "integer" || tipoCustom.tipo == "real" || tipoCustom.tipo == "boolean")
+                                            {
+                                                argumento += "heap[(int)" + temporal + "] = 0;\n";
+                                            }
+                                            else
+                                            {
+                                                argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
+
+                                            }
                                         }
 
 
@@ -409,7 +517,15 @@ namespace OC2_P2_201800523.Arbol.variables
                                                             asignartamanio = false;
                                                             continue;
                                                         }
-                                                        argumento += "heap[(int)" + temporal + "] = 0;\n";
+                                                        if (tipoCustom.tipo == "integer" || tipoCustom.tipo == "real" || tipoCustom.tipo == "boolean")
+                                                        {
+                                                            argumento += "heap[(int)" + temporal + "] = 0;\n";
+                                                        }
+                                                        else
+                                                        {
+                                                            argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
+
+                                                        }
                                                     }
                                                 }
 
@@ -419,6 +535,81 @@ namespace OC2_P2_201800523.Arbol.variables
 
                                         }
                                     }
+                                    #endregion
+                                }
+                                else if (tipoCustom.categoria == "objeto")
+                                {
+                                    #region objeto
+                                    LinkedList<simbolo> listaAtributos = new LinkedList<simbolo>();
+                                    /*salida para objetos*/
+                                    string salidaCadenas = cosasGlobalesewe.nuevoTemp("hp");
+                                    argumento += "heap[(int)" + salidaCadenas + "] = -1;\n";
+                                    argumento += "hp" + " = " + "hp" + " + 1;\n";
+                                    /*Declarar posicion Objeto*/
+                                    argumento += temp + " = " + "sp" + ";\n";
+                                    argumento += "sp" + " = " + "sp" + " + 1;\n";
+                                    argumento += "stack" + "[(int)" + temp + "] = " + "hp" + ";\n";
+                                    //bool repetir = false;
+
+
+                                    if (tipoCustom != null)
+                                    {
+
+
+                                        if (tipoCustom.listaAtributos != null)
+                                        {
+
+
+                                            for (int i = 0; i < tipoCustom.listaAtributos.Count; i++)//Crear Temporales
+                                            {
+                                                temp = cosasGlobalesewe.nuevoTemp();
+                                                argumento += temp + " = " + "hp" + ";\n";
+                                                argumento += "hp" + " = " + "hp" + " + 1;\n";
+                                                tipoCustom.listaAtributos.ElementAt(i).direccion = temp;
+
+                                            }
+
+
+                                            int contador = 0;
+                                            foreach (var atributo in tipoCustom.listaAtributos)
+                                            {
+
+                                                if (atributo.tipo == "integer" || atributo.tipo == "real" || atributo.tipo == "boolean")
+                                                {
+                                                    argumento += "heap[(int)" + atributo.direccion + "] = 0;\n";
+                                                }
+                                                else if (atributo.tipo == "string" || atributo.tipo == "char")
+                                                {
+                                                    argumento += "heap[(int)" + atributo.direccion + "] = " + salidaCadenas + ";\n";
+                                                }
+                                                else
+                                                {
+                                                    temp = cosasGlobalesewe.nuevoTemp();
+                                                    argumento += "heap[(int)" + atributo.direccion + "] = " + temp + ";\n";
+                                                    atributo atributoComplejo = iniciarAtributos(ref tablaActual, atributo, temp, ref argumento, salidaCadenas);
+
+                                                    tipoCustom.listaAtributos.ElementAt(contador).listaAtributos = atributoComplejo.listaAtributos;
+
+
+                                                }
+
+
+                                                nuevoSimbolo = new simbolo("", atributo.id, atributo.tipo, atributo.direccion, fila + 1, columna + 1, "atributo");
+                                                listaAtributos.AddLast(nuevoSimbolo);
+                                                contador++;
+                                            }
+                                        }
+                                        else//Array
+                                        {
+
+                                        }
+                                    }
+
+
+                                    /*Guardar en tabla de simbolos*/
+                                    nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "objeto", tipoCustom.listaAtributos, true);
+                                    tablaActual.agregarSimbolo(nuevoSimbolo);
+                                    #endregion
                                 }
                             }
 
@@ -464,8 +655,6 @@ namespace OC2_P2_201800523.Arbol.variables
                     argumento = "/*EMPIEZA DECLARACION VARIABLE " + id.Token.Text + "*/\n";
 
 
-
-
                     argumento += temp + " = " + "sp" + ";\n";
                     argumento += "sp" + " = " + "sp" + " + 1;\n";
                     argumento += "stack" + "[(int)" + temp + "] = " + res.valor + ";\n";
@@ -490,6 +679,233 @@ namespace OC2_P2_201800523.Arbol.variables
 
             }
             return new resultado();
+        }
+
+        atributo iniciarAtributos(ref tabla tablaActual, atributo atr, string temp, ref string argumento, string salidaCadenas)
+        {
+            
+            string otroOtroTemp = "";
+            atributo retorno = null ;
+
+
+            simbolo tipoCustom = tablaActual.buscarTipo(atr.tipo);
+            LinkedList<simbolo> listaAtributos = new LinkedList<simbolo>();
+
+            /*Declarar posicion Objeto*/
+            argumento += "/*Inicio Atributo complejo*/\n";
+            
+            //bool repetir = false;
+            
+            if (tipoCustom != null)
+            {
+                
+                retorno = atr;
+                retorno.direccion = temp;
+                retorno.listaAtributos = tipoCustom.listaAtributos;
+
+                if (retorno.listaAtributos != null)
+                {
+
+
+                    for (int i = 0; i < retorno.listaAtributos.Count; i++)//Crear Temporales
+                    {
+
+                        argumento += temp + " = " + "hp" + ";\n";
+                        argumento += "hp" + " = " + "hp" + " + 1;\n";
+                        retorno.listaAtributos.ElementAt(i).direccion = temp;
+                        temp = cosasGlobalesewe.nuevoTemp();
+                    }
+
+                    int contador = 0;
+
+                    foreach (var atributo in retorno.listaAtributos)
+                    {
+
+                        if (atributo.tipo == "integer" || atributo.tipo == "real" || atributo.tipo == "boolean")
+                        {
+                            argumento += "heap[(int)" + atributo.direccion + "] = 0;\n";
+                        }
+                        else if (atributo.tipo == "string" || atributo.tipo == "char")
+                        {
+                            argumento += "heap[(int)" + atributo.direccion + "] = " + salidaCadenas + ";\n";
+                        }
+                        else
+                        {
+                            temp = cosasGlobalesewe.nuevoTemp();
+                            argumento += "heap[(int)" + atributo.direccion + "] = " + temp + ";\n";
+
+                            atributo atributoComplejo = iniciarAtributos(ref tablaActual, atributo, temp, ref argumento, salidaCadenas);
+
+                            retorno.listaAtributos.ElementAt(contador).listaAtributos = atributoComplejo.listaAtributos;
+                        }
+                        contador++;
+                    }
+                }
+                else//Array
+                {
+                    
+                    tipos.arreglos.arreglo newArr = new tipos.arreglos.arreglo(terminales.rarray, node);
+                    argumento += "heap" + "[(int)" + temp + "] = " + "hp" + ";\n";
+                    if (tipoCustom.listaIndex.Count == 1)
+                    {
+
+                        int inicio = tipoCustom.listaIndex.ElementAt(0).inicio;
+                        int final = tipoCustom.listaIndex.ElementAt(0).final;
+                        int tamanioArray = final - inicio + 1;
+
+
+                        LinkedList<string> temporalesEwe = new LinkedList<string>();
+                        for (int i = 0; i <= tamanioArray; i++)//Crear Temporales
+                        {
+                            temp = cosasGlobalesewe.nuevoTemp();
+                            argumento += temp + " = " + "hp" + ";\n";
+                            argumento += "hp" + " = " + "hp" + " + 1;\n";
+                            temporalesEwe.AddLast(temp);
+                        }
+                        bool asignartamanio = true;
+
+                        int contador = 0;
+                        foreach (var temporal in temporalesEwe)
+                        {
+                            if (asignartamanio == true)
+                            {
+                                argumento += "heap[(int)" + temporal + "] = " + tamanioArray + ";\n";
+                                asignartamanio = false;
+                                continue;
+                            }
+                            if (tipoCustom.tipo == "integer" || tipoCustom.tipo == "real" || tipoCustom.tipo == "boolean")
+                            {
+                                argumento += "heap[(int)" + tipoCustom.direccion + "] = 0;\n";
+                            }
+                            else if (tipoCustom.tipo == "string" || tipoCustom.tipo == "char")
+                            {
+                                argumento += "heap[(int)" + tipoCustom.direccion + "] = " + salidaCadenas + ";\n";
+                            }
+                            else//Un type xd
+                            {
+                                //ASUMIENDO QUE NO ES UN ARRAY
+                                temp = cosasGlobalesewe.nuevoTemp();
+                                argumento += "heap[(int)" + tipoCustom.direccion + "] = " + temp + ";\n";
+                                //TA A MEDIAS
+                                atributo atributoComplejo = iniciarAtributos(ref tablaActual, atributo, temp, ref argumento, salidaCadenas);
+
+                                retorno.listaAtributos.ElementAt(contador).listaAtributos = atributoComplejo.listaAtributos;
+                            }
+                            contador++;
+                            //if (tipoCustom.tipo == "integer" || tipoCustom.tipo == "real" || tipoCustom.tipo == "boolean")
+                            //{
+                            //    argumento += "heap[(int)" + temporal + "] = 0;\n";
+                            //}
+                            //else
+                            //{
+                            //    argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
+
+                            //}
+                        }
+
+
+                    }
+                    else
+                    {
+                       
+
+
+                        LinkedList<tipos.arreglos.index> listaActual = tipoCustom.listaIndex;
+                        int multiplicador = 1;
+                        for (int j = 0; j < listaActual.Count; j++)
+                        {
+                            if (j < listaActual.Count - 1)
+                            {
+
+                                int inicio = listaActual.ElementAt(j).inicio;
+                                int final = listaActual.ElementAt(j).final;
+                                int tamanioArray = final - inicio + 1;
+                                /*ASUMIENDO 2D*/
+                                int inicioSiguiente = listaActual.ElementAt(j + 1).inicio;
+                                int finalSiguiente = listaActual.ElementAt(j + 1).final;
+                                int tamanioSig = finalSiguiente - inicioSiguiente + 1;
+                                multiplicador = multiplicador * tamanioArray;
+
+
+                                string temphp = cosasGlobalesewe.nuevoTemp();
+                                argumento += temphp + " = hp;\n";
+                                LinkedList<string> temporalesEwe = new LinkedList<string>();
+                                for (int i = 0; i <= tamanioArray; i++)//Crear Temporales
+                                {
+                                    temp = cosasGlobalesewe.nuevoTemp();
+                                    argumento += temp + " = " + "hp" + ";\n";
+                                    argumento += "hp" + " = " + "hp" + " + 1;\n";
+                                    temporalesEwe.AddLast(temp);
+                                }
+                                bool asignartamanio = true;
+                                int contador = 0;
+                                foreach (var temporal in temporalesEwe)
+                                {
+                                    if (asignartamanio == true)
+                                    {
+                                        argumento += "heap[(int)" + temporal + "] = " + tamanioArray + ";\n";
+                                        asignartamanio = false;
+                                        continue;
+                                    }
+                                    int result = ((tamanioArray + (tamanioSig + 1) * contador) + 1);
+                                    argumento += "heap[(int)" + temporal + "] = " + temphp + " + " + result + ";\n";
+                                    contador++;
+                                }
+                            }
+                            else
+                            {
+                                int inicio = listaActual.ElementAt(j).inicio;
+                                int final = listaActual.ElementAt(j).final;
+                                int tamanioArray = final - inicio + 1;
+                                /*ASUMIENDO 2D*/
+
+
+
+                                for (int k = 0; k < multiplicador; k++)
+                                {
+
+                                    LinkedList<string> temporalesEwe = new LinkedList<string>();
+                                    for (int i = 0; i <= tamanioArray; i++)//Crear Temporales
+                                    {
+                                        temp = cosasGlobalesewe.nuevoTemp();
+                                        argumento += temp + " = " + "hp" + ";\n";
+                                        argumento += "hp" + " = " + "hp" + " + 1;\n";
+                                        temporalesEwe.AddLast(temp);
+                                    }
+                                    bool asignartamanio = true;
+
+                                    foreach (var temporal in temporalesEwe)
+                                    {
+                                        if (asignartamanio == true)
+                                        {
+                                            argumento += "heap[(int)" + temporal + "] = " + tamanioArray + ";\n";
+                                            asignartamanio = false;
+                                            continue;
+                                        }
+                                        if (tipoCustom.tipo == "integer" || tipoCustom.tipo == "real" || tipoCustom.tipo == "boolean")
+                                        {
+                                            argumento += "heap[(int)" + temporal + "] = 0;\n";
+                                        }
+                                        else
+                                        {
+                                            argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
+
+                                        }
+                                    }
+                                }
+
+                            }
+
+
+
+                        }
+                    }
+                }
+            }
+            argumento += "/*Final Atributo complejo*/\n";
+
+
+            return retorno;
         }
     }
 }

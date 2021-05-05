@@ -94,6 +94,7 @@ namespace OC2_P2_201800523.AST
             #endregion
 
             #region No terminales
+            NonTerminal ATRIBUTOS = new NonTerminal(noterminales.ATRIBUTOS);
             NonTerminal INI = new NonTerminal(noterminales.INI);
             NonTerminal COSAS = new NonTerminal(noterminales.COSAS);
             NonTerminal USES = new NonTerminal(noterminales.USES);
@@ -136,7 +137,7 @@ namespace OC2_P2_201800523.AST
             NonTerminal PARAMETROSWRITELN = new NonTerminal(noterminales.PARAMETROSWRITELN);
             NonTerminal DECLARACIONATRIBUTOS = new NonTerminal(noterminales.DECLARACIONATRIBUTOS);
             NonTerminal OTRADECLARACIONATRIBUTOS = new NonTerminal(noterminales.OTRADECLARACIONATRIBUTOS);
-
+            NonTerminal ATRIBUTO = new NonTerminal(noterminales.ATRIBUTO);
             NonTerminal ELSEIF = new NonTerminal(noterminales.ELSEIF);
             NonTerminal DECLARARENFUNC = new NonTerminal(noterminales.DECLARARENFUNC);
 
@@ -204,7 +205,7 @@ namespace OC2_P2_201800523.AST
             DECLTIPOS.Rule =
                  DECLVARIOST + igual + TIPO + punto_coma + DECLTIPOS//No importa parte1
                 | id + igual + TIPO + punto_coma + DECLTIPOS//No importa parte2
-                | id + igual + robject + var + DECLARACIONATRIBUTOS + end + punto_coma
+                | id + igual + robject + DECLARACIONATRIBUTOS + end + punto_coma
                 | id + igual + rarray + abrir_corchete + INDEXADO + cerrar_corchete + rof + TIPO + punto_coma + DECLTIPOS
                 | Empty
                 ;
@@ -216,13 +217,11 @@ namespace OC2_P2_201800523.AST
                 | id
                 ;
 
-            DECLARACIONATRIBUTOS.Rule = id + dos_puntos + TIPO + punto_coma + DECLARACIONATRIBUTOS
-                | OTRADECLARACIONATRIBUTOS + dos_puntos + TIPO + punto_coma + DECLARACIONATRIBUTOS
+            DECLARACIONATRIBUTOS.Rule =   DECLARACIONATRIBUTOS  + ATRIBUTO
+                | ATRIBUTO
                 | Empty
                 ;
-
-            OTRADECLARACIONATRIBUTOS.Rule = OTRADECLARACIONATRIBUTOS + coma + id
-                | id
+            ATRIBUTO.Rule = var + id + dos_puntos + TIPO + punto_coma
                 ;
 
             INDEXADO.Rule = INDEXADO + coma + numero + dospunticos + numero
@@ -261,7 +260,8 @@ namespace OC2_P2_201800523.AST
                 | Empty
                 ;
 
-            SENTENCIA.Rule = id + dos_puntos_igual + EXPRESION + punto_coma
+            SENTENCIA.Rule = id + PreferShiftHere() + dos_puntos_igual + EXPRESION + punto_coma
+                | id + punto + ATRIBUTOS + dos_puntos_igual + EXPRESION + punto_coma                
                 | id + abrir_corchete + POSICION + cerrar_corchete + dos_puntos_igual + EXPRESION + punto_coma
                 | id + abrir_parentesis + PARAMETROS + cerrar_parentesis + punto_coma
                 | rif + EXPRESION + rthen + begin + SENTENCIAS + end + punto_coma
@@ -282,7 +282,9 @@ namespace OC2_P2_201800523.AST
                 | exit + abrir_parentesis + EXPRESION + cerrar_parentesis + punto_coma
                 | graficar_ts + abrir_parentesis + cerrar_parentesis + punto_coma
                 ;
-
+            ATRIBUTOS.Rule = ATRIBUTOS + punto + id
+                | id
+                ;
             ELSEIF.Rule = relse + rif + EXPRESION + rthen + begin + SENTENCIAS + end + ELSEIF
                 | relse + begin + SENTENCIAS + end
                 | Empty

@@ -40,7 +40,7 @@ namespace OC2_P2_201800523
             this.label4 = new System.Windows.Forms.Label();
             this.richTextBox4 = new System.Windows.Forms.RichTextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.richTextBox5 = new System.Windows.Forms.RichTextBox();
+            this.consolaErrores = new System.Windows.Forms.RichTextBox();
             this.button3 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -156,14 +156,14 @@ namespace OC2_P2_201800523
             this.label5.TabIndex = 9;
             this.label5.Text = "Errores";
             // 
-            // richTextBox5
+            // consolaErrores
             // 
-            this.richTextBox5.Location = new System.Drawing.Point(861, 438);
-            this.richTextBox5.Name = "richTextBox5";
-            this.richTextBox5.ReadOnly = true;
-            this.richTextBox5.Size = new System.Drawing.Size(261, 149);
-            this.richTextBox5.TabIndex = 10;
-            this.richTextBox5.Text = "";
+            this.consolaErrores.Location = new System.Drawing.Point(861, 438);
+            this.consolaErrores.Name = "consolaErrores";
+            this.consolaErrores.ReadOnly = true;
+            this.consolaErrores.Size = new System.Drawing.Size(261, 149);
+            this.consolaErrores.TabIndex = 10;
+            this.consolaErrores.Text = "";
             // 
             // button3
             // 
@@ -182,7 +182,7 @@ namespace OC2_P2_201800523
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1149, 648);
             this.Controls.Add(this.button3);
-            this.Controls.Add(this.richTextBox5);
+            this.Controls.Add(this.consolaErrores);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.richTextBox4);
             this.Controls.Add(this.label4);
@@ -214,7 +214,7 @@ namespace OC2_P2_201800523
         public System.Windows.Forms.RichTextBox richTextBox4;
         public System.Windows.Forms.RichTextBox richTextBox3;
         private System.Windows.Forms.Label label5;
-        public System.Windows.Forms.RichTextBox richTextBox5;
+        public System.Windows.Forms.RichTextBox consolaErrores;
         private System.Windows.Forms.Button button3;
     }
 }

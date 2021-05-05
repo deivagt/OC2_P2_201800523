@@ -26,17 +26,12 @@ namespace OC2_P2_201800523.Arbol.tipos.arreglos
             int fila = id.Token.Location.Line;
             int columna = id.Token.Location.Column;
 
-            simbolo nuevotipo = new simbolo(ambito, id.Token.Text, tipo, fila, columna, "array", listaIndex, true);
+            simbolo nuevotipo = new simbolo(ambito, id.Token.Text, tipo, fila+1, columna+1, "array", listaIndex, true);
             tablaActual.agregarSimbolo(nuevotipo);
 
             return new resultado();
         }
 
-        public string construir(string tipo, LinkedList<index> listaIndex)
-        {
-            string argumento = "";
-
-            return argumento;
-        }
+        
     }
 }
