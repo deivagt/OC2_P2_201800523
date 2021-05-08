@@ -93,6 +93,7 @@ namespace OC2_P2_201800523.Arbol.variables
                             tablaActual.agregarSimbolo(nuevoSimbolo);
                             if (tipoCustom.listaIndex.Count == 1)
                             {
+                                LinkedList<tipos.arreglos.index> listaActual = tipoCustom.listaIndex;
                                 argumento += temp + " = " + "sp" + ";\n";
                                 argumento += "sp" + " = " + "sp" + " + 1;\n";
                                 argumento += "stack" + "[(int)" + temp + "] = " + "hp" + ";\n";
@@ -112,9 +113,15 @@ namespace OC2_P2_201800523.Arbol.variables
                                     argumento += "hp" + " = " + "hp" + " + 1;\n";
                                     temporalesEwe.AddLast(temp);
                                 }
+                                
+
+
+
+
                                 bool asignartamanio = true;
-
-
+                                simbolo esteAtr;
+                                atributo otroatr;
+                                int contador = 0;
                                 foreach (var temporal in temporalesEwe)
                                 {
                                     if (asignartamanio == true)
@@ -127,11 +134,27 @@ namespace OC2_P2_201800523.Arbol.variables
                                     {
                                         argumento += "heap[(int)" + temporal + "] = 0;\n";
                                     }
-                                    else
+                                    else if (tipoCustom.tipo == "string" || tipoCustom.tipo == "char")
                                     {
                                         argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
-
                                     }
+                                    else//Un type xd
+                                    {
+                                        //ASUMIENDO QUE NO ES UN ARRAY
+                                        temp = cosasGlobalesewe.nuevoTemp();
+                                        argumento += "/*ACCION ARRAY*/\n";
+                                        argumento += "heap[(int)" + temporal + "] = " + temp + ";\n";
+                                        //TA A MEDIAS
+                                        esteAtr = tablaActual.buscarTipo(tipoCustom.tipo);//Busca el tipo del array
+                                        otroatr = new atributo(esteAtr.id, esteAtr.id);
+                                        otroatr.direccion = temporal;
+                                        atributo atributoComplejo = iniciarAtributos(ref tablaActual, otroatr, temp, ref argumento, salidaCadenas);
+                                        nuevoSimbolo.esArray = true;
+                                        nuevoSimbolo.listaIndex = listaActual;
+                                        nuevoSimbolo.listaAtributos = atributoComplejo.listaAtributos;
+                                    }
+                                    contador++;
+
                                 }
 
 
@@ -206,7 +229,9 @@ namespace OC2_P2_201800523.Arbol.variables
                                                 temporalesEwe.AddLast(temp);
                                             }
                                             bool asignartamanio = true;
-
+                                            simbolo esteAtr;
+                                            atributo otroatr;
+                                            int contador = 0;
                                             foreach (var temporal in temporalesEwe)
                                             {
                                                 if (asignartamanio == true)
@@ -219,11 +244,27 @@ namespace OC2_P2_201800523.Arbol.variables
                                                 {
                                                     argumento += "heap[(int)" + temporal + "] = 0;\n";
                                                 }
-                                                else
+                                                else if (tipoCustom.tipo == "string" || tipoCustom.tipo == "char")
                                                 {
                                                     argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
-
                                                 }
+                                                else//Un type xd
+                                                {
+                                                    //ASUMIENDO QUE NO ES UN ARRAY
+                                                    temp = cosasGlobalesewe.nuevoTemp();
+                                                    argumento += "/*ACCION ARRAY*/\n";
+                                                    argumento += "heap[(int)" + temporal + "] = " + temp + ";\n";
+                                                    //TA A MEDIAS
+                                                    esteAtr = tablaActual.buscarTipo(tipoCustom.tipo);//Busca el tipo del array
+                                                    otroatr = new atributo(esteAtr.id, esteAtr.id);
+                                                    otroatr.direccion = temporal;
+                                                    atributo atributoComplejo = iniciarAtributos(ref tablaActual, otroatr, temp, ref argumento, salidaCadenas);
+                                                    nuevoSimbolo.esArray = true;
+                                                    nuevoSimbolo.listaIndex = listaActual;
+                                                    nuevoSimbolo.listaAtributos = atributoComplejo.listaAtributos;
+                                                }
+                                                contador++;
+
                                             }
                                         }
 
@@ -244,6 +285,7 @@ namespace OC2_P2_201800523.Arbol.variables
                             argumento += "heap[(int)" + salidaCadenas + "] = -1;\n";
                             argumento += "hp" + " = " + "hp" + " + 1;\n";
                             /*Declarar posicion Objeto*/
+                            string posicion = temp;
                             argumento += temp + " = " + "sp" + ";\n";
                             argumento += "sp" + " = " + "sp" + " + 1;\n";
                             argumento += "stack" + "[(int)" + temp + "] = " + "hp" + ";\n";
@@ -304,7 +346,7 @@ namespace OC2_P2_201800523.Arbol.variables
 
 
                             /*Guardar en tabla de simbolos*/
-                            nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "objeto", tipoCustom.listaAtributos, true);
+                            nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, posicion, fila + 1, columna + 1, "objeto", tipoCustom.listaAtributos, true);
                             tablaActual.agregarSimbolo(nuevoSimbolo);
                             #endregion
                         }
@@ -395,6 +437,7 @@ namespace OC2_P2_201800523.Arbol.variables
                                     tablaActual.agregarSimbolo(nuevoSimbolo);
                                     if (tipoCustom.listaIndex.Count == 1)
                                     {
+                                        LinkedList<tipos.arreglos.index> listaActual = tipoCustom.listaIndex;
                                         argumento += temp + " = " + "sp" + ";\n";
                                         argumento += "sp" + " = " + "sp" + " + 1;\n";
                                         argumento += "stack" + "[(int)" + temp + "] = " + "hp" + ";\n";
@@ -415,8 +458,9 @@ namespace OC2_P2_201800523.Arbol.variables
                                             temporalesEwe.AddLast(temp);
                                         }
                                         bool asignartamanio = true;
-
-
+                                        simbolo esteAtr;
+                                        atributo otroatr;
+                                        int contador = 0;
                                         foreach (var temporal in temporalesEwe)
                                         {
                                             if (asignartamanio == true)
@@ -429,11 +473,27 @@ namespace OC2_P2_201800523.Arbol.variables
                                             {
                                                 argumento += "heap[(int)" + temporal + "] = 0;\n";
                                             }
-                                            else
+                                            else if (tipoCustom.tipo == "string" || tipoCustom.tipo == "char")
                                             {
                                                 argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
-
                                             }
+                                            else//Un type xd
+                                            {
+                                                //ASUMIENDO QUE NO ES UN ARRAY
+                                                temp = cosasGlobalesewe.nuevoTemp();
+                                                argumento += "/*ACCION ARRAY*/\n";
+                                                argumento += "heap[(int)" + temporal + "] = " + temp + ";\n";
+                                                //TA A MEDIAS
+                                                esteAtr = tablaActual.buscarTipo(tipoCustom.tipo);//Busca el tipo del array
+                                                otroatr = new atributo(esteAtr.id, esteAtr.id);
+                                                otroatr.direccion = temporal;
+                                                atributo atributoComplejo = iniciarAtributos(ref tablaActual, otroatr, temp, ref argumento, salidaCadenas);
+                                                nuevoSimbolo.esArray = true;
+                                                nuevoSimbolo.listaIndex = listaActual;
+                                                nuevoSimbolo.listaAtributos = atributoComplejo.listaAtributos;
+                                            }
+                                            contador++;
+
                                         }
 
 
@@ -508,7 +568,9 @@ namespace OC2_P2_201800523.Arbol.variables
                                                         temporalesEwe.AddLast(temp);
                                                     }
                                                     bool asignartamanio = true;
-
+                                                    simbolo esteAtr;
+                                                    atributo otroatr;
+                                                    int contador = 0;
                                                     foreach (var temporal in temporalesEwe)
                                                     {
                                                         if (asignartamanio == true)
@@ -521,11 +583,27 @@ namespace OC2_P2_201800523.Arbol.variables
                                                         {
                                                             argumento += "heap[(int)" + temporal + "] = 0;\n";
                                                         }
-                                                        else
+                                                        else if (tipoCustom.tipo == "string" || tipoCustom.tipo == "char")
                                                         {
                                                             argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
-
                                                         }
+                                                        else//Un type xd
+                                                        {
+                                                            //ASUMIENDO QUE NO ES UN ARRAY
+                                                            temp = cosasGlobalesewe.nuevoTemp();
+                                                            argumento += "/*ACCION ARRAY*/\n";
+                                                            argumento += "heap[(int)" + temporal + "] = " + temp + ";\n";
+                                                            //TA A MEDIAS
+                                                            esteAtr = tablaActual.buscarTipo(tipoCustom.tipo);//Busca el tipo del array
+                                                            otroatr = new atributo(esteAtr.id, esteAtr.id);
+                                                            otroatr.direccion = temporal;
+                                                            atributo atributoComplejo = iniciarAtributos(ref tablaActual, otroatr, temp, ref argumento, salidaCadenas);
+                                                            nuevoSimbolo.esArray = true;
+                                                            nuevoSimbolo.listaIndex = listaActual;
+                                                            nuevoSimbolo.listaAtributos = atributoComplejo.listaAtributos;
+                                                        }
+                                                        contador++;
+
                                                     }
                                                 }
 
@@ -546,6 +624,7 @@ namespace OC2_P2_201800523.Arbol.variables
                                     argumento += "heap[(int)" + salidaCadenas + "] = -1;\n";
                                     argumento += "hp" + " = " + "hp" + " + 1;\n";
                                     /*Declarar posicion Objeto*/
+                                    string posicion = temp;
                                     argumento += temp + " = " + "sp" + ";\n";
                                     argumento += "sp" + " = " + "sp" + " + 1;\n";
                                     argumento += "stack" + "[(int)" + temp + "] = " + "hp" + ";\n";
@@ -607,7 +686,7 @@ namespace OC2_P2_201800523.Arbol.variables
 
 
                                     /*Guardar en tabla de simbolos*/
-                                    nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, temp, fila + 1, columna + 1, "objeto", tipoCustom.listaAtributos, true);
+                                    nuevoSimbolo = new simbolo(ambito, id.Token.Text, eltipo, posicion, fila + 1, columna + 1, "objeto", tipoCustom.listaAtributos, true);
                                     tablaActual.agregarSimbolo(nuevoSimbolo);
                                     #endregion
                                 }
@@ -748,7 +827,7 @@ namespace OC2_P2_201800523.Arbol.variables
                     argumento += "heap" + "[(int)" + temp + "] = " + "hp" + ";\n";
                     if (tipoCustom.listaIndex.Count == 1)
                     {
-
+                        LinkedList<tipos.arreglos.index> listaActual = tipoCustom.listaIndex;
                         int inicio = tipoCustom.listaIndex.ElementAt(0).inicio;
                         int final = tipoCustom.listaIndex.ElementAt(0).final;
                         int tamanioArray = final - inicio + 1;
@@ -763,7 +842,8 @@ namespace OC2_P2_201800523.Arbol.variables
                             temporalesEwe.AddLast(temp);
                         }
                         bool asignartamanio = true;
-
+                        simbolo esteAtr;
+                        atributo otroatr;
                         int contador = 0;
                         foreach (var temporal in temporalesEwe)
                         {
@@ -775,32 +855,30 @@ namespace OC2_P2_201800523.Arbol.variables
                             }
                             if (tipoCustom.tipo == "integer" || tipoCustom.tipo == "real" || tipoCustom.tipo == "boolean")
                             {
-                                argumento += "heap[(int)" + tipoCustom.direccion + "] = 0;\n";
+                                argumento += "heap[(int)" + temporal + "] = 0;\n";
                             }
                             else if (tipoCustom.tipo == "string" || tipoCustom.tipo == "char")
                             {
-                                argumento += "heap[(int)" + tipoCustom.direccion + "] = " + salidaCadenas + ";\n";
+                                argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
                             }
                             else//Un type xd
                             {
                                 //ASUMIENDO QUE NO ES UN ARRAY
                                 temp = cosasGlobalesewe.nuevoTemp();
-                                argumento += "heap[(int)" + tipoCustom.direccion + "] = " + temp + ";\n";
+                                argumento += "/*ACCION ARRAY*/\n";
+                                argumento += "heap[(int)" + temporal + "] = " + temp + ";\n";
                                 //TA A MEDIAS
-                                atributo atributoComplejo = iniciarAtributos(ref tablaActual, atributo, temp, ref argumento, salidaCadenas);
-
-                                retorno.listaAtributos.ElementAt(contador).listaAtributos = atributoComplejo.listaAtributos;
+                                esteAtr = tablaActual.buscarTipo(tipoCustom.tipo);//Busca el tipo del array
+                                otroatr = new atributo(esteAtr.id, esteAtr.id);
+                                otroatr.direccion = temporal;
+                                atributo atributoComplejo = iniciarAtributos(ref tablaActual, otroatr, temp, ref argumento, salidaCadenas);
+                                retorno.esArray = true;
+                                retorno.listaIndex = listaActual;
+                                retorno.listaAtributos = atributoComplejo.listaAtributos;
                             }
                             contador++;
-                            //if (tipoCustom.tipo == "integer" || tipoCustom.tipo == "real" || tipoCustom.tipo == "boolean")
-                            //{
-                            //    argumento += "heap[(int)" + temporal + "] = 0;\n";
-                            //}
-                            //else
-                            //{
-                            //    argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
-
-                            //}
+                           
+                           
                         }
 
 
@@ -873,7 +951,9 @@ namespace OC2_P2_201800523.Arbol.variables
                                         temporalesEwe.AddLast(temp);
                                     }
                                     bool asignartamanio = true;
-
+                                    simbolo esteAtr;
+                                    atributo otroatr;
+                                    int contador = 0;
                                     foreach (var temporal in temporalesEwe)
                                     {
                                         if (asignartamanio == true)
@@ -886,11 +966,27 @@ namespace OC2_P2_201800523.Arbol.variables
                                         {
                                             argumento += "heap[(int)" + temporal + "] = 0;\n";
                                         }
-                                        else
+                                        else if (tipoCustom.tipo == "string" || tipoCustom.tipo == "char")
                                         {
                                             argumento += "heap[(int)" + temporal + "] = " + salidaCadenas + ";\n";
-
                                         }
+                                        else//Un type xd
+                                        {
+                                            //ASUMIENDO QUE NO ES UN ARRAY
+                                            temp = cosasGlobalesewe.nuevoTemp();
+                                            argumento += "/*ACCION ARRAY*/\n";
+                                            argumento += "heap[(int)" + temporal + "] = " + temp + ";\n";
+                                            //TA A MEDIAS
+                                            esteAtr = tablaActual.buscarTipo(tipoCustom.tipo);//Busca el tipo del array
+                                            otroatr = new atributo(esteAtr.id, esteAtr.id);
+                                            otroatr.direccion = temporal;
+                                            atributo atributoComplejo = iniciarAtributos(ref tablaActual, otroatr, temp, ref argumento, salidaCadenas);
+                                            retorno.esArray = true;
+                                            retorno.listaIndex = listaActual;
+                                            retorno.listaAtributos = atributoComplejo.listaAtributos;
+                                        }
+                                        contador++;
+                                        
                                     }
                                 }
 

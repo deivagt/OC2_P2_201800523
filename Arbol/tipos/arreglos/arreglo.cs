@@ -6,6 +6,7 @@ using Irony.Ast;
 using Irony.Parsing;
 using OC2_P2_201800523.tablaSimbolos;
 using OC2_P2_201800523.AST;
+using OC2_P2_201800523.Arbol.tipos.objetos;
 
 namespace OC2_P2_201800523.Arbol.tipos.arreglos
 {
@@ -25,10 +26,23 @@ namespace OC2_P2_201800523.Arbol.tipos.arreglos
             string tipo = node.ChildNodes.ElementAt(7).ChildNodes.ElementAt(0).Token.Text;
             int fila = id.Token.Location.Line;
             int columna = id.Token.Location.Column;
+            LinkedList<atributo> listaAtr = new LinkedList<atributo>();
+            
+            atributo atr = null;
+            int posicion = 0;
 
-            simbolo nuevotipo = new simbolo(ambito, id.Token.Text, tipo, fila+1, columna+1, "array", listaIndex, true);
+
+
+            if (tipo != "integer" && tipo != "real" && tipo != "string" && tipo != "char"&& tipo != "boolean")
+            {
+                simbolo nuevoAtr = tablaActual.buscarTipo(tipo);
+                listaAtr = nuevoAtr.listaAtributos;
+               
+                
+            }
+            simbolo nuevotipo = new simbolo(ambito, id.Token.Text, tipo, fila + 1, columna + 1, "array", listaIndex, true);
+            nuevotipo.listaAtributos = listaAtr;
             tablaActual.agregarSimbolo(nuevotipo);
-
             return new resultado();
         }
 

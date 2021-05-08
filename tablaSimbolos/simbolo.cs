@@ -28,6 +28,7 @@ namespace OC2_P2_201800523.tablaSimbolos
         public LinkedList<parametroCustom> listaParam;
         public ParseTreeNode nodo;
         public bool esArray;
+        public atributo estrAtrArray;
 
 
 
@@ -113,6 +114,19 @@ namespace OC2_P2_201800523.tablaSimbolos
             this.esConstante = false;
             this.listaAtributos = listaAtributos;
             this.esArray = esArray;
+        }
+        public simbolo(string ambito, string id, string tipo, string direccion,string categoria, LinkedList<atributo> listaAtributos )
+        {
+            this.ambito = ambito;
+            this.id = id;
+            this.tipo = tipo;
+            
+            this.direccion = direccion;
+            this.categoria = categoria;
+            this.esConstante = false;
+           
+            this.listaAtributos = listaAtributos;
+            
         }
 
         public atributo buscarAtributo(string id)

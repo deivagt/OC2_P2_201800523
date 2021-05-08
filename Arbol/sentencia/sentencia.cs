@@ -158,7 +158,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
                     return new resultado();
 
 
-                case "Exit":
+                case "exit":
                     string[] partido = xd.Split(';');
                     if (node.ChildNodes.Count == 4)// No return
                     {
@@ -185,7 +185,32 @@ namespace OC2_P2_201800523.Arbol.sentencia
 
                     return new resultado();
 
+                case "Exit":
+                    string[] partido1 = xd.Split(';');
+                    if (node.ChildNodes.Count == 4)// No return
+                    {
 
+                    }
+                    else
+                    {
+
+                        expresion exp = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(2));
+                        res = exp.traducir(ref tablaActual, ambito, "", "", xd);
+                        argumento = "";
+                        if (res.argumento != null)
+                        {
+                            argumento = res.argumento;
+                        }
+
+
+                        argumento += "stack" + "[(int)" + partido1[1] + "] = " + res.valor + ";";
+                        cosasGlobalesewe.concatenarAccion(argumento);
+
+
+                    }
+                    cosasGlobalesewe.concatenarAccion("goto " + partido1[0] + ";");
+
+                    return new resultado();
                 default:
                     if (palabraClave.Term.ToString() == "id")
                     {
@@ -201,17 +226,12 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                 {
                                     cosasGlobalesewe.concatenarAccion(res.argumento);
                                 }
-                                if(res.tipo == variable.tipo)
-                                {
+                                
                                     argumento = "stack" + "[(int)" + variable.direccion + "] = " + res.valor + ";";
                                     cosasGlobalesewe.concatenarAccion(argumento);
-                                }
-                                else
-                                {
-                                    Program.form.consolaErrores.Text += "Tipos de asignacion incompatibles\n";
-                                }
                                 
-                                
+
+
 
                             }
                             else
@@ -328,19 +348,19 @@ namespace OC2_P2_201800523.Arbol.sentencia
 
                             if (a != null)
                             {
-                                LinkedList<string> listaAtr = new LinkedList<string>();
+                                LinkedList<ParseTreeNode> listaAtr = new LinkedList<ParseTreeNode>();
                                 ParseTreeNode auxi = node.ChildNodes.ElementAt(2);
                                 while (auxi != null)
                                 {
                                     if (auxi.ChildNodes.Count == 3)
                                     {
-                                        string thisId = auxi.ChildNodes.ElementAt(2).Token.Text;
+                                        ParseTreeNode thisId = auxi.ChildNodes.ElementAt(2);
                                         listaAtr.AddFirst(thisId);
                                         auxi = auxi.ChildNodes.ElementAt(0);
                                     }
                                     else if (auxi.ChildNodes.Count == 1)
                                     {
-                                        string thisId = auxi.ChildNodes.ElementAt(0).Token.Text;
+                                        ParseTreeNode thisId = auxi.ChildNodes.ElementAt(0);
                                         listaAtr.AddFirst(thisId);
                                         auxi = null;
                                     }
@@ -350,12 +370,17 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                 bool buscarSimbolo = true;
                                 atributo esteAtr;
                                 atributo auxiliar = null;
+                                string busqueda;
+                                temp = cosasGlobalesewe.nuevoTemp();
+                                argumento += temp + " = " + "stack[(int)"+ a.direccion + "];\n";
+
                                 foreach (var atr in listaAtr)
                                 {
 
+                                    busqueda = atr.ChildNodes.ElementAt(0).Token.Text;
                                     if (buscarSimbolo == true)
                                     {
-                                        esteAtr = a.buscarAtributo(atr);
+                                        esteAtr = a.buscarAtributo(busqueda);
                                         buscarSimbolo = false;
                                     }
                                     else
@@ -365,37 +390,144 @@ namespace OC2_P2_201800523.Arbol.sentencia
                                             Program.form.consolaErrores.Text += "Atributo Invalido\n";
                                             return new resultado();
                                         }
-                                        esteAtr = auxiliar.buscarAtributo(atr);
+                                        esteAtr = auxiliar.buscarAtributo(busqueda);
                                     }
-
-
                                     if (esteAtr == null)
                                     {
+
                                         Program.form.consolaErrores.Text += "Atributo Invalido\n";
                                         return new resultado();
                                     }
-                                    if (contador == listaAtr.Count - 1)//Ultimo atr a buscar
+                                    //argumento += "//" + esteAtr.tipo + "\n";
+                                    if (atr.ChildNodes.Count == 1)
                                     {
-                                        argumento += "/*INICIA ASIGNACION ATRIBUTO " + esteAtr.id + "*/\n";
 
-                                        
-                                        if (res.tipo == esteAtr.tipo)
+                                        if (contador == listaAtr.Count - 1)//Ultimo atr a buscar
                                         {
-                                            argumento += "heap" + "[(int)" + esteAtr.direccion + "] = " + res.valor + ";\n";                                            
+                                            argumento += "/*INICIA ASIGNACION ATRIBUTO " + esteAtr.id + "*/\n";
+                                            argumento += temp + " = " + temp + " + " + esteAtr.pos + ";\n";
+
+                                            argumento += "heap" + "[(int)" + temp + "] = " + res.valor + ";\n";
+
+                                            argumento += "/*FINALIZA ASIGNACION ATRIBUTO " + esteAtr.id + "*/\n";
+                                        }
+                                        else //Seguir buscando Ewe
+                                        {
+                                            argumento += temp + " = " + temp + " + " + esteAtr.pos + ";\n";
+
+                                            argumento += temp + " = " + "heap" + "[(int)" + temp + "];\n";
+                                            auxiliar = esteAtr;
+
+                                        }
+                                    }
+                                    else //Atributo en array
+                                    {
+                                        //Ultimo atr a buscar
+
+
+                                        LinkedList<resultado> listaPos = new LinkedList<resultado>();
+                                        auxi = atr.ChildNodes.ElementAt(2);
+                                        resultado posicion = null;
+                                        while (auxi != null)
+                                        {
+                                            if (auxi.ChildNodes.Count == 3)
+                                            {
+                                                expresion thisExpr = new expresion(noterminales.EXPRESION, auxi.ChildNodes.ElementAt(2));
+                                                posicion = thisExpr.traducir(ref tablaActual, ambito, "", "", "");
+                                                listaPos.AddFirst(posicion);
+                                                auxi = auxi.ChildNodes.ElementAt(0);
+                                            }
+                                            else if (auxi.ChildNodes.Count == 1)
+                                            {
+                                                expresion thisExpr = new expresion(noterminales.EXPRESION, auxi.ChildNodes.ElementAt(0));
+                                                posicion = thisExpr.traducir(ref tablaActual, ambito, "", "", "");
+                                                listaPos.AddFirst(posicion);
+                                                auxi = null;
+                                            }
+                                        }
+                                        argumento += temp + " = " + temp + " + " + esteAtr.pos + ";\n";
+                                        argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+
+                                        if (listaPos.Count == 1)//C3D para un array normalito
+                                        {
+
+
+
+
+
+                                            if (contador == listaAtr.Count - 1)//Ultimo atr a buscar
+                                            {
+                                                argumento += "/*INICIA ASIGNACION ATRIBUTO " + esteAtr.id + "*/\n";
+                                                argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                                argumento += temp + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
+                                                argumento += "heap[(int)" + temp + "]" + " = " + res.valor + ";\n";
+
+                                                argumento += "/*FINALIZA ASIGNACION ATRIBUTO " + esteAtr.id + "*/\n";
+                                            }
+                                            else //Seguir buscando Ewe
+                                            {
+                                                argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                                argumento += temp + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
+                                                argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                                                auxiliar = esteAtr;
+
+                                            }
+
                                         }
                                         else
                                         {
-                                            Program.form.consolaErrores.Text += "Tipos de asignacion incompatibles\n";
+                                            int ct = 0;
+                                            foreach (var pos in listaPos)
+                                            {
+                                                if (ct == 0)
+                                                {
+                                                    argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                                    argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                                                    argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                                                }
+                                                else
+                                                {
+                                                    if (ct == listaPos.Count - 1)
+                                                    {
+                                                        argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                                        argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                                                        argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                                                    }
+                                                    else
+                                                    {
+                                                        if (contador == listaAtr.Count - 1)//Ultimo atr a buscar
+                                                        {
+                                                            argumento += "/*INICIA ASIGNACION ATRIBUTO " + esteAtr.id + "*/\n";
+                                                            argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                                            argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                                                            argumento += "heap[(int)" + temp + "]" + " = " + res.valor + ";\n";
+
+                                                            argumento += "/*FINALIZA ASIGNACION ATRIBUTO " + esteAtr.id + "*/\n";
+                                                        }
+                                                        else //Seguir buscando Ewe
+                                                        {
+                                                            argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                                            argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                                                            argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                                                            auxiliar = esteAtr;
+
+                                                        }
+
+
+
+                                                    }
+
+                                                }
+                                                ct++;
+                                            }
+
                                         }
 
 
-                                        argumento += "/*FINALIZA ASIGNACION ATRIBUTO " + esteAtr.id + "*/\n";
-                                    }
-                                    else //Seguir buscando Ewe
-                                    {
-                                        auxiliar = esteAtr;
+
 
                                     }
+
 
 
                                     contador++;

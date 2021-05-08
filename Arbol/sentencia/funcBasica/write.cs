@@ -52,7 +52,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
                     }
                     else if(res.tipo == terminales.rstring || res.tipo == terminales.rchar)//Cadena o char
                     {
-                        argumento = "t0 = " + res.valor + ";\n";
+                        argumento += "t0 = " + res.valor + ";\n";
                         argumento += "imprimirLn();\n";
                     }
                     
@@ -143,7 +143,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
                         }
                         else // Cadena o char
                         {
-                            argumento = "t0 = " + res.valor + ";\n";
+                            argumento += "t0 = " + res.valor + ";\n";
                             argumento += "imprimirLn();\n";
                         }
                     }

@@ -31,8 +31,8 @@ namespace OC2_P2_201800523.Arbol.sentencia.funcBasica
             }
             else if (node.ChildNodes.Count == 1)
             {
-                expresion ins = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(0));
-                lista.AddLast(ins);
+                expresion exp = new expresion(noterminales.SENTENCIA, node.ChildNodes.ElementAt(0));
+                lista.AddLast(exp);
             }
             else
             {

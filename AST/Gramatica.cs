@@ -136,7 +136,7 @@ namespace OC2_P2_201800523.AST
 
             NonTerminal PARAMETROSWRITELN = new NonTerminal(noterminales.PARAMETROSWRITELN);
             NonTerminal DECLARACIONATRIBUTOS = new NonTerminal(noterminales.DECLARACIONATRIBUTOS);
-            NonTerminal OTRADECLARACIONATRIBUTOS = new NonTerminal(noterminales.OTRADECLARACIONATRIBUTOS);
+            NonTerminal UNATR = new NonTerminal(noterminales.OTRADECLARACIONATRIBUTOS);
             NonTerminal ATRIBUTO = new NonTerminal(noterminales.ATRIBUTO);
             NonTerminal ELSEIF = new NonTerminal(noterminales.ELSEIF);
             NonTerminal DECLARARENFUNC = new NonTerminal(noterminales.DECLARARENFUNC);
@@ -217,7 +217,7 @@ namespace OC2_P2_201800523.AST
                 | id
                 ;
 
-            DECLARACIONATRIBUTOS.Rule =   DECLARACIONATRIBUTOS  + ATRIBUTO
+            DECLARACIONATRIBUTOS.Rule = DECLARACIONATRIBUTOS + ATRIBUTO
                 | ATRIBUTO
                 | Empty
                 ;
@@ -261,7 +261,7 @@ namespace OC2_P2_201800523.AST
                 ;
 
             SENTENCIA.Rule = id + PreferShiftHere() + dos_puntos_igual + EXPRESION + punto_coma
-                | id + punto + ATRIBUTOS + dos_puntos_igual + EXPRESION + punto_coma                
+                | id + punto + ATRIBUTOS + dos_puntos_igual + EXPRESION + punto_coma
                 | id + abrir_corchete + POSICION + cerrar_corchete + dos_puntos_igual + EXPRESION + punto_coma
                 | id + abrir_parentesis + PARAMETROS + cerrar_parentesis + punto_coma
                 | rif + EXPRESION + rthen + begin + SENTENCIAS + end + punto_coma
@@ -282,9 +282,14 @@ namespace OC2_P2_201800523.AST
                 | exit + abrir_parentesis + EXPRESION + cerrar_parentesis + punto_coma
                 | graficar_ts + abrir_parentesis + cerrar_parentesis + punto_coma
                 ;
-            ATRIBUTOS.Rule = ATRIBUTOS + punto + id
-                | id
+            ATRIBUTOS.Rule = ATRIBUTOS + punto + UNATR
+                | UNATR
                 ;
+            UNATR.Rule = id
+                | id + abrir_corchete + POSICION + cerrar_corchete
+                ;
+
+
             ELSEIF.Rule = relse + rif + EXPRESION + rthen + begin + SENTENCIAS + end + ELSEIF
                 | relse + begin + SENTENCIAS + end
                 | Empty
@@ -323,6 +328,8 @@ namespace OC2_P2_201800523.AST
                 | id
                 | id + abrir_parentesis + PARAMETROS + cerrar_parentesis
                 | id + abrir_corchete + POSICION + cerrar_corchete
+                | id + abrir_corchete + POSICION + cerrar_corchete + punto + ATRIBUTOS
+                | id + punto + ATRIBUTOS
                 | numero
                 | cadena
                 | rtrue

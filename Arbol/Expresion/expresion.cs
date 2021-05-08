@@ -6,6 +6,7 @@ using Irony.Ast;
 using Irony.Parsing;
 using OC2_P2_201800523.tablaSimbolos;
 using OC2_P2_201800523.AST;
+using OC2_P2_201800523.Arbol.tipos.objetos;
 
 namespace OC2_P2_201800523.Arbol.Expresion
 {
@@ -19,6 +20,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
             string argumento;
             string temporal = "";
             string temp = "";
+            string retorno = "";
             //string array, pointer;
 
 
@@ -36,8 +38,265 @@ namespace OC2_P2_201800523.Arbol.Expresion
             resultado resDer;
 
 
+            if (node.ChildNodes.Count == 6)
+            {
 
-            if (node.ChildNodes.Count == 1)
+                argumento = "";
+                simbolo regreso = null;
+
+
+                ParseTreeNode id = node.ChildNodes.ElementAt(0);
+                simbolo a = tablaActual.buscar(id.Token.Text, ambito);
+
+                if (a != null)
+                {
+
+                    LinkedList<ParseTreeNode> listaAtr = new LinkedList<ParseTreeNode>();
+                    ParseTreeNode auxi = node.ChildNodes.ElementAt(5);
+                    while (auxi != null)
+                    {
+                        if (auxi.ChildNodes.Count == 3)
+                        {
+                            ParseTreeNode thisId = auxi.ChildNodes.ElementAt(2);
+                            listaAtr.AddFirst(thisId);
+                            auxi = auxi.ChildNodes.ElementAt(0);
+                        }
+                        else if (auxi.ChildNodes.Count == 1)
+                        {
+                            ParseTreeNode thisId = auxi.ChildNodes.ElementAt(0);
+                            listaAtr.AddFirst(thisId);
+                            auxi = null;
+                        }
+                    }
+
+                    int contador = 0;
+                    bool buscarSimbolo = true;
+                    atributo esteAtr;
+                    atributo auxiliar = null;
+                    string busqueda;
+                    /**/
+                    temp = cosasGlobalesewe.nuevoTemp();
+                    argumento += temp + " = " + "stack[(int)" + a.direccion + "];\n";
+
+                    LinkedList<resultado> listaPos = new LinkedList<resultado>();
+                    auxi = node.ChildNodes.ElementAt(2);
+                    resultado posicion = null;
+                    while (auxi != null)
+                    {
+                        if (auxi.ChildNodes.Count == 3)
+                        {
+                            expresion thisExpr = new expresion(noterminales.EXPRESION, auxi.ChildNodes.ElementAt(2));
+                            posicion = thisExpr.traducir(ref tablaActual, ambito, "", "", "");
+                            listaPos.AddFirst(posicion);
+                            auxi = auxi.ChildNodes.ElementAt(0);
+                        }
+                        else if (auxi.ChildNodes.Count == 1)
+                        {
+                            expresion thisExpr = new expresion(noterminales.EXPRESION, auxi.ChildNodes.ElementAt(0));
+                            posicion = thisExpr.traducir(ref tablaActual, ambito, "", "", "");
+                            listaPos.AddFirst(posicion);
+                            auxi = null;
+                        }
+                    }
+                    if (listaPos.Count == 1)//C3D para un array normalito
+                    {
+                        argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                        argumento += temp + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
+                        argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                        cosasGlobalesewe.concatenarAccion(argumento);
+                    }
+                    else//Matriz y demás
+                    {
+                      
+                        foreach (var pos in listaPos)
+                        {
+                            argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                            argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                            argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                           
+                        }
+                        cosasGlobalesewe.concatenarAccion(argumento);
+                    }
+                    argumento = "";
+
+                    /**/
+
+
+                    contador = 0;
+                    foreach (var atr in listaAtr)
+                    {
+
+                        busqueda = atr.ChildNodes.ElementAt(0).Token.Text;
+                        if (buscarSimbolo == true)
+                        {
+                            esteAtr = a.buscarAtributo(busqueda);
+                            buscarSimbolo = false;
+                        }
+                        else
+                        {
+                            if (auxiliar == null)
+                            {
+                                Program.form.consolaErrores.Text += "Atributo Invalido\n";
+                                return new resultado();
+                            }
+                            esteAtr = auxiliar.buscarAtributo(busqueda);
+                        }
+                        if (esteAtr == null)
+                        {
+
+                            Program.form.consolaErrores.Text += "Atributo Invalido\n";
+                            return new resultado();
+                        }
+                        //argumento += "//" + esteAtr.tipo + "\n";
+                        if (atr.ChildNodes.Count == 1)
+                        {
+
+                            if (contador == listaAtr.Count - 1)//Ultimo atr a buscar
+                            {
+                                argumento += "/*INICIA BUSQUEDA ATRIBUTO " + esteAtr.id + "*/\n";
+                                argumento += temp + " = " + temp + " + " + esteAtr.pos + ";\n";
+                                argumento += temp + " = " + "heap" + "[(int)" + temp + "]" + ";\n";
+                                regreso = new simbolo(ambito, esteAtr.id, esteAtr.tipo, temp, 0, 0, "atributo");
+
+                                argumento += "/*FINALIZA BUSQUEDA ATRIBUTO " + esteAtr.id + "*/\n";
+                                break;
+                            }
+                            else //Seguir buscando Ewe
+                            {
+                                argumento += temp + " = " + temp + " + " + esteAtr.pos + ";\n";
+
+                                argumento += temp + " = " + "heap" + "[(int)" + temp + "];\n";
+                                auxiliar = esteAtr;
+
+                            }
+                        }
+                        else //Atributo en array
+                        {
+                            //Ultimo atr a buscar
+
+
+                            listaPos = new LinkedList<resultado>();
+                            auxi = atr.ChildNodes.ElementAt(2);
+                             posicion = null;
+                            while (auxi != null)
+                            {
+                                if (auxi.ChildNodes.Count == 3)
+                                {
+                                    expresion thisExpr = new expresion(noterminales.EXPRESION, auxi.ChildNodes.ElementAt(2));
+                                    posicion = thisExpr.traducir(ref tablaActual, ambito, "", "", "");
+                                    listaPos.AddFirst(posicion);
+                                    auxi = auxi.ChildNodes.ElementAt(0);
+                                }
+                                else if (auxi.ChildNodes.Count == 1)
+                                {
+                                    expresion thisExpr = new expresion(noterminales.EXPRESION, auxi.ChildNodes.ElementAt(0));
+                                    posicion = thisExpr.traducir(ref tablaActual, ambito, "", "", "");
+                                    listaPos.AddFirst(posicion);
+                                    auxi = null;
+                                }
+                            }
+                            argumento += temp + " = " + temp + " + " + esteAtr.pos + ";\n";
+                            argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+
+                            if (listaPos.Count == 1)//C3D para un array normalito
+                            {
+
+
+                                if (contador == listaAtr.Count - 1)//Ultimo atr a buscar
+                                {
+                                    argumento += "/*INICIA BUSQUEDA ATRIBUTO " + esteAtr.id + "*/\n";
+                                    argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                    argumento += temp + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
+                                    argumento += temp + " = " + "heap" + "[(int)" + temp + "]" + ";\n";
+                                    regreso = new simbolo(ambito, esteAtr.id, esteAtr.tipo, temp, 0, 0, "atributo");
+
+                                    argumento += "/*FINALIZA BUSQUEDA ATRIBUTO " + esteAtr.id + "*/\n";
+                                    break;
+                                }
+                                else //Seguir buscando Ewe
+                                {
+                                    argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                    argumento += temp + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
+                                    argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                                    auxiliar = esteAtr;
+
+                                }
+
+                            }
+                            else
+                            {
+                                int ct = 0;
+                                foreach (var pos in listaPos)
+                                {
+                                    if (ct == 0)
+                                    {
+                                        argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                        argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                                        argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                                    }
+                                    else
+                                    {
+                                        if (ct == listaPos.Count - 1)
+                                        {
+                                            argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                            argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                                            argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                                        }
+                                        else
+                                        {
+                                            if (contador == listaAtr.Count - 1)//Ultimo atr a buscar
+                                            {
+                                                argumento += "/*INICIA ASIGNACION ATRIBUTO " + esteAtr.id + "*/\n";
+                                                argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                                argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                                                argumento += temp + " = " + "heap" + "[(int)" + temp + "]" + ";\n";
+                                                regreso = new simbolo(ambito, esteAtr.id, esteAtr.tipo, temp, 0, 0, "atributo");
+
+                                                argumento += "/*FINALIZA BUSQUEDA ATRIBUTO " + esteAtr.id + "*/\n";
+                                                break;
+
+
+                                            }
+                                            else //Seguir buscando Ewe
+                                            {
+                                                argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                                argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                                                argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                                                auxiliar = esteAtr;
+
+                                            }
+
+
+
+                                        }
+
+                                    }
+                                    ct++;
+                                }
+
+                            }
+
+
+
+
+                        }
+
+
+
+                        contador++;
+                    }
+                    cosasGlobalesewe.concatenarAccion(argumento);
+                    if (regreso == null)
+                    {
+                        return new resultado();
+                    }
+                    return new resultado(regreso.tipo, regreso.direccion, regreso);
+
+
+                }
+
+            }
+            else if (node.ChildNodes.Count == 1)
             {
                 ParseTreeNode salida = node.ChildNodes.ElementAt(0);
                 if (salida.Term.ToString() == "numero")
@@ -59,7 +318,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                 }
                 else if (salida.Term.ToString() == "cadena")
                 {
-                    string retorno = salida.Token.Text.Replace("'", "");
+                    retorno = salida.Token.Text.Replace("'", "");
 
                     string inicio = cosasGlobalesewe.nuevoTemp();
                     argumento = inicio + " = hp;\n";
@@ -94,8 +353,9 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     }
 
                 }
-                else
+                else// BUSQUEDA DE ID
                 {
+
                     simbolo a = tablaActual.buscar(salida.Token.Text, ambito);
                     if (a != null)
                     {
@@ -185,14 +445,227 @@ namespace OC2_P2_201800523.Arbol.Expresion
 
                 }
             }
-            else if (node.ChildNodes.Count == 3 && (node.ChildNodes.ElementAt(0).Term.ToString() == "EXPRESION" || node.ChildNodes.ElementAt(0).Term.ToString() == "("))
+            else if (node.ChildNodes.Count == 3 && (node.ChildNodes.ElementAt(0).Term.ToString() == "EXPRESION" || node.ChildNodes.ElementAt(0).Term.ToString() == "(" || node.ChildNodes.ElementAt(0).Term.ToString() == "id"))
             {
-
-                if (node.ChildNodes.ElementAt(0).Term.ToString() != "EXPRESION") /*CASO DEL PARENTESIS*/
+                if (node.ChildNodes.ElementAt(0).Term.ToString() != "EXPRESION")
                 {
-                    expresion centro = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(1));
-                    res = centro.traducir(ref tablaActual, ambito, "", "", "");
-                    return res;
+                    if (node.ChildNodes.ElementAt(0).Term.ToString() == "id")//Caso atributos
+                    {
+                        argumento = "";
+                        simbolo regreso = null;
+
+
+                        ParseTreeNode id = node.ChildNodes.ElementAt(0);
+                        simbolo a = tablaActual.buscar(id.Token.Text, ambito);
+
+                        if (a != null)
+                        {
+                            LinkedList<ParseTreeNode> listaAtr = new LinkedList<ParseTreeNode>();
+                            ParseTreeNode auxi = node.ChildNodes.ElementAt(2);
+                            while (auxi != null)
+                            {
+                                if (auxi.ChildNodes.Count == 3)
+                                {
+                                    ParseTreeNode thisId = auxi.ChildNodes.ElementAt(2);
+                                    listaAtr.AddFirst(thisId);
+                                    auxi = auxi.ChildNodes.ElementAt(0);
+                                }
+                                else if (auxi.ChildNodes.Count == 1)
+                                {
+                                    ParseTreeNode thisId = auxi.ChildNodes.ElementAt(0);
+                                    listaAtr.AddFirst(thisId);
+                                    auxi = null;
+                                }
+                            }
+
+                            int contador = 0;
+                            bool buscarSimbolo = true;
+                            atributo esteAtr;
+                            atributo auxiliar = null;
+                            string busqueda;
+                            temp = cosasGlobalesewe.nuevoTemp();
+                            argumento += temp + " = " + "stack[(int)" + a.direccion + "];\n";
+
+                            foreach (var atr in listaAtr)
+                            {
+
+                                busqueda = atr.ChildNodes.ElementAt(0).Token.Text;
+                                if (buscarSimbolo == true)
+                                {
+                                    esteAtr = a.buscarAtributo(busqueda);
+                                    buscarSimbolo = false;
+                                }
+                                else
+                                {
+                                    if (auxiliar == null)
+                                    {
+                                        Program.form.consolaErrores.Text += "Atributo Invalido\n";
+                                        return new resultado();
+                                    }
+                                    esteAtr = auxiliar.buscarAtributo(busqueda);
+                                }
+                                if (esteAtr == null)
+                                {
+
+                                    Program.form.consolaErrores.Text += "Atributo Invalido\n";
+                                    return new resultado();
+                                }
+                                //argumento += "//" + esteAtr.tipo + "\n";
+                                if (atr.ChildNodes.Count == 1)
+                                {
+
+                                    if (contador == listaAtr.Count - 1)//Ultimo atr a buscar
+                                    {
+                                        argumento += "/*INICIA BUSQUEDA ATRIBUTO " + esteAtr.id + "*/\n";
+                                        argumento += temp + " = " + temp + " + " + esteAtr.pos + ";\n";
+                                        argumento += temp + " = " + "heap" + "[(int)" + temp + "]" + ";\n";
+                                        regreso = new simbolo(ambito, esteAtr.id, esteAtr.tipo, temp, 0, 0, "atributo");
+
+                                        argumento += "/*FINALIZA BUSQUEDA ATRIBUTO " + esteAtr.id + "*/\n";
+                                        break;
+                                    }
+                                    else //Seguir buscando Ewe
+                                    {
+                                        argumento += temp + " = " + temp + " + " + esteAtr.pos + ";\n";
+
+                                        argumento += temp + " = " + "heap" + "[(int)" + temp + "];\n";
+                                        auxiliar = esteAtr;
+
+                                    }
+                                }
+                                else //Atributo en array
+                                {
+                                    //Ultimo atr a buscar
+
+
+                                    LinkedList<resultado> listaPos = new LinkedList<resultado>();
+                                    auxi = atr.ChildNodes.ElementAt(2);
+                                    resultado posicion = null;
+                                    while (auxi != null)
+                                    {
+                                        if (auxi.ChildNodes.Count == 3)
+                                        {
+                                            expresion thisExpr = new expresion(noterminales.EXPRESION, auxi.ChildNodes.ElementAt(2));
+                                            posicion = thisExpr.traducir(ref tablaActual, ambito, "", "", "");
+                                            listaPos.AddFirst(posicion);
+                                            auxi = auxi.ChildNodes.ElementAt(0);
+                                        }
+                                        else if (auxi.ChildNodes.Count == 1)
+                                        {
+                                            expresion thisExpr = new expresion(noterminales.EXPRESION, auxi.ChildNodes.ElementAt(0));
+                                            posicion = thisExpr.traducir(ref tablaActual, ambito, "", "", "");
+                                            listaPos.AddFirst(posicion);
+                                            auxi = null;
+                                        }
+                                    }
+                                    argumento += temp + " = " + temp + " + " + esteAtr.pos + ";\n";
+                                    argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+
+                                    if (listaPos.Count == 1)//C3D para un array normalito
+                                    {
+
+
+                                        if (contador == listaAtr.Count - 1)//Ultimo atr a buscar
+                                        {
+                                            argumento += "/*INICIA BUSQUEDA ATRIBUTO " + esteAtr.id + "*/\n";
+                                            argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                            argumento += temp + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
+                                            argumento += temp + " = " + "heap" + "[(int)" + temp + "]" + ";\n";
+                                            regreso = new simbolo(ambito, esteAtr.id, esteAtr.tipo, temp, 0, 0, "atributo");
+
+                                            argumento += "/*FINALIZA BUSQUEDA ATRIBUTO " + esteAtr.id + "*/\n";
+                                            break;
+                                        }
+                                        else //Seguir buscando Ewe
+                                        {
+                                            argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                            argumento += temp + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
+                                            argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                                            auxiliar = esteAtr;
+
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        int ct = 0;
+                                        foreach (var pos in listaPos)
+                                        {
+                                            if (ct == 0)
+                                            {
+                                                argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                                argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                                                argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                                            }
+                                            else
+                                            {
+                                                if (ct == listaPos.Count - 1)
+                                                {
+                                                    argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                                    argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                                                    argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                                                }
+                                                else
+                                                {
+                                                    if (contador == listaAtr.Count - 1)//Ultimo atr a buscar
+                                                    {
+                                                        argumento += "/*INICIA ASIGNACION ATRIBUTO " + esteAtr.id + "*/\n";
+                                                        argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                                        argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                                                        argumento += temp + " = " + "heap" + "[(int)" + temp + "]" + ";\n";
+                                                        regreso = new simbolo(ambito, esteAtr.id, esteAtr.tipo, temp, 0, 0, "atributo");
+
+                                                        argumento += "/*FINALIZA BUSQUEDA ATRIBUTO " + esteAtr.id + "*/\n";
+                                                        break;
+
+
+                                                    }
+                                                    else //Seguir buscando Ewe
+                                                    {
+                                                        argumento += temp + " = " + temp + " + " + 1 + ";\n";
+                                                        argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                                                        argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
+                                                        auxiliar = esteAtr;
+
+                                                    }
+
+
+
+                                                }
+
+                                            }
+                                            ct++;
+                                        }
+
+                                    }
+
+
+
+
+                                }
+
+
+
+                                contador++;
+                            }
+                            cosasGlobalesewe.concatenarAccion(argumento);
+                            if (regreso == null)
+                            {
+                                return new resultado();
+                            }
+                            return new resultado(regreso.tipo, regreso.direccion, regreso);
+
+
+                        }
+                    }
+
+                    else /*CASO DEL PARENTESIS*/
+                    {
+                        expresion centro = new expresion(noterminales.EXPRESION, node.ChildNodes.ElementAt(1));
+                        res = centro.traducir(ref tablaActual, ambito, "", "", "");
+                        return res;
+                    }
+
 
                 }
                 else
@@ -896,7 +1369,7 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     argumento = "";
                     ParseTreeNode id = node.ChildNodes.ElementAt(0);
                     simbolo a = tablaActual.buscar(id.Token.Text, ambito);
-                    string retorno = "";
+                    retorno = "";
                     if (a != null)
                     {
 
