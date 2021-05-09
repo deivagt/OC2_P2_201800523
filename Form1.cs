@@ -9,12 +9,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using OC2_P2_201800523.AST;
+using OC2_P2_201800523.optimizar;
 
 namespace OC2_P2_201800523
 {
     public partial class Form1 : Form
     {
         AnalizadorSintactico n;
+        string analisisActual;
         public Form1()
         {
             InitializeComponent();
@@ -28,11 +30,14 @@ namespace OC2_P2_201800523
         private void button1_Click(object sender, EventArgs e)
         {
             //System.Diagnostics.Debug.WriteLine(richTextBox1.Text);
+            analisisActual = "";
             this.consola.Text = "";
             n = new AnalizadorSintactico();
             n.analisis(richTextBox1.Text);
             consola.Text = cosasGlobalesewe.salida;
-            
+            analisisActual = cosasGlobalesewe.salida;
+
+
         }
 
         private void richTextBox2_TextChanged(object sender, EventArgs e)
@@ -78,6 +83,34 @@ namespace OC2_P2_201800523
                 //Program.form.richTextBox3.Text = "";
                 //Program.form.richTextBox4.Text = "";
                 //Program.form.richTextBox5.Text = "";
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            //System.Diagnostics.Debug.WriteLine(richTextBox1.Text);
+            if(this.consola.Text != "")
+            {
+                analisisActual = this.consola.Text;
+            }
+            this.consola.Text = "";
+            analizadorC3D a = new analizadorC3D();
+          
+            a.analisis(analisisActual);
+           
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if(consola.ReadOnly == true)
+            {
+                consola.ReadOnly = false;
+                editable.Text = "Editable: Si";
+            }
+            else
+            {
+                consola.ReadOnly = true;
+                editable.Text = "Editable: No";
             }
         }
     }
