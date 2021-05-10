@@ -156,6 +156,15 @@ namespace OC2_P2_201800523.Arbol.sentencia
                 case "break":
                     cosasGlobalesewe.concatenarAccion("goto " + falso + ";");
                     return new resultado();
+                case "graficar_ts":
+                    Program.form.richTextBox3.Text = "";
+                    foreach (var simbolo in tablaActual.getTabla())
+                    {
+                        Program.form.richTextBox3.AppendText("Simbolo:\n     Ámbito: " + simbolo.ambito + "\n     Nombre: " + simbolo.id + "\n     Tipo: "
+                            + simbolo.tipo + "\n     Direccion: " + simbolo.direccion + "\n     Fila: " + simbolo.fila + "\n     Columna: " + simbolo.columna + "\n");
+                        Program.form.richTextBox3.AppendText("-------------------------\n");
+                    }
+                    return new resultado();
 
 
                 case "exit":
@@ -255,6 +264,7 @@ namespace OC2_P2_201800523.Arbol.sentencia
                             simbolo a = tablaActual.buscar(id.Token.Text, ambito);
                             if (a != null)
                             {
+                                
                                 LinkedList<resultado> listaPos = new LinkedList<resultado>();
                                 ParseTreeNode auxi = node.ChildNodes.ElementAt(2);
                                 resultado posicion = null;
@@ -284,6 +294,8 @@ namespace OC2_P2_201800523.Arbol.sentencia
 
                                     argumento += temp + " = " + "stack[(int)" + a.direccion + "];\n";
                                     argumento += temporal + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
+                                    int iin = a.listaIndex.ElementAt(0).inicio;
+                                    argumento += temporal + " = " + temporal + " - " + iin + ";\n";
                                     argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
                                     argumento += "heap[(int)" + temporal + "]" + " = " + res.valor + ";\n";
                                     cosasGlobalesewe.concatenarAccion(argumento);

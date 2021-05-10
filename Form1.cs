@@ -78,11 +78,11 @@ namespace OC2_P2_201800523
             if (abrirArchivo.ShowDialog() == DialogResult.OK)
             {
                 string text = System.IO.File.ReadAllText(abrirArchivo.FileName);
-                //Program.form.richTextBox1.Text = text;
-                //Program.form.richTextBox2.Text = "";
-                //Program.form.richTextBox3.Text = "";
-                //Program.form.richTextBox4.Text = "";
-                //Program.form.richTextBox5.Text = "";
+                Program.form.richTextBox1.Text = text;
+                Program.form.richTextBox3.Text = "";
+                Program.form.richTextBox4.Text = "";
+                Program.form.consolaErrores.Text = "";
+                Program.form.consolaOPT.Text = "";
             }
         }
 

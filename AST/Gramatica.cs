@@ -82,6 +82,7 @@ namespace OC2_P2_201800523.AST
             var mayor = ToTerm(terminales.mayor);
             var mayor_igual = ToTerm(terminales.mayor_igual);
             var dospunticos = ToTerm(terminales.dospunticos);
+            var downto = ToTerm("downto");
 
 
             #region Otros
@@ -270,6 +271,7 @@ namespace OC2_P2_201800523.AST
                 | rcase + EXPRESION + rof + CASOS + PreferShiftHere() + relse + begin + SENTENCIAS + end + punto_coma + end + punto_coma
                 | rwhile + EXPRESION + rdo + begin + SENTENCIAS + end + punto_coma
                 | rfor + id + dos_puntos_igual + EXPRESION + to + EXPRESION + rdo + begin + SENTENCIAS + end + punto_coma
+                | rfor + id + dos_puntos_igual + EXPRESION + downto + EXPRESION + rdo + begin + SENTENCIAS + end + punto_coma
                 | repeat + begin + SENTENCIAS + end + until + EXPRESION + punto_coma
                 | repeat + SENTENCIAS + until + EXPRESION + punto_coma
                 | writeln + punto_coma
@@ -362,6 +364,7 @@ namespace OC2_P2_201800523.AST
                 | rboolean
                 | rvoid
                 | id
+
                 ;
 
 

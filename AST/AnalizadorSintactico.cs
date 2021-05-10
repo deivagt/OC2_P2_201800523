@@ -38,7 +38,16 @@ namespace OC2_P2_201800523.AST
 
                     foreach (var a in arbol.ParserMessages)
                     {
-                        //Program.form.richTextBox5.AppendText("Error: " + a.Message + " in line " + (a.Location.Line + 1) + " and column " + (a.Location.Column + 1) + "\n");
+                        if (a.Message.StartsWith('I'))
+                        {
+                            Program.form.consolaErrores.AppendText("Lexical Error: " + a.Message + " in line " + (a.Location.Line + 1) + " and column " + (a.Location.Column + 1) + "\n");
+                        }
+                        else
+                        {
+                            Program.form.consolaErrores.AppendText( a.Message + " in line " + (a.Location.Line + 1) + " and column " + (a.Location.Column + 1) + "\n");
+
+                        }
+
 
 
                     }
@@ -48,8 +57,15 @@ namespace OC2_P2_201800523.AST
 
                     foreach (var a in arbol.ParserMessages)
                     {
-                        //Program.form.richTextBox5.AppendText("Error: " + a.Message + " in line " + (a.Location.Line + 1) + " and column " + (a.Location.Column + 1) + "\n");
+                        if (a.Message.StartsWith('I'))
+                        {
+                            Program.form.consolaErrores.AppendText("Lexical Error: " + a.Message + " in line " + (a.Location.Line + 1) + " and column " + (a.Location.Column + 1) + "\n");
+                        }
+                        else
+                        {
+                            Program.form.consolaErrores.AppendText( a.Message + " in line " + (a.Location.Line + 1) + " and column " + (a.Location.Column + 1) + "\n");
 
+                        }
 
                     }
                 }

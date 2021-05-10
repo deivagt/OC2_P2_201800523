@@ -110,6 +110,7 @@ namespace OC2_P2_201800523.Arbol.funcProce
                             {
                                 simbolo tipoCustom = tablaActual.buscarTipo(a.tipo);
                                 nuevoSimbolo = new simbolo(id.Token.Text, a.id, a.tipo, nuevoTemp, "parametro", tipoCustom.listaAtributos);
+                                nuevoSimbolo.listaIndex = tipoCustom.listaIndex;
                                 a.direccion = nuevoTemp;
                             }
 
@@ -197,6 +198,7 @@ namespace OC2_P2_201800523.Arbol.funcProce
                             {
                                 simbolo tipoCustom = tablaActual.buscarTipo(a.tipo);
                                 nuevoSimbolo = new simbolo(id.Token.Text, a.id, a.tipo, nuevoTemp, "parametro", tipoCustom.listaAtributos);
+                                nuevoSimbolo.listaIndex = tipoCustom.listaIndex;
                                 a.direccion = nuevoTemp;
                             }
 

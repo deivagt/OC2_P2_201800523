@@ -102,6 +102,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                     {
                         argumento += temp + " = " + temp + " + " + 1 + ";\n";
                         argumento += temp + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
+                        int iin = a.listaIndex.ElementAt(0).inicio;
+                        argumento += temp + " = " + temp + " - " + iin + ";\n";
                         argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
                         cosasGlobalesewe.concatenarAccion(argumento);
                     }
@@ -112,6 +114,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                         {
                             argumento += temp + " = " + temp + " + " + 1 + ";\n";
                             argumento += temp + " = " + temp + " + " + pos.valor + ";\n";
+                            int iin = a.listaIndex.ElementAt(0).inicio;
+                            argumento += temp + " = " + temp + " - " + iin + ";\n";
                             argumento += temp + " = " + "heap[(int)" + temp + "]" + ";\n";
                            
                         }
@@ -724,12 +728,18 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 }
                                 else
                                 {
-                                    //ERROR
+                                    argumento = "0";
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    Program.form.consolaErrores.Text += "Error Sintactico: [Tipos invalidos]" + " en Fila: " + (node.ChildNodes.ElementAt(1).Token.Location.Line + 1) + "\n";
+                                    return new resultado(terminales.numero, temp);
                                 }
                             }
                             else
                             {
-                                //Error
+                                argumento = "0";
+                                temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                Program.form.consolaErrores.Text += "Error Sintactico: [Tipos invalidos]" + " en Fila: " + (node.ChildNodes.ElementAt(1).Token.Location.Line + 1) + "\n";
+                                return new resultado(terminales.numero, temp);
                             }
 
 
@@ -753,12 +763,18 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 }
                                 else
                                 {
-                                    //ERROR
+                                    argumento = "0";
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    Program.form.consolaErrores.Text += "Error Sintactico: [Tipos invalidos]" + " en Fila: " + (node.ChildNodes.ElementAt(1).Token.Location.Line + 1) + "\n";
+                                    return new resultado(terminales.numero, temp);
                                 }
                             }
                             else
                             {
-                                //Error
+                                argumento = "0";
+                                temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                Program.form.consolaErrores.Text += "Error Sintactico: [Tipos invalidos]" + " en Fila: " + (node.ChildNodes.ElementAt(1).Token.Location.Line + 1) + "\n";
+                                return new resultado(terminales.numero, temp);
                             }
 
 
@@ -782,12 +798,18 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                 }
                                 else
                                 {
-                                    //ERROR
+                                    argumento = "0";
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    Program.form.consolaErrores.Text += "Error Sintactico: [Tipos invalidos]" + " en Fila: " + (node.ChildNodes.ElementAt(1).Token.Location.Line + 1) + "\n";
+                                    return new resultado(terminales.numero, temp);
                                 }
                             }
                             else
                             {
-                                //Error
+                                argumento = "0";
+                                temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                Program.form.consolaErrores.Text += "Error Sintactico: [Tipos invalidos]" + " en Fila: " + (node.ChildNodes.ElementAt(1).Token.Location.Line + 1) + "\n";
+                                return new resultado(terminales.numero, temp);
                             }
 
 
@@ -806,18 +828,41 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             {
                                 if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse || resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
                                 {
-                                    argumento = resIzq.valor + " / " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    int prueba = 1;
+                                    
+                                    if(int.TryParse(resDer.valor, out int i) == true)
+                                    {
+                                        prueba = int.Parse(resDer.valor);
+                                    }
+                                    if(prueba == 0)//Error
+                                    {
+                                        argumento = "0";
+                                        temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                        Program.form.consolaErrores.Text += "Error Sintactico: No se puede dividir entre 0" +" en Fila: "+ (node.ChildNodes.ElementAt(1).Token.Location.Line +1)+ "\n";
+                                        return new resultado(terminales.numero, temp);
+                                    }
+                                    else
+                                    {
+                                        argumento = resIzq.valor + " / " + resDer.valor;
+                                        temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                        return new resultado(terminales.numero, temp);
+                                    }
+                                    
                                 }
                                 else
                                 {
-                                    //ERROR
+                                    argumento = "0";
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    Program.form.consolaErrores.Text += "Error Sintactico: [Tipos invalidos]" + " en Fila: " + (node.ChildNodes.ElementAt(1).Token.Location.Line + 1) + "\n";
+                                    return new resultado(terminales.numero, temp);
                                 }
                             }
                             else
                             {
-                                //Error
+                                argumento = "0";
+                                temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                Program.form.consolaErrores.Text += "Error Sintactico: [Tipos invalidos]" + " en Fila: " + (node.ChildNodes.ElementAt(1).Token.Location.Line + 1) + "\n";
+                                return new resultado(terminales.numero, temp);
                             }
 
 
@@ -835,18 +880,40 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             {
                                 if (resDer.tipo == terminales.numero || resDer.tipo == terminales.rtrue || resDer.tipo == terminales.rfalse || resDer.tipo == terminales.rinteger || resDer.tipo == terminales.rreal || resIzq.tipo == terminales.rboolean)
                                 {
-                                    argumento = resIzq.valor + " % " + resDer.valor;
-                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
-                                    return new resultado(terminales.numero, temp);
+                                    int prueba = 1;
+
+                                    if (int.TryParse(resDer.valor, out int i) == true)
+                                    {
+                                        prueba = int.Parse(resDer.valor);
+                                    }
+                                    if (prueba == 0)//Error
+                                    {
+                                        argumento = "0";
+                                        temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                        Program.form.consolaErrores.Text += "Error Sintactico: No se puede dividir entre 0" + " en Fila: " + (node.ChildNodes.ElementAt(1).Token.Location.Line + 1) + "\n";
+                                        return new resultado(terminales.numero, temp);
+                                    }
+                                    else
+                                    {
+                                        argumento = resIzq.valor + " % " + resDer.valor;
+                                        temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                        return new resultado(terminales.numero, temp);
+                                    }
                                 }
                                 else
                                 {
-                                    //ERROR
+                                    argumento = "0";
+                                    temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                    Program.form.consolaErrores.Text += "Error Sintactico: [Tipos invalidos]" + " en Fila: " + (node.ChildNodes.ElementAt(1).Token.Location.Line + 1) + "\n";
+                                    return new resultado(terminales.numero, temp);
                                 }
                             }
                             else
                             {
-                                //Error
+                                argumento = "0";
+                                temp = cosasGlobalesewe.nuevoTemp(argumento);
+                                Program.form.consolaErrores.Text += "Error Sintactico: [Tipos invalidos]" + " en Fila: " + (node.ChildNodes.ElementAt(1).Token.Location.Line + 1) + "\n";
+                                return new resultado(terminales.numero, temp);
                             }
 
                             return new resultado();
@@ -1402,6 +1469,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                             retorno = cosasGlobalesewe.nuevoTemp();
                             argumento += temp + " = " + "stack[(int)" + a.direccion + "];\n";
                             argumento += temporal + " = " + temp + " + " + listaPos.ElementAt(0).valor + ";\n";
+                            int iin = a.listaIndex.ElementAt(0).inicio;
+                            argumento += temporal + " = " + temporal + " - " + iin + ";\n";
                             argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
                             argumento += retorno + " = heap[(int)" + temporal + "];\n";
                             cosasGlobalesewe.concatenarAccion(argumento);
@@ -1418,6 +1487,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     retorno = cosasGlobalesewe.nuevoTemp();
                                     argumento += temp + " = " + "stack[(int)" + a.direccion + "];\n";
                                     argumento += temporal + " = " + temp + " + " + pos.valor + ";\n";
+                                    int iin = a.listaIndex.ElementAt(0).inicio;
+                                    argumento += temporal + " = " + temporal + " - " + iin + ";\n";
                                     argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
                                     argumento += retorno + " = heap[(int)" + temporal + "];\n";
                                 }
@@ -1426,6 +1497,8 @@ namespace OC2_P2_201800523.Arbol.Expresion
                                     temporal = cosasGlobalesewe.nuevoTemp();
                                     argumento += temporal + " = " + retorno + " + " + pos.valor + ";\n";
                                     argumento += temporal + " = " + temporal + " + " + 1 + ";\n";
+                                    int iin = a.listaIndex.ElementAt(0).inicio;
+                                    argumento += temporal + " = " + temporal + " - " + iin + ";\n";
                                     retorno = cosasGlobalesewe.nuevoTemp();
                                     argumento += retorno + " = heap[(int)" + temporal + "];\n";
                                 }

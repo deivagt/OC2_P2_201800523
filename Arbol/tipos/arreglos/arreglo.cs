@@ -37,7 +37,6 @@ namespace OC2_P2_201800523.Arbol.tipos.arreglos
             {
                 simbolo nuevoAtr = tablaActual.buscarTipo(tipo);
                 listaAtr = nuevoAtr.listaAtributos;
-               
                 
             }
             simbolo nuevotipo = new simbolo(ambito, id.Token.Text, tipo, fila + 1, columna + 1, "array", listaIndex, true);

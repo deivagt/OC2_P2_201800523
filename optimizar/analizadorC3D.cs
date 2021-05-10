@@ -21,10 +21,7 @@ namespace OC2_P2_201800523.optimizar
             LinkedList<string> ListaAnalisis = new LinkedList<string>();
             LinkedList<string> ListaSalida = new LinkedList<string>();
 
-            Program.form.consola.Text = "";
-            Program.form.richTextBox3.Text = "";
-            Program.form.richTextBox4.Text = "";
-            Program.form.consolaErrores.Text = "";
+           
             Program.form.consolaOPT.Text = "";
             cosasGlobalesewe.inicializar();
             bool guardar = false;
@@ -34,7 +31,7 @@ namespace OC2_P2_201800523.optimizar
             string auxiliar = "";
             string auxi = entrada;
 
-            while (regla <= 15)
+            while (regla <= 16)
             {
                 try
                 {
@@ -696,7 +693,7 @@ namespace OC2_P2_201800523.optimizar
                         Program.form.consolaOPT.Text += "Código agredado: " + "\n";
                         Program.form.consolaOPT.Text += "Código eliminado: " + "if(" + izq.ChildNodes.ElementAt(0).Token.Text + "==" + der.ChildNodes.ElementAt(0).Token.Text + ") goto " + etTrue.Token.Text + "\n" + "goto " + etFalse.Token.Text + "\n";
                         
-                        Program.form.consolaOPT.Text += "Fila: "+nodo.ChildNodes.ElementAt(0).ChildNodes.ElementAt(0).Token.Location.Line+"\n";
+                        Program.form.consolaOPT.Text += "Fila: "+nodo.ChildNodes.ElementAt(0).Token.Location.Line+"\n";
                         Program.form.consolaOPT.Text += "-----------------\n";
                         aux += "goto " + etTrue.Token.Text + ";\n";
                         return false;
@@ -799,8 +796,19 @@ namespace OC2_P2_201800523.optimizar
                     Program.form.consolaOPT.Text += "-----------------\n";
                     return false;
                 }
-
-
+            }
+            else if (simbolo.ChildNodes.ElementAt(0).Token.Text == "-" && izq.ChildNodes.ElementAt(0).Token.Text == "0")
+            {
+                if (id.Token.Text == der.ChildNodes.ElementAt(0).Token.Text)
+                {
+                    Program.form.consolaOPT.Text += "Se aplicó la Regla 7\n";
+                    Program.form.consolaOPT.Text += "Tipo de Optimización: Mirilla\n";
+                    Program.form.consolaOPT.Text += "Código agredado: " + "\n";
+                    Program.form.consolaOPT.Text += "Código eliminado: " + id.Token.Text + " = " + "0" + simbolo.ChildNodes.ElementAt(0).Token.Text + id.Token.Text + "\n";
+                    Program.form.consolaOPT.Text += "Fila: " + id.Token.Location.Line + "\n";
+                    Program.form.consolaOPT.Text += "-----------------\n";
+                    return false;
+                }
             }
 
             return true;

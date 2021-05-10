@@ -31,10 +31,10 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
             expresion derecha;
             resultado resIzq;
             resultado resDer;
-            
 
 
-            simbolo variable = tablaActual.buscar(node.ChildNodes.ElementAt(1).Token.Text,ambito);
+
+            simbolo variable = tablaActual.buscar(node.ChildNodes.ElementAt(1).Token.Text, ambito);
             if (variable == null)
             {
                 return new resultado();
@@ -50,7 +50,7 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
 
 
             argumento = "/*INICIO DE FOR*/";
-            
+
             cosasGlobalesewe.concatenarAccion(argumento);
 
             /*Crear codigo de asignacion de valor*/
@@ -62,11 +62,11 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
                 cosasGlobalesewe.concatenarAccion(resExprIni.argumento);
             }
             temp = resExprIni.valor;
-            
+
 
             #region Codigo de asignar            
 
-           
+
             argumento = "stack" + "[(int)" + variable.direccion + "] = " + temp + ";";
             cosasGlobalesewe.concatenarAccion(argumento);
 
@@ -82,29 +82,48 @@ namespace OC2_P2_201800523.Arbol.sentencia.condicion
                 cosasGlobalesewe.concatenarAccion(res.argumento);
             }
             temp1 = res.valor;
-            
+
 
             argumento = tempCondicion + ":\n";
             temp = cosasGlobalesewe.nuevoTemp();
             cosasGlobalesewe.concatenarAccion(argumento);
-            argumento =  temp + " = " + "stack" + "[(int)" + variable.direccion + "];\n"
-                
-                + "if(" +temp +"<="+ temp1 + ") goto " + tempCiclo + ";\n"
-            + "goto " + tempSalida + ";\n"
-            + tempIncremento + ":";
 
-            cosasGlobalesewe.concatenarAccion(argumento);
+
+            
             //EL incremento ewe
-            argumento = "stack" + "[(int)" + variable.direccion + "]" + " = " + temp + " + 1;\n"
+            if (node.ChildNodes.ElementAt(4).Token.Text == "to")
+            {
+                argumento = temp + " = " + "stack" + "[(int)" + variable.direccion + "];\n"
+
+               + "if(" + temp + "<=" + temp1 + ") goto " + tempCiclo + ";\n"
+           + "goto " + tempSalida + ";\n"
+
+           + tempIncremento + ":";
+                cosasGlobalesewe.concatenarAccion(argumento);
+                argumento = "stack" + "[(int)" + variable.direccion + "]" + " = " + temp + " + 1;\n"
+           + "goto " + tempCondicion + ";\n"
+           + tempCiclo + ":";
+            }
+            else
+            {
+                argumento = temp + " = " + "stack" + "[(int)" + variable.direccion + "];\n"
+
+               + "if(" + temp + ">=" + temp1 + ") goto " + tempCiclo + ";\n"
+           + "goto " + tempSalida + ";\n"
+           + tempIncremento + ":";
+                cosasGlobalesewe.concatenarAccion(argumento);
+                argumento = "stack" + "[(int)" + variable.direccion + "]" + " = " + temp + " - 1;\n"
             + "goto " + tempCondicion + ";\n"
-            +tempCiclo +":";
+            + tempCiclo + ":";
+            }
+
             cosasGlobalesewe.concatenarAccion(argumento);
             cosasGlobalesewe.concatenarAccion("/*INICIO COSAS FOR*****************/");
             hacerTraduccion(node.ChildNodes.ElementAt(8), ref tablaActual, ambito, tempIncremento, tempSalida, xd);
             cosasGlobalesewe.concatenarAccion("/*FIN COSAS FOR*******************/");
-            
-             argumento = "goto " + tempIncremento + ";\n"
-                + tempSalida + ":\n";
+
+            argumento = "goto " + tempIncremento + ";\n"
+               + tempSalida + ":\n";
             argumento += "/*FIN DE FOR*/";
             cosasGlobalesewe.concatenarAccion(argumento);
 
